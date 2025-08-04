@@ -1,4 +1,3 @@
-<!-- Ovaj fajl prikazuje sve zaposlene u tabeli. Dodato po zahtevu korisnika. -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -44,12 +43,17 @@
                             <td><%= emp.PhoneNmbr %></td>
                             <td><%= emp.IDCardNmbr %></td>
                             <td><%= emp.PassportNmbr %></td>
-                            <td><a href="/admin/employee/edit/<%= emp.EmplID %>">Izmeni</a></td>
+                            <td><a href="/admin/employee/update/<%= emp.EmplID %>">Izmeni</a></td>
                         </tr>
                     <% }) %>
                 </tbody>
             </table>
+            
+            </body>
+            
         <% } else { %>
             <h1>No Employees Found!</h1>
         <% } %>
     <%- include('../includes/end.ejs') %>
+
+</html>

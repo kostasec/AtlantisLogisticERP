@@ -13,13 +13,14 @@ app.use(bodyParser.urlencoded({ extended: false}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 //Routes
-
 const employeeRoutes = require('./routes/admin/employee');
+const vehicleRoutes = require('./routes/admin/vehicle')
 
-const homeRoutes = require('./routes');
+const indexRoutes = require('./routes/index');
 
 app.use('/admin/employee', employeeRoutes);
-app.use(homeRoutes);
+app.use('/admin/vehicle', vehicleRoutes);
+app.use(indexRoutes);
 
 
 

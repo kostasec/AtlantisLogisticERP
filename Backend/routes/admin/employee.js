@@ -1,4 +1,3 @@
-
 const express = require('express');
 const router = express.Router();
 const { sql, config } = require('../../util/db');
@@ -58,8 +57,8 @@ router.post('/update/:id', async (req, res) => {
     }
 });
 
-// GET /admin/employee/edit/:id
-router.get('/edit/:id', async (req, res) => {
+// GET /admin/employee/update/:id
+router.get('/update/:id', async (req, res) => {
     try {
         let pool = await sql.connect(config);
         const result = await pool.request()
@@ -141,7 +140,7 @@ router.get('/all', async (req, res) => {
         });
     } catch (err) {
         console.error('Error fetching employees:', err);
-        res.status(500).send('Database error');
+        res.status(500).send('Database Error');
     }
 });
 
