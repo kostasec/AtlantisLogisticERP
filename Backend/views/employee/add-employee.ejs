@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title><%= pageTitle %></title>
+</head>
+
+<body>
+  <h1><%= pageTitle %></h1>
+  <form action="/admin/employee/add" method="POST">
+    
+    <input type="text" name="EmplType" placeholder="Employee Type" required /> <br />
+    <input type="text" name="FirstName" placeholder="First Name" required /> <br />
+    <input type="text" name="LastName" placeholder="Last Name" required /> <br />
+    <input type="text" name="StreetAndNmbr" placeholder="Street and Number" required /> <br />
+    <input type="text" name="City" placeholder="City" required /> <br />
+    <input type="text" name="ZIPCode" placeholder="ZIP Code" required /> <br />
+    <input type="text" name="Country" placeholder="Country" required /> <br />
+    <input type="text" name="PhoneNmbr" placeholder="Phone Number" required /> <br />
+    <input type="email" name="EmailAddress" placeholder="Email Address" required /> <br />
+    <input type="text" name="IDCardNmbr" placeholder="ID Card Number" required /> <br />
+    <input type="text" name="PassportNmbr" placeholder="Passport Number" required /> <br />
+    <input type="text" name="MgrID" placeholder="Manager ID" /> <br />
+    <button type="submit">Add Employee</button>
+  </form>
+</body>
+</html>

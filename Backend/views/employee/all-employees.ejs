@@ -1,0 +1,55 @@
+<!-- Ovaj fajl prikazuje sve zaposlene u tabeli. Dodato po zahtevu korisnika. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title><%= pageTitle %></title>
+</head>
+
+<body>
+   <h1><%= pageTitle %></h1>
+    <form action="/admin/employee/read" method="GET"></form>
+           
+        <% if (employees && employees.length > 0) { %>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Type</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Street And Number</th>
+                        <th>City</th>
+                        <th>ZIP Code</th>
+                        <th>Country</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>ID Card</th>
+                        <th>Passport</th>
+                        <th>Akcija</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% employees.forEach(emp => { %>
+                        <tr>
+                            <td><%= emp.EmplID %></td>
+                            <td><%= emp.EmplType %></td>
+                            <td><%= emp.FirstName %></td>
+                            <td><%= emp.LastName %></td>
+                            <td><%= emp.StreetAndNmbr %></td>
+                            <td><%= emp.City %></td>
+                            <td><%= emp.ZIPCode %></td>
+                            <td><%= emp.Country %></td>
+                            <td><%= emp.EmailAddress %></td>
+                            <td><%= emp.PhoneNmbr %></td>
+                            <td><%= emp.IDCardNmbr %></td>
+                            <td><%= emp.PassportNmbr %></td>
+                            <td><a href="/admin/employee/edit/<%= emp.EmplID %>">Izmeni</a></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <h1>No Employees Found!</h1>
+        <% } %>
+    <%- include('../includes/end.ejs') %>

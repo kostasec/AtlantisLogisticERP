@@ -1,0 +1,39 @@
+# Node.js
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Logs
+logs/
+*.log
+
+# dotenv environment variables
+.env
+.env.*
+
+# VSCode
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+/dist
+/build
+
+# Coverage
+coverage/
+
+# Database
+*.mdf
+*.ldf
+
+# Misc
+*.tgz
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln

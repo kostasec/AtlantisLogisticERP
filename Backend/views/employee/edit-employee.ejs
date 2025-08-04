@@ -1,0 +1,30 @@
+<!-- Forma za izmenu zaposlenog -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Izmeni zaposlenog</title>
+</head>
+<body>
+  <h1>Izmeni zaposlenog</h1>
+  <form action="/admin/employee/update/<%= employee.EmplID %>" method="POST">
+    <label>Tip zaposlenog: <input type="text" name="EmplType" value="<%= employee.EmplType %>" required></label><br>
+    <label>Ime: <input type="text" name="FirstName" value="<%= employee.FirstName %>" required></label><br>
+    <label>Prezime: <input type="text" name="LastName" value="<%= employee.LastName %>" required></label><br>
+    <label>Ulica i broj: <input type="text" name="StreetAndNmbr" value="<%= employee.StreetAndNmbr %>" required></label><br>
+    <label>Grad: <input type="text" name="City" value="<%= employee.City %>" required></label><br>
+    <label>Poštanski broj: <input type="text" name="ZIPCode" value="<%= employee.ZIPCode %>" required></label><br>
+    <label>Država: <input type="text" name="Country" value="<%= employee.Country %>" required></label><br>
+    <label>Email: <input type="email" name="EmailAddress" value="<%= employee.EmailAddress %>" required></label><br>
+    <label>Telefon: <input type="text" name="PhoneNmbr" value="<%= employee.PhoneNmbr %>" required></label><br>
+    <label>Broj lične karte: <input type="text" name="IDCardNmbr" value="<%= employee.IDCardNmbr %>" required></label><br>
+    <label>Broj pasoša: <input type="text" name="PassportNmbr" value="<%= employee.PassportNmbr %>" required></label><br>
+    <label>Menadžer ID: <input type="text" name="MgrID" value="<%= employee.MgrID %>"></label><br>
+    <button type="submit">Sačuvaj izmene</button>
+  </form>
+  <form action="/admin/employee/delete/<%= employee.EmplID %>" method="POST" style="margin-top:20px;">
+    <button type="submit" style="color:red;">Brisanje</button>
+  </form>
+  <a href="/admin/employee/all">Nazad na listu zaposlenih</a>
+</body>
+</html>
