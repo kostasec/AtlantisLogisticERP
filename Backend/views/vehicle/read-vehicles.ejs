@@ -26,7 +26,7 @@
                         <td><%= vehicle.Make %></td>
                         <td><%= vehicle.Model %></td>
                         <td><%= vehicle.RegistrationTag %></td>
-                        <td><%= vehicle.DriverName %></td>
+                        <td><%= vehicle.DriverName && vehicle.DriverName.trim() ? vehicle.DriverName : 'No Driver' %></td>
                     </tr>
                 <% }) %>
             </tbody>
