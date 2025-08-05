@@ -29,4 +29,22 @@ app.use((req, res, next) => {
   res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
 });
 
-app.listen(3000);
+const server = app.listen(3000, () => {
+  console.log('Server started on port 3000');
+});
+
+// Proper shutdown handler
+const { sql } = require('./util/db');
+process.on('SIGINT', async () => {
+  console.log('Shutting down server...');
+  server.close(async () => {
+    try {
+      await sql.close();
+      console.log('SQL connection closed.');
+    } catch (e) {
+      console.log('Error closing SQL connection:', e.message);
+    }
+    console.log('Server closed. Exiting process.');
+    process.exit(0);
+  });
+});

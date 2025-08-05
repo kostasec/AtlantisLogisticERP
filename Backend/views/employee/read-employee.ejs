@@ -25,7 +25,8 @@
                         <th>Phone</th>
                         <th>ID Card</th>
                         <th>Passport</th>
-                        <th>Akcija</th>
+                        <th>Manager</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -43,7 +44,8 @@
                             <td><%= emp.PhoneNmbr %></td>
                             <td><%= emp.IDCardNmbr %></td>
                             <td><%= emp.PassportNmbr %></td>
-                            <td><a href="/admin/employee/update/<%= emp.EmplID %>">Izmeni</a></td>
+                            <td><%= emp.ManagerName && emp.ManagerName.trim() ? emp.ManagerName : '-' %></td>
+                            <td><a href="/admin/employee/update/<%= emp.EmplID %>">Change</a></td>
                         </tr>
                     <% }) %>
                 </tbody>

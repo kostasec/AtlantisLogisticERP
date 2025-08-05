@@ -7,29 +7,26 @@
 
 <body>
     <h1><%= pageTitle %></h1>
-    <form action="/admin/vehicle/read" method="GET"></form>
 
     <% if (vehicles && vehicles.length > 0) { %>
         <table border="1">
             <thead>
                 <tr>
-                    <th>VehicleID</th>
                     <th>VehicleType</th>
                     <th>Make</th>
                     <th>Model</th>
                     <th>RegistrationTag</th>
-                    <th>EmplID</th>
+                    <th>DriverName</th>
                 </tr>
             </thead>
             <tbody>
                 <% vehicles.forEach(vehicle => { %>
                     <tr>
-                        <td><%= vehicle.VehicleID %></td>
                         <td><%= vehicle.VehicleType %></td>
                         <td><%= vehicle.Make %></td>
                         <td><%= vehicle.Model %></td>
                         <td><%= vehicle.RegistrationTag %></td>
-                        <td><%= vehicle.EmplID %></td>
+                        <td><%= vehicle.DriverName %></td>
                     </tr>
                 <% }) %>
             </tbody>
@@ -37,5 +34,7 @@
     <% } else { %>
         <h1>No Vehicles Found!</h1>
     <% } %>
+
     <%- include('../includes/end.ejs') %>
+</body>
 </html>
