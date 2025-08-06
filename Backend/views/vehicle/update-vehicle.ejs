@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Change Vehicle</title>
+</head>
+<body>
+    <h1>Change Vehicle</h1>
+    <form action="/admin/vehicle/update/<%= vehicle.VehicleID %>" method="POST">
+    <label>Vehicle Type: <input type="text" name="VehicleType" value="<%= vehicle.VehicleType %>" required></label><br>
+    <label>Make: <input type="text" name="Make" value="<%= vehicle.Make %>" required></label><br>
+    <label>Model: <input type="text" name="Model" value="<%= vehicle.Model %>" required></label><br>   
+    <label>Registration Tag: <input type="text" name="RegistrationTag" value="<%= vehicle.RegistrationTag %>" required></label><br>   
+    <label for="EmplID">Driver:</label>
+    <select name="EmplID" id="EmplID">
+        <option value="">No Driver</option>
+        <% drivers.forEach(driver => { %>
+            <option value="<%= driver.EmplID %>" <%= (vehicle.EmplID == driver.EmplID) ? 'selected' : '' %>>
+                <%= driver.FirstName %> <%= driver.LastName %>
+            </option>
+        <% }) %>
+    </select><br>
+    <button type="submit">Save</button>
+    </form>
+    <form action="/admin/vehicle/delete/<%= vehicle.VehicleID %>" method="POST" style="margin-top:20px;">
+    <button type="submit" style="color:red;">Delete</button>
+    <a href="/admin/vehicle/read">Back to all vehicles</a>
+    
+    
+</body>
+</html>

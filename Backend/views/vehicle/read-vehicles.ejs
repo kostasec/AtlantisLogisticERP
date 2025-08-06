@@ -17,6 +17,7 @@
                     <th>Model</th>
                     <th>RegistrationTag</th>
                     <th>DriverName</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,7 +27,8 @@
                         <td><%= vehicle.Make %></td>
                         <td><%= vehicle.Model %></td>
                         <td><%= vehicle.RegistrationTag %></td>
-                        <td><%= vehicle.DriverName && vehicle.DriverName.trim() ? vehicle.DriverName : 'No Driver' %></td>
+                        <td><%= vehicle.DriverName === 'N/A' ? 'No Driver' : vehicle.DriverName %></td>
+                        <td><a href="/admin/vehicle/update/<%= vehicle.VehicleID %>">Change</a></td>
                     </tr>
                 <% }) %>
             </tbody>
