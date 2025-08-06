@@ -13,7 +13,13 @@
         <input type="text" name="Make" placeholder="Make" required /> <br />
         <input type="text" name="Model" placeholder="Model" required /> <br />
         <input type="text" name="RegistrationTag" placeholder="Registration Tag" required /> <br />
-        <input type="text" name="EmplID" placeholder="Employee ID (Driver)" /> <br />
+        <label for="EmplID">Driver:</label>
+        <select name="EmplID" id="EmplID">
+            <option value="">No Driver</option>
+            <% if (typeof drivers !== 'undefined') { drivers.forEach(driver => { %>
+            <option value="<%= driver.EmplID %>"><%= driver.FirstName %> <%= driver.LastName %></option>
+            <% }) } %>
+        </select><br>
         <button type="submit">Add Vehicle</button>
     </form>
 </body>

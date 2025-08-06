@@ -42,15 +42,25 @@ router.get('/read', async (req, res) => {
 
 
 // GET /admin/vehicle/insert
-router.get('/insert', (req, res) => {
-    res.render('vehicle/insert-vehicle', {
-        pageTitle: 'Add Vehicle',
-        path: '/admin/vehicle/insert'
-    });
+router.get('/insert', async (req, res, next) => {
+    try {
+        let pool = await sql.connect(config);
+        const driversResult = await pool.request().query(`
+            SELECT EmplID, FirstName, LastName FROM Employee WHERE Status = 'Active'
+        `);
+        res.render('vehicle/insert-vehicle', {
+            pageTitle: 'Add Vehicle',
+            path: '/admin/vehicle/insert',
+            drivers: driversResult.recordset
+        });
+    } catch (err) {
+        console.error('Error fetching managers:', err);
+        res.status(500).send('Database error');
+    }
 });
 
 // POST /admin/vehicle/insert
-router.post('/insert', async (req, res) => {
+router.post('/insert', async (req, res, next) => {
     try {
         console.log('Attempting to add vehicle...');
         let pool = await sql.connect(config);
@@ -59,7 +69,6 @@ router.post('/insert', async (req, res) => {
         const emplIdValue = req.body.EmplID && req.body.EmplID.trim() !== '' ? req.body.EmplID : null;
 
         await pool.request()
-            .input('VehicleID', sql.Int, vehicleIdValue)
             .input('VehicleType', sql.VarChar, req.body.VehicleType)
             .input('Make', sql.VarChar, req.body.Make)
             .input('Model', sql.VarChar, req.body.Model)

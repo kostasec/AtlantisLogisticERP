@@ -37,11 +37,21 @@ router.get('/read', async (req, res) => {
 
 
 // GET /admin/employee/insert
-router.get('/insert',(req, res, next)=> {
-    res.render('employee/insert-employee',{
-        pageTitle: 'Add Employee',
-        path: '/admin/employee/insert'
-    });
+router.get('/insert', async (req, res, next) => {
+    try {
+        let pool = await sql.connect(config);
+        const managersResult = await pool.request().query(`
+            SELECT EmplID, FirstName, LastName FROM Employee WHERE EmplType = 'Director' AND Status = 'Active'
+        `);
+        res.render('employee/insert-employee', {
+            pageTitle: 'Add Employee',
+            path: '/admin/employee/insert',
+            managers: managersResult.recordset
+        });
+    } catch (err) {
+        console.error('Error fetching managers:', err);
+        res.status(500).send('Database error');
+    }
 });
 
 // POST /admin/employee/insert
@@ -70,6 +80,8 @@ router.post('/insert', async (req, res, next) => {
                 VALUES 
                 (@EmplType, @FirstName, @LastName, @StreetAndNmbr, @City, @ZIPCode, @Country, @PhoneNmbr, @EmailAddress, @IDCardNmbr, @PassportNmbr, @MgrID)
             `);
+
+
         console.log('Employee inserted successfully.');
         res.redirect('/admin/employee/insert');
     } catch (err) {

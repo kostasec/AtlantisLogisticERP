@@ -18,7 +18,13 @@
     <input type="email" name="EmailAddress" placeholder="Email Address" required /> <br />
     <input type="text" name="IDCardNmbr" placeholder="ID Card Number" required /> <br />
     <input type="text" name="PassportNmbr" placeholder="Passport Number" required /> <br />
-    <input type="text" name="MgrID" placeholder="Manager ID" /> <br />
+    <label for="MgrID">Manager:</label>
+    <select name="MgrID" id="MgrID">
+      <option value="">No Manager</option>
+      <% if (typeof managers !== 'undefined') { managers.forEach(manager => { %>
+        <option value="<%= manager.EmplID %>"><%= manager.FirstName %> <%= manager.LastName %></option>
+      <% }) } %>
+    </select><br>
     <button type="submit">Add Employee</button>
   </form>
   <a href="/admin/employee/read">Back to all employees</a>
