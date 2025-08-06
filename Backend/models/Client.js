@@ -7,7 +7,8 @@ class Client {
         City,
         ZIP,
         Country,
-        IsActive
+        IsActive,
+        Email
     }) {
         this.TaxID = TaxID;
         this.RegNmbr = RegNmbr;
@@ -17,6 +18,7 @@ class Client {
         this.ZIP = ZIP;
         this.Country = Country;
         this.IsActive = IsActive;
+        this.Email = Email;
     }
 }
 

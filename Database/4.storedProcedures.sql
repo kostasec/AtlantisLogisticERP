@@ -1,4 +1,10 @@
-﻿-- ============================
+﻿-- ===========================
+-- DROP InsertClientAndContact
+-- ===========================
+IF OBJECT_ID('sp_InsertClientAndContact', 'P') IS NOT NULL
+    DROP PROCEDURE sp_InsertClientAndContact;
+
+-- ============================
 -- DROP InsertServiceProcedure
 -- ============================
 IF OBJECT_ID('sp_InsertService', 'P') IS NOT NULL
@@ -70,6 +76,7 @@ BEGIN
     END CATCH
 END;
 GO
+
 -- =================================
 -- StoredProcedure: InsertService
 -- =================================
@@ -117,3 +124,48 @@ BEGIN
     END CATCH
 END;
 GO
+
+-- =======================================
+-- StoredProcedure: InsertClientAndContact
+-- =======================================
+CREATE PROCEDURE sp_InsertClientAndContact
+    @TaxID VARCHAR(50),
+    @RegNmbr VARCHAR(50),
+    @ClientName VARCHAR(100),
+    @StreetAndNmbr VARCHAR(100),
+    @City VARCHAR(50),
+    @ZIP VARCHAR(10),
+    @Country VARCHAR(50),
+    @Email VARCHAR(100),           -- Email za Client
+    @ContactName VARCHAR(100) = NULL,
+    @Description VARCHAR(100) = NULL,
+    @PhoneNmbr VARCHAR(30) = NULL,
+    @PersonEmail VARCHAR(100) = NULL -- Email za ContactPerson
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        -- Unesi klijenta ako ne postoji
+        IF NOT EXISTS (SELECT 1 FROM Client WHERE TaxID = @TaxID)
+        BEGIN
+            INSERT INTO Client (TaxID, RegNmbr, ClientName, StreetAndNmbr, City, ZIP, Country, Email)
+            VALUES (@TaxID, @RegNmbr, @ClientName, @StreetAndNmbr, @City, @ZIP, @Country, @Email);
+        END
+
+        -- Unesi kontakt osobu samo ako je prosleđena ContactName
+        IF (@ContactName IS NOT NULL AND LTRIM(RTRIM(@ContactName)) <> '')
+        BEGIN
+            INSERT INTO ContactPerson (ContactName, Description, PhoneNmbr, PersonEmail, TaxID)
+            VALUES (@ContactName, @Description, @PhoneNmbr, @PersonEmail, @TaxID);
+        END
+
+        COMMIT;
+        SELECT 'Success' AS Status, @TaxID AS TaxID;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK;
+        SELECT ERROR_MESSAGE() AS ErrorMessage;
+    END CATCH
+END

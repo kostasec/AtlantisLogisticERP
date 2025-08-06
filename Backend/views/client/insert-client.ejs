@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Client</title>
+</head>
+<body>
+    <h1>Add Client</h1>
+    <form action="/admin/client/insert" method="POST">
+        <h2>Client Info</h2>
+        <input type="text" name="TaxID" placeholder="Tax ID" required /><br>
+        <input type="text" name="RegNmbr" placeholder="Registration Number" /><br>
+        <input type="text" name="ClientName" placeholder="Client Name" required /><br>
+        <input type="text" name="StreetAndNmbr" placeholder="Street and Number" required /><br>
+        <input type="text" name="City" placeholder="City" required /><br>
+        <input type="text" name="ZIP" placeholder="ZIP" required /><br>
+        <input type="text" name="Country" placeholder="Country" required /><br>
+        <input type="text" name="Email" placeholder="Email" /><br>
+
+        </select><br>
+        <h2>Contact Person</h2>
+        <input type="text" name="ContactName" placeholder="Contact Name"  /><br>
+        <input type="text" name="Description" placeholder="Description" /><br>
+        <input type="text" name="PhoneNmbr" placeholder="Phone Number" /><br>
+        <input type="email" name="Email" placeholder="Email" /><br>
+        <button type="submit">Add Client</button>
+    </form>
+</body>
+</html>
