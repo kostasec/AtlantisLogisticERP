@@ -6,7 +6,7 @@
 </head>
 <body>
     <h1>Add Client</h1>
-    <form action="/admin/client/insert" method="POST">
+    <form action="/admin/client/insert" method="POST" id="clientForm">
         <h2>Client Info</h2>
         <input type="text" name="TaxID" placeholder="Tax ID" required /><br>
         <input type="text" name="RegNmbr" placeholder="Registration Number" /><br>
@@ -17,13 +17,33 @@
         <input type="text" name="Country" placeholder="Country" required /><br>
         <input type="text" name="Email" placeholder="Email" /><br>
 
-        </select><br>
-        <h2>Contact Person</h2>
-        <input type="text" name="ContactName" placeholder="Contact Name"  /><br>
-        <input type="text" name="Description" placeholder="Description" /><br>
-        <input type="text" name="PhoneNmbr" placeholder="Phone Number" /><br>
-        <input type="email" name="Email" placeholder="Email" /><br>
+        <h2>Contact Persons</h2>
+        <div id="contactPersons" style="display:none;"></div>
+        <button type="button" id="showContactBtn" onclick="showContactPerson()">Add Contact Person</button>
+        <button type="button" id="addContactBtn" style="display:none;margin-top:10px;" onclick="addContactPerson()">Add Another Contact Person</button><br><br>
         <button type="submit">Add Client</button>
     </form>
+    <script>
+    function showContactPerson() {
+        document.getElementById('contactPersons').style.display = 'block';
+        if(document.getElementById('contactPersons').children.length === 0) {
+            addContactPerson();
+        }
+        document.getElementById('showContactBtn').style.display = 'none';
+        document.getElementById('addContactBtn').style.display = 'inline-block';
+    }
+    function addContactPerson() {
+        const div = document.createElement('div');
+        div.className = 'contact-person';
+        div.innerHTML = `
+            <input type="text" name="ContactName[]" placeholder="Contact Name"  /><br>
+            <input type="text" name="Description[]" placeholder="Description" /><br>
+            <input type="text" name="PhoneNmbr[]" placeholder="Phone Number" /><br>
+            <input type="email" name="PersonEmail[]" placeholder="Contact Person Email" /><br>
+            <button type='button' onclick='this.parentNode.remove()'>Remove</button><br><br>
+        `;
+        document.getElementById('contactPersons').appendChild(div);
+    }
+    </script>
 </body>
 </html>

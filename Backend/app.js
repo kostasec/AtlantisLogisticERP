@@ -50,3 +50,6 @@ process.on('SIGINT', async () => {
     process.exit(0);
   });
 });
+
+// Export Express aplikacije za testove
+module.exports = app;
