@@ -2,49 +2,60 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Clients & Contacts</title>
-    <style>
-        .client-block { border:1px solid #ccc; margin:10px; padding:10px; }
-        .contact-list { margin-left:20px; }
-        .contact-person { margin-bottom:8px; }
-    </style>
+    <title><%= pageTitle %></title>
 </head>
+
 <body>
-    <h1>Clients</h1>
-    <% clients.forEach(function(client) { %>
-        <div class="client-block">
-            <strong><%= client.ClientName %></strong> (<%= client.TaxID %>)<br>
-            Address: <%= client.StreetAndNmbr %>, <%= client.City %>, <%= client.ZIP %>, <%= client.Country %><br>
-            Email: <%= client.Email %><br>
-            <button onclick="toggleContacts('<%= client.TaxID %>')">Show Contacts</button>
-            <div id="contacts-<%= client.TaxID %>" class="contact-list" style="display:none;">
-                <% if (client.contacts.length === 0) { %>
-                    <em>No contact persons.</em>
-                <% } else { %>
-                    <% client.contacts.forEach(function(contact) { %>
-                        <div class="contact-person">
-                            <strong><%= contact.ContactName %></strong><br>
-                            Description: <%= contact.Description %><br>
-                            Phone: <%= contact.PhoneNmbr %><br>
-                            Email: <%= contact.PersonEmail %><br>
-                        </div>
-                    <% }); %>
+    <h1><%= pageTitle %></h1>
+
+    <% if (clients && clients.length > 0) { %>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Tax ID</th>
+                    <th>Registration Number</th>
+                    <th>Name</th>
+                    <th>Street & Number</th>
+                    <th>City</th>
+                    <th>ZIP</th>
+                    <th>Country</th>
+                    <th>Email</th>
+                    <th>Contacts</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <% clients.forEach(client => { %>
+                        <tr>
+                            <td><%= client.TaxID %></td>
+                            <td><%= client.RegNmbr %></td>
+                            <td><%= client.ClientName %></td>
+                            <td><%= client.StreetAndNmbr %></td>
+                            <td><%= client.City %></td>
+                            <td><%= client.ZIP %></td>
+                            <td><%= client.Country %></td>
+                            <td><%= client.Email %></td>
+                            <td>
+                                <% if (client.contacts && client.contacts.length > 0) { %>
+                                    <ul>
+                                        <% client.contacts.forEach(contact => { %>
+                                            <li><%= contact.ContactName %> (<%= contact.PhoneNmbr %>)</li>
+                                        <% }); %>
+                                    </ul>
+                                <% } else { %>
+                                    No contacts
+                                <% } %>
+                            </td>
+                            <td><a href="/admin/client/update/<%= client.TaxID %>">Update</a></td>
+                        </tr>
+                        <% }); %>
+                </tbody>
+        </table>
+    <% } else { %>
+                    <h1>No Clients Found!</h1>
                 <% } %>
-            </div>
-        </div>
-    <% }); %>
-    <script>
-        function toggleContacts(id) {
-            var el = document.getElementById('contacts-' + id);
-            el.style.display = (el.style.display === 'none') ? 'block' : 'none';
-        }
-    </script>
+
+                <%- include('../includes/end.ejs') %>
+
 </body>
 </html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>

@@ -14,28 +14,6 @@ router.get('/test-connection', async (req, res) => {
 });
 
 
-// GET /admin/employee/read
-router.get('/read', async (req, res) => {
-    try {
-        let pool = await sql.connect(config);
-        const result = await pool.request().query(`
-            SELECT e.*, m.FirstName+' '+m.LastName AS ManagerName
-            FROM Employee e
-            LEFT JOIN Employee m ON e.MgrID = m.EmplID
-            WHERE e.Status = 'Active'
-        `);
-        res.render('employee/read-employee', {
-            pageTitle: 'All Employees',
-            path: '/admin/employee/read',
-            employees: result.recordset
-        });
-    } catch (err) {
-        console.error('Error fetching employees:', err);
-        res.status(500).send('Database Error');
-    }
-});
-
-
 // GET /admin/employee/insert
 router.get('/insert', async (req, res, next) => {
     try {
@@ -87,6 +65,28 @@ router.post('/insert', async (req, res, next) => {
     } catch (err) {
         console.error('Error inserting employee into database.', err);
         res.status(500).send('Database error');
+    }
+});
+
+
+// GET /admin/employee/read
+router.get('/read', async (req, res) => {
+    try {
+        let pool = await sql.connect(config);
+        const result = await pool.request().query(`
+            SELECT e.*, m.FirstName+' '+m.LastName AS ManagerName
+            FROM Employee e
+            LEFT JOIN Employee m ON e.MgrID = m.EmplID
+            WHERE e.Status = 'Active'
+        `);
+        res.render('employee/read-employee', {
+            pageTitle: 'All Employees',
+            path: '/admin/employee/read',
+            employees: result.recordset
+        });
+    } catch (err) {
+        console.error('Error fetching employees:', err);
+        res.status(500).send('Database Error');
     }
 });
 
