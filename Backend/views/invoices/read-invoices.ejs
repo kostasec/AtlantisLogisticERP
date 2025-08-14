@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">   
+    <title><%= pageTitle %></title>
+ </head>
+
+<body>
+    <h1><%= pageTitle %></h1>
+    <form action="/admin/outInvoice/read" method="GET"></form>
+
+    <% if (invoices && invoices.length > 0) { %>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Status</th>
+                    <th>Proc.Status</th>
+                    <th>Recipient</th>
+                    <th>Sent</th>
+                    <th>Delivered</th>
+                    <th>Invoice Number</th>
+                    <th>Payment Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% invoices.forEach(inv => { %>
+                    <tr>
+                        <td><%= inv.DStatusName %></td>
+                        <td><%= inv.ProcessingStatusName %></td>
+                        <td><%= inv.ClientName %></td> <!-- Recipient -->
+                        <td><%= inv.Sent %></td>
+                        <td><%= inv.Delivered %></td>
+                        <td><%= inv.OutInvoiceNmbr %></td> <!-- Invoice Number -->
+                        <td><%= inv.PaymentStatusName %></td>
+                    </tr>
+                <% }) %>
+                </tbody>
+        </table>
+</body>
+  <% } else { %>
+            <h1>No Invoices Found!</h1>
+        <% } %>
+    <%- include('../includes/end.ejs') %>
+</html>

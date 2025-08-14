@@ -1,0 +1,134 @@
+IF OBJECT_ID('dbo.sp_UpsertClientWithContacts', 'P') IS NOT NULL
+DROP PROCEDURE dbo.sp_UpsertClientWithContacts;
+
+IF OBJECT_ID('dbo.sp_ReadClientsWithContacts', 'P') IS NOT NULL
+DROP PROCEDURE dbo.sp_ReadClientsWithContacts;
+
+IF TYPE_ID('dbo.ContactPersonTvpType') IS NOT NULL
+DROP TYPE dbo.ContactPersonTvpType;
+
+CREATE TYPE dbo.ContactPersonTvpType AS TABLE
+(
+    ContactPersonID INT NULL,              -- Ako postoji: koristi se za UPDATE
+    ContactName     VARCHAR(100) NOT NULL, -- Obavezno u svakom slučaju
+    [Description]   VARCHAR(200) NULL,
+    PhoneNmbr       VARCHAR(50) NULL,
+    PersonEmail     VARCHAR(100) NULL
+);
+GO
+
+CREATE OR ALTER PROCEDURE dbo.sp_UpsertClientWithContacts
+    @TaxID          VARCHAR(50),
+    @RegNmbr        VARCHAR(30),
+    @ClientName     VARCHAR(100),
+    @StreetAndNmbr  VARCHAR(100),
+    @City           VARCHAR(50),
+    @ZIP            VARCHAR(10),
+    @Country        VARCHAR(50),
+    @Email          VARCHAR(100),
+    @ContactPersons dbo.ContactPersonTvpType READONLY
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        -- 1) Upsert klijenta
+        IF EXISTS (SELECT 1 FROM dbo.Client WHERE TaxID = @TaxID)
+        BEGIN
+            UPDATE dbo.Client
+            SET RegNmbr = @RegNmbr,
+                ClientName = @ClientName,
+                StreetAndNmbr = @StreetAndNmbr,
+                City = @City,
+                ZIP = @ZIP,
+                Country = @Country,
+                Email = @Email,
+                IsActive = 1
+            WHERE TaxID = @TaxID;
+        END
+        ELSE
+        BEGIN
+            INSERT INTO dbo.Client (TaxID, RegNmbr, ClientName, StreetAndNmbr, City, ZIP, Country, Email, IsActive)
+            VALUES (@TaxID, @RegNmbr, @ClientName, @StreetAndNmbr, @City, @ZIP, @Country, @Email, 1);
+        END
+
+        -- 2) UPDATE kontakata po ID (rename dozvoljen)
+        UPDATE CP
+        SET CP.ContactName   = S.ContactName,
+            CP.[Description] = S.[Description],
+            CP.PhoneNmbr     = S.PhoneNmbr,
+            CP.PersonEmail   = S.PersonEmail
+        FROM dbo.ContactPerson CP
+        JOIN @ContactPersons S
+          ON S.ContactPersonID IS NOT NULL
+         AND CP.ContactPersonID = S.ContactPersonID
+         AND CP.TaxID = @TaxID; -- sigurnosni guard
+
+        -- 3) UPDATE po (TaxID, ContactName) ako ID nije poznat
+        UPDATE CP
+        SET CP.[Description] = S.[Description],
+            CP.PhoneNmbr     = S.PhoneNmbr,
+            CP.PersonEmail   = S.PersonEmail
+        FROM dbo.ContactPerson CP
+        JOIN @ContactPersons S
+          ON S.ContactPersonID IS NULL
+         AND CP.TaxID = @TaxID
+         AND CP.ContactName = S.ContactName;
+
+        -- 4) INSERT novih kontakata
+        ;WITH ToInsert AS (
+            SELECT S.*
+            FROM @ContactPersons S
+            WHERE S.ContactPersonID IS NULL
+              AND NOT EXISTS (
+                    SELECT 1 FROM dbo.ContactPerson CP
+                    WHERE CP.TaxID = @TaxID
+                      AND CP.ContactName = S.ContactName
+              )
+        )
+        INSERT INTO dbo.ContactPerson (TaxID, ContactName, [Description], PhoneNmbr, PersonEmail)
+        OUTPUT inserted.ContactPersonID, inserted.ContactName  -- možeš koristiti u backendu ako želiš
+        SELECT @TaxID, ContactName, [Description], PhoneNmbr, PersonEmail
+        FROM ToInsert;
+
+        COMMIT;
+        SELECT 'Success' AS Status, @TaxID AS TaxID;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK;
+        THROW;
+    END CATCH
+END
+GO
+
+
+
+CREATE OR ALTER PROCEDURE dbo.sp_ReadClientsWithContacts
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        c.TaxID,
+        c.ClientName,
+        c.RegNmbr,
+        c.StreetAndNmbr,
+        c.City,
+        c.ZIP,
+        c.Country,
+        c.Email,
+        cp.ContactPersonID,
+        cp.ContactName,
+        cp.Description,
+        cp.PhoneNmbr,
+        cp.PersonEmail
+    FROM dbo.Client c
+    LEFT JOIN dbo.ContactPerson cp ON cp.TaxID = c.TaxID
+    WHERE c.IsActive = 1
+    ORDER BY c.TaxID;
+END
+GO
+
+

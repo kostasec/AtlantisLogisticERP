@@ -413,7 +413,7 @@ SELECT
     CAST(SUM(s.Price * (1 - ISNULL(i.Discount, 0)) * ISNULL(v.VATPercentage, 0)) AS DECIMAL(18, 2)) AS VAT,
     CAST(SUM(s.Price * (1 - ISNULL(i.Discount, 0)) * (1 + ISNULL(v.VATPercentage, 0))) AS DECIMAL(18, 2)) AS TotalAmount,
 
-    MAX(s.Currency) AS Valuta
+    MAX(s.Currency) AS Currency
 
 FROM Item i
 JOIN Service s ON i.ServiceID = s.ServiceID

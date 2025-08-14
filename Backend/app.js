@@ -9,19 +9,21 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 //Middleware
-app.use(bodyParser.urlencoded({ extended: false}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 //Routes
 const employeeRoutes = require('./routes/admin/employee');
 const vehicleRoutes = require('./routes/admin/vehicle');
 const clientRoutes = require('./routes/admin/client');
+const outInvoiceRoutes = require('./routes/admin/outInvoice');
 
 const indexRoutes = require('./routes/index');
 
 app.use('/admin/employee', employeeRoutes);
 app.use('/admin/vehicle', vehicleRoutes);
 app.use('/admin/client', clientRoutes);
+ app.use('/admin/outInvoice', outInvoiceRoutes);
 app.use(indexRoutes);
 
 
