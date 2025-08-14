@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title><%= pageTitle %></title>
+  <style>
+    body { font-family: system-ui, sans-serif; }
+    table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+    th, td { border: 1px solid #ddd; padding: 6px; }
+    th { background: #f6f6f6; text-align: left; }
+    .row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .row > div { display: flex; flex-direction: column; }
+    .actions { display: flex; gap: 8px; }
+    .muted { color: #666; font-size: 12px; }
+    button { cursor: pointer; }
+  </style>
+</head>
+<body>
+
+<h1>New Outgoing Invoice</h1>
+
+<form action="/admin/outInvoice/insert" method="POST">
+  <!-- Osnovna polja -->
+  <div class="row">
+    <div>
+      <label>Invoice Number</label>
+      <input name="OutInvoiceNmbr" required />
+    </div>
+    <div>
+      <label>Reference Number</label>
+      <input name="ReferenceNmbr" required />
+    </div>
+
+    <div>
+      <label>Order Number</label>
+      <input name="OrderNmbr" />
+    </div>
+    <div>
+      <label>Client (TaxID)</label>
+      <select name="TaxID" required>
+        <% clients.forEach(c => { %>
+          <option value="<%= c.TaxID %>"><%= c.TaxID %></option>
+        <% }) %>
+      </select>
+    </div>
+
+    <div>
+      <label>Transaction Date</label>
+      <input type="date" name="TransDate" required />
+    </div>
+    <div>
+      <label>Issue Date</label>
+      <input type="date" name="IssueDate" required />
+    </div>
+
+    <div>
+      <label>Due Date</label>
+      <input type="date" name="DueDate" required />
+    </div>
+    <div>
+      <label>Currency</label>
+      <input name="Currency" value="EUR" required />
+    </div>
+
+    <div>
+      <label>Document Status</label>
+      <select name="DStatusID" required>
+        <% documentStatuses.forEach(ds => { %>
+          <option value="<%= ds.DStatusID %>"><%= ds.DStatusName %></option>
+        <% }) %>
+      </select>
+    </div>
+    <div>
+      <label>Processing Status</label>
+      <select name="ProcessingStatus" required>
+        <% processingStatuses.forEach(ps => { %>
+          <option value="<%= ps.ProcessingStatusID %>"><%= ps.ProcessingStatusName %></option>
+        <% }) %>
+      </select>
+    </div>
+
+    <div>
+      <label>Payment Status</label>
+      <select name="PaymentStatus" required>
+        <% paymentStatuses.forEach(py => { %>
+          <option value="<%= py.PaymentStatusID %>"><%= py.PaymentStatusName %></option>
+        <% }) %>
+      </select>
+    </div>
+    <div>
+      <label>Attachment (URL)</label>
+      <input name="Attachment" />
+    </div>
+
+    <div>
+      <label>Sent</label>
+      <input type="date" name="Sent" />
+    </div>
+    <div>
+      <label>Delivered</label>
+      <input type="date" name="Delivered" />
+    </div>
+
+    <div style="grid-column: 1 / -1;">
+      <label>Note</label>
+      <textarea name="Note"></textarea>
+    </div>
+  </div>
+
+  <hr />
+
+  <!-- Services -->
+  <h3>Services</h3>
+  <div class="muted">Napomena: TruckID/TrailerID su opcioni.</div>
+  <table id="servicesTable">
+    <thead>
+      <tr>
+        <th>Service Name</th>
+        <th>Price</th>
+        <th>Transportation Type</th>
+        <th>TruckID</th>
+        <th>TrailerID</th>
+        <th style="width:80px;">Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <div class="actions">
+    <button type="button" id="addServiceBtn">+ Add Service</button>
+  </div>
+
+  <hr />
+
+  <!-- Items -->
+  <h3>Items</h3>
+  <div class="muted">VAT polja pune se iz šifarnika. Service Name treba da odgovara nazivu iz Services.</div>
+  <table id="itemsTable">
+    <thead>
+      <tr>
+        <th>Service Name</th>
+        <th>Discount</th>
+        <th>VAT Code</th>
+        <th>VAT Examption Code</th>
+        <th style="width:80px;">Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <div class="actions">
+    <button type="button" id="addItemBtn">+ Add Item</button>
+  </div>
+
+  <hr />
+
+  <button type="submit">Save Invoice</button>
+</form>
+
+<!-- Šablon redova (skriven) -->
+<table style="display:none;">
+  <tbody id="serviceRowTemplate">
+    <tr>
+    <td>
+    <select required class="serviceNameSelect"></select>
+    </td>
+      <td><input type="number" step="0.01" required /></td>
+      <td><input /></td>
+      <td>
+        <select>
+          <option value="">-- None --</option>
+          <% compositions.forEach(c => { %>
+            <option value="<%= c.TruckID %>"><%= c.TruckID %></option>
+          <% }) %>
+        </select>
+      </td>
+      <td>
+        <select>
+          <option value="">-- None --</option>
+          <% compositions.forEach(c => { %>
+            <option value="<%= c.TrailerID %>"><%= c.TrailerID %></option>
+          <% }) %>
+        </select>
+      </td>
+      <td><button type="button" class="removeRowBtn">Remove</button></td>
+    </tr>
+  </tbody>
+
+  <tbody id="itemRowTemplate">
+    <tr>
+      <td><input required /></td>
+      <td><input type="number" step="0.01" /></td>
+      <td>
+        <select required>
+          <% vatReasons.forEach(v => { %>
+            <option value="<%= v.VATCode %>"><%= v.VATCode %></option>
+          <% }) %>
+        </select>
+      </td>
+      <td>
+        <select>
+          <option value="">-- None --</option>
+          <% vatReasons.forEach(v => { %>
+            <option value="<%= v.VATExamptionCode %>"><%= v.VATExamptionCode %></option>
+          <% }) %>
+        </select>
+      </td>
+      <td><button type="button" class="removeRowBtn">Remove</button></td>
+    </tr>
+  </tbody>
+</table>
+
+<script>
+  // Brojači redova da bismo formirali nazive kao Services[0][Price], Items[1][VATCode], itd.
+  let serviceIndex = 0;
+  let itemIndex = 0;
+
+  const servicesTbody = document.querySelector('#servicesTable tbody');
+  const itemsTbody = document.querySelector('#itemsTable tbody');
+
+  const addServiceBtn = document.getElementById('addServiceBtn');
+  const addItemBtn = document.getElementById('addItemBtn');
+
+  addServiceBtn.addEventListener('click', addService);
+  addItemBtn.addEventListener('click', addItem);
+
+  function addService(defaults = {}) {
+    const tpl = document.querySelector('#serviceRowTemplate tr').cloneNode(true);
+    const inputs = tpl.querySelectorAll('input, select');
+
+    // Redosled: ServiceName, Price, TransportationType, TruckID, TrailerID
+    inputs[0].name = `Services[${serviceIndex}][ServiceName]`;
+    inputs[0].value = defaults.ServiceName || '';
+
+    inputs[1].name = `Services[${serviceIndex}][Price]`;
+    inputs[1].value = (defaults.Price ?? '');
+
+    inputs[2].name = `Services[${serviceIndex}][TransportationType]`;
+    inputs[2].value = defaults.TransportationType || '';
+
+    inputs[3].name = `Services[${serviceIndex}][TruckID]`;
+    inputs[3].value = defaults.TruckID || '';
+
+    inputs[4].name = `Services[${serviceIndex}][TrailerID]`;
+    inputs[4].value = defaults.TrailerID || '';
+
+    tpl.querySelector('.removeRowBtn').addEventListener('click', () => {
+      tpl.remove();
+      updateItemServiceSelects();
+    });
+
+    servicesTbody.appendChild(tpl);
+    serviceIndex++;
+
+    updateItemServiceSelects();
+  }
+
+    function addItem(defaults = {}) {
+    const tpl = document.querySelector('#itemRowTemplate tr').cloneNode(true);
+    const inputs = tpl.querySelectorAll('input, select');
+
+    // Redosled: ServiceName, Discount, VATCode, VATExamptionCode
+    inputs[0].name = `Items[${itemIndex}][ServiceName]`;
+    inputs[0].value = defaults.ServiceName || '';
+
+    inputs[1].name = `Items[${itemIndex}][Discount]`;
+    inputs[1].value = (defaults.Discount ?? '');
+
+    inputs[2].name = `Items[${itemIndex}][VATCode]`;
+    inputs[2].value = defaults.VATCode || '';
+
+    inputs[3].name = `Items[${itemIndex}][VATExamptionCode]`;
+    inputs[3].value = defaults.VATExamptionCode || '';
+
+    tpl.querySelector('.removeRowBtn').addEventListener('click', () => tpl.remove());
+
+    itemsTbody.appendChild(tpl);
+    itemIndex++;
+
+  updateItemServiceSelects();
+  }
+
+ function updateItemServiceSelects() {
+    const serviceNames = Array.from(servicesTbody.querySelectorAll('input[name$="[ServiceName]"]'))
+      .map(input => input.value)
+      .filter(name => name.trim() !== '');
+
+    itemsTbody.querySelectorAll('.serviceNameSelect').forEach(select => {
+      const currentValue = select.value;
+      select.innerHTML = '<option value="">-- Select Service --</option>';
+      serviceNames.forEach(name => {
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = name;
+        if (name === currentValue) option.selected = true;
+        select.appendChild(option);
+      });
+    });
+  }
+
+
+  // Dodaj po jedan početni red da forma nije prazna
+  addService();
+  addItem();
+</script>
+
+</body>
+</html>

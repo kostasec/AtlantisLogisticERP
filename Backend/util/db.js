@@ -10,7 +10,13 @@ const config = {
     }
 };
 
+// Funkcija za dobijanje konekcije sa bazom
+async function getPool() {
+    return await sql.connect(config);
+}
+
 module.exports = {
     sql,
+    getPool,
     config
 };

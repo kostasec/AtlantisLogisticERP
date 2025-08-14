@@ -27,10 +27,10 @@
                     <tr>
                         <td><%= inv.DStatusName %></td>
                         <td><%= inv.ProcessingStatusName %></td>
-                        <td><%= inv.ClientName %></td> <!-- Recipient -->
-                        <td><%= inv.Sent %></td>
-                        <td><%= inv.Delivered %></td>
-                        <td><%= inv.OutInvoiceNmbr %></td> <!-- Invoice Number -->
+                        <td><%= inv.ClientName %></td>
+                        <td><%= new Date(inv.Sent).toLocaleDateString('sr-RS') %></td>
+                        <td><%= new Date(inv.Delivered).toLocaleDateString('sr-RS') %></td>
+                        <td><%= inv.OutInvoiceNmbr %></td>
                         <td><%= inv.PaymentStatusName %></td>
                     </tr>
                 <% }) %>
