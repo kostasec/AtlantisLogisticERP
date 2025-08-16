@@ -17,7 +17,7 @@ router.get('/test-connection', async (req, res) => {
 router.get('/read', async (req, res) => {
     try {
         const pool = await getPool();
-        const result = await pool.request().execute('dbo.sp_ReadOutgoingInvoices');
+        const result = await pool.request().query('SELECT * FROM vw_ReadOutgoingInvoice');
         res.render('outInvoice/read-invoices', {
             pageTitle: 'Outgoing Invoices',
             path: '/admin/outInvoice/read',
@@ -42,12 +42,12 @@ router.get('/insert', async (req, res) => {
             processingStatusResult,
             paymentStatusResult
         ] = await Promise.all([
-            pool.request().query(`SELECT TaxID FROM Client ORDER BY TaxID`),
-            pool.request().query(`SELECT TruckID, TrailerID FROM Composition ORDER BY TruckID, TrailerID`),
+            pool.request().query(`SELECT * FROM Client WHERE IsActive=1`),
+            pool.request().query(`SELECT CompositionName FROM vw_CompositionDisplay`),
             pool.request().query(`SELECT * FROM VATExamptionReason ORDER BY VATCode, VATExamptionCode`),
-            pool.request().query(`SELECT * FROM DocumentStatusList ORDER BY DStatusID`),
-            pool.request().query(`SELECT * FROM ProcessingStatusList ORDER BY ProcessingStatusID`),
-            pool.request().query(`SELECT * FROM PaymentStatusList ORDER BY PaymentStatusID`)
+            pool.request().query(`SELECT DStatusID FROM DocumentStatusList ORDER BY DStatusID`),
+            pool.request().query(`SELECT ProcessingStatusID FROM ProcessingStatusList ORDER BY ProcessingStatusID`),
+            pool.request().query(`SELECT PaymentStatusID FROM PaymentStatusList ORDER BY PaymentStatusID`)
         ]);
 
         res.render('outInvoice/insert-outInvoice', {
@@ -67,110 +67,78 @@ router.get('/insert', async (req, res) => {
 });
 
 // POST /admin/outInvoice/insert
-router.post('/insert', async (req, res) => {
+router.post('/insert', async (req, res)=>{
+
+    let{
+        OutInvoiceNmbr,
+        Currency,           
+        ReferenceNmbr,      
+        OrderNmbr,          
+        TransDate,          
+        IssueDate,          
+        DueDate,            
+        Attachment,         
+        Note,               
+        DocumentStatus,     
+        ProcessingStatus,   
+        PaymentStatus,      
+        TaxID,             
+        serviceItems = []
+    } = req.body;
+
     try {
         const pool = await getPool();
-        const transaction = new sql.Transaction(pool);
-        await transaction.begin();
 
-        const {
-            OutInvoiceNmbr,
-            ReferenceNmbr,
-            OrderNmbr,
-            TransDate,
-            IssueDate,
-            DueDate,
-            Attachment,
-            Note,
-            PaymentStatus,
-            ProcessingStatus,
-            TaxID,
-            Currency,
-            DStatusID,
-            Sent,
-            Delivered,
-            Services,
-            Items
-        } = req.body;
+        const serviceItemsTable = new sql.Table('dbo.ServiceItemTvpType');
+        serviceItemsTable.columns.add('ServiceType', sql.VarChar(20));
+        serviceItemsTable.columns.add('Route', sql.VarChar(100));
+        serviceItemsTable.columns.add('Price', sql.Decimal(18, 2));            
+        serviceItemsTable.columns.add('TruckID', sql.Int);                     
+        serviceItemsTable.columns.add('TrailerID', sql.Int);                   
+        serviceItemsTable.columns.add('RegTag', sql.VarChar(30));              
+        serviceItemsTable.columns.add('Name', sql.VarChar(100));              
+        serviceItemsTable.columns.add('Discount', sql.Decimal(10, 2));        
+        serviceItemsTable.columns.add('VATCode', sql.VarChar(6));              
+        serviceItemsTable.columns.add('VATExamptionCode', sql.VarChar(50)); 
+        
+        serviceItems.forEach(s=>{
+            serviceItemsTable.rows.add(
+                s.ServiceType,
+                s.Route,
+                s.Price,
+                s.TruckID,
+                s.TrailerID,
+                s.RegTag,
+                s.Name,
+                s.Discount,
+                s.VATCode,
+                s.VATExamptionCode
+            );
+        });
 
-        // 1. Insert OutgoingInvoice
-        const invoiceResult = await new sql.Request(transaction)
-            .input('OutInvoiceNmbr', sql.VarChar(50), OutInvoiceNmbr)
-            .input('ReferenceNmbr', sql.VarChar(50), ReferenceNmbr)
-            .input('OrderNmbr', sql.VarChar(50), OrderNmbr || null)
-            .input('TransDate', sql.Date, TransDate)
-            .input('IssueDate', sql.Date, IssueDate)
-            .input('DueDate', sql.Date, DueDate)
-            .input('Attachment', sql.NVarChar(500), Attachment || null)
-            .input('Note', sql.VarChar(255), Note || null)
-            .input('PaymentStatus', sql.TinyInt, PaymentStatus)
-            .input('ProcessingStatus', sql.TinyInt, ProcessingStatus)
-            .input('TaxID', sql.VarChar(50), TaxID)
-            .input('Currency', sql.VarChar(10), Currency)
-            .input('DStatusID', sql.Int, DStatusID)
-            .input('Sent', sql.Date, Sent || null)
-            .input('Delivered', sql.Date, Delivered || null)
-            .query(`
-                INSERT INTO dbo.OutgoingInvoice (
-                    OutInvoiceNmbr, ReferenceNmbr, OrderNmbr,
-                    TransDate, IssueDate, DueDate,
-                    Attachment, Note,
-                    PaymentStatus, ProcessingStatus,
-                    TaxID, Currency, DStatusID, Sent, Delivered
-                )
-                OUTPUT inserted.InvoiceID
-                VALUES (
-                    @OutInvoiceNmbr, @ReferenceNmbr, @OrderNmbr,
-                    @TransDate, @IssueDate, @DueDate,
-                    @Attachment, @Note,
-                    @PaymentStatus, @ProcessingStatus,
-                    @TaxID, @Currency, @DStatusID, @Sent, @Delivered
-                )
-            `);
+    await pool.request()
+        .input('OutInvoiceNmbr', sql.VarChar(50), OutInvoiceNmbr)
+        .input('Currency', sql.VarChar(10), Currency)
+        .input('ReferenceNmbr', sql.VarChar(50), ReferenceNmbr)
+        .input('OrderNmbr', sql.VarChar(50), OrderNmbr)
+        .input('TransDate', sql.Date, TransDate)
+        .input('IssueDate', sql.Date, IssueDate)
+        .input('DueDate', sql.Date, DueDate)
+        .input('Attachment', sql.NVarChar(500), Attachment)
+        .input('Note', sql.VarChar(255), Note)
+        .input('DocumentStatus', sql.Int, DocumentStatus)
+        .input('ProcessingStatus', sql.Int, ProcessingStatus)
+        .input('PaymentStatus', sql.Int, PaymentStatus)
+        .input('TaxID', sql.VarChar(50), TaxID)
+        .input('ServiceItems', serviceItemsTable)
+        .execute('sp_InsertOutgoingInvoiceWithItems');
 
-        const invoiceID = invoiceResult.recordset[0].InvoiceID;
-
-        // 2. Insert Services
-        const serviceIdMap = new Map();
-        for (const s of Services) {
-            const result = await new sql.Request(transaction)
-                .input('ServiceName', sql.VarChar(100), s.ServiceName)
-                .input('Price', sql.Decimal(9, 2), s.Price)
-                .input('TransportationType', sql.VarChar(10), s.TransportationType || null)
-                .input('TruckID', sql.Int, s.TruckID || null)
-                .input('TrailerID', sql.Int, s.TrailerID || null)
-                .query(`
-                    INSERT INTO dbo.Service (ServiceName, Price, TransportationType, TruckID, TrailerID)
-                    OUTPUT inserted.ServiceID
-                    VALUES (@ServiceName, @Price, @TransportationType, @TruckID, @TrailerID)
-                `);
-
-            serviceIdMap.set(s.ServiceName, result.recordset[0].ServiceID);
-        }
-
-        // 3. Insert Items
-        for (const i of Items) {
-            const serviceID = serviceIdMap.get(i.ServiceName);
-            if (!serviceID) throw new Error(`ServiceName '${i.ServiceName}' does not exist in Services.`);
-
-            await new sql.Request(transaction)
-                .input('InvoiceID', sql.Int, invoiceID)
-                .input('ServiceID', sql.Int, serviceID)
-                .input('Discount', sql.Decimal(5, 2), i.Discount || 0)
-                .input('VATCode', sql.VarChar(6), i.VATCode)
-                .input('VATExamptionCode', sql.VarChar(50), i.VATExamptionCode || null)
-                .query(`
-                    INSERT INTO dbo.Item (InvoiceID, ServiceID, Discount, VATCode, VATExamptionCode)
-                    VALUES (@InvoiceID, @ServiceID, @Discount, @VATCode, @VATExamptionCode)
-                `);
-        }
-
-        await transaction.commit();
         res.redirect('/admin/outInvoice/read');
-    } catch (err) {
-        console.error('Error inserting new invoice:', err);
-        res.status(500).send('Database error');
-    }
+  } catch (err) {
+    console.error('Error upserting client:', err);
+    res.status(500).send('Database Error');
+  }
 });
+
 
 module.exports = router;

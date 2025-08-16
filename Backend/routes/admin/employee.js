@@ -38,7 +38,7 @@ router.post('/insert', async (req, res, next) => {
         console.log('Attempting to add employee...');
         let pool = await sql.connect(config);
         console.log('Database connection successful.');
-        const mgrIdValue = req.body.MgrID && req.body.MgrID.trim() !== '' ? req.body.MgrID : null;
+        const mgrIdValue = req.body.MgrID && typeof req.body.MgrID === 'string' && req.body.MgrID.trim() !== '' ? req.body.MgrID.trim() : null;
         await pool.request()
             .input('EmplType', sql.VarChar, req.body.EmplType)
             .input('FirstName', sql.VarChar, req.body.FirstName)

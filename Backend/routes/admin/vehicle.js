@@ -90,6 +90,7 @@ router.post('/insert', async (req, res, next) => {
 });
 
 
+
 //GET /admin/vehicle/update/:id
 router.get('/update/:id', async(req, res)=>{
     try{

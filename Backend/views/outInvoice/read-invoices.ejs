@@ -16,10 +16,9 @@
                     <th>Status</th>
                     <th>Proc.Status</th>
                     <th>Recipient</th>
-                    <th>Sent</th>
-                    <th>Delivered</th>
                     <th>Invoice Number</th>
                     <th>Payment Status</th>
+                    
                 </tr>
             </thead>
             <tbody>
@@ -28,8 +27,6 @@
                         <td><%= inv.DStatusName %></td>
                         <td><%= inv.ProcessingStatusName %></td>
                         <td><%= inv.ClientName %></td>
-                        <td><%= new Date(inv.Sent).toLocaleDateString('sr-RS') %></td>
-                        <td><%= new Date(inv.Delivered).toLocaleDateString('sr-RS') %></td>
                         <td><%= inv.OutInvoiceNmbr %></td>
                         <td><%= inv.PaymentStatusName %></td>
                     </tr>

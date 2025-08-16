@@ -24,9 +24,10 @@ describe('Client routes', () => {
   it('POST /admin/client/upsert should handle missing data', async () => {
     const res = await request(app)
       .post('/admin/client/upsert')
-      .send({}); // Prazan body
-    expect(res.statusCode).to.equal(500); // Očekujemo grešku zbog nedostatka podataka
-  });
+      .send({}); // empty body
+    expect(res.statusCode).to.equal(500); //we're expecting error due to empty body
+    });
+
 
   it('POST /admin/client/upsert should create client with valid data', async () => {
     const res = await request(app)
@@ -68,4 +69,6 @@ describe('Client routes', () => {
       });
     expect(res.statusCode).to.equal(302); // Očekujemo redirect na /admin/client/read
   });
+
+  
 });

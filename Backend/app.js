@@ -9,8 +9,11 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 //Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true })); 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+
 
 //Routes
 const employeeRoutes = require('./routes/admin/employee');
@@ -23,7 +26,7 @@ const indexRoutes = require('./routes/index');
 app.use('/admin/employee', employeeRoutes);
 app.use('/admin/vehicle', vehicleRoutes);
 app.use('/admin/client', clientRoutes);
- app.use('/admin/outInvoice', outInvoiceRoutes);
+app.use('/admin/outInvoice', outInvoiceRoutes);
 app.use(indexRoutes);
 
 

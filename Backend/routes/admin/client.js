@@ -1,13 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const { sql, config } = require('../../util/db');
+const { sql, getPool } = require('../../util/db');
+
+
 
 
 // GET /admin/client/read
 router.get('/read', async (req, res) => {
   try {
-    const pool = await sql.connect(config);
-    const result = await pool.request().execute('dbo.sp_ReadClientsWithContacts');
+    const pool = await getPool();
+    const result = await pool.request().query('select * from vw_ClientWithContacts');
     const rows = result.recordset;
 
     const clientMap = {};
@@ -69,7 +71,7 @@ router.get('/update/:taxId', async (req, res) => {
   
 
   try {
-    const pool = await sql.connect(config);
+    const pool = await getPool();
 
     const clientRes = await pool.request()
       .input('taxId', sql.VarChar(50), taxId)
@@ -114,7 +116,7 @@ router.post('/upsert', async (req, res) => {
 
 
   try {
-    const pool = await sql.connect(config);
+    const pool = await getPool();
 
     const contactTable = new sql.Table('dbo.ContactPersonTvpType');
     contactTable.columns.add('ContactPersonID', sql.Int);
@@ -156,7 +158,7 @@ router.post('/upsert', async (req, res) => {
 // POST /admin/client/delete/:id
 router.post('/delete/:id', async (req, res) => {
     try {
-        let pool = await sql.connect(config);
+        const pool = await getPool();
     await pool.request()
       .input('TaxID', sql.VarChar(50), req.params.id)
       .query("UPDATE Client SET IsActive = 0 WHERE TaxID = @TaxID");
@@ -172,7 +174,7 @@ router.post('/contact/delete/:id', async (req, res) => {
   const contactId = req.params.id;
   const taxId = req.body.taxId;
   try {
-    const pool = await sql.connect(config);
+    const pool = await getPool();
     await pool.request()
       .input('ContactPersonID', sql.Int, contactId)
       .query('DELETE FROM dbo.ContactPerson WHERE ContactPersonID = @ContactPersonID');
