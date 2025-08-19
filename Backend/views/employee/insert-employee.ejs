@@ -24,7 +24,16 @@
       <% if (typeof managers !== 'undefined') { managers.forEach(manager => { %>
         <option value="<%= manager.EmplID %>"><%= manager.FirstName %> <%= manager.LastName %></option>
       <% }) } %>
-    </select><br>
+    </select><br />
+    <label for="Composition">Composition: </label>
+    <select name="Composition" id="Composition">
+      <option value ="">No Composition</option>
+      <% if (typeof compositions !== 'undefined') { compositions.forEach(composition => { %>
+        <option value="<%= composition.TruckID %>,<%= composition.TrailerID %>">
+      <%= composition.CompositionName %>
+    </option>
+  <% }) } %>
+</select><br>
     <button type="submit">Add Employee</button>
   </form>
   <a href="/admin/employee/read">Back to all employees</a>

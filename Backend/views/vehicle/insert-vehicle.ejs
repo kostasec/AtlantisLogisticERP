@@ -1,26 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title><%= pageTitle %></title>
+  <meta charset="UTF-8">
+  <title><%= pageTitle %></title>
 </head>
-
 <body>
-    <h1><%= pageTitle %></h1>
-    <form action="/admin/vehicle/insert" method="POST">
-        
-        <input type="text" name="VehicleType" placeholder="Vehicle Type" required /> <br />
-        <input type="text" name="Make" placeholder="Make" required /> <br />
-        <input type="text" name="Model" placeholder="Model" required /> <br />
-        <input type="text" name="RegistrationTag" placeholder="Registration Tag" required /> <br />
-        <label for="EmplID">Driver:</label>
-        <select name="EmplID" id="EmplID">
-            <option value="">No Driver</option>
-            <% if (typeof drivers !== 'undefined') { drivers.forEach(driver => { %>
-            <option value="<%= driver.EmplID %>"><%= driver.FirstName %> <%= driver.LastName %></option>
-            <% }) } %>
-        </select><br>
-        <button type="submit">Add Vehicle</button>
-    </form>
+  <h1><%= pageTitle %></h1>
+
+  <form action="/admin/vehicle/type/insert" method="POST">
+    <label for="vehicleType">Select Vehicle Type:</label><br />
+    <select name="vehicleType" id="vehicleType" required>
+      <option value="">Choose: </option>
+      <option value="Truck">Truck</option>
+      <option value="Trailer">Trailer</option>
+    </select>
+    <br /><br />
+    <button type="submit">Continue</button>
+  </form>
 </body>
 </html>

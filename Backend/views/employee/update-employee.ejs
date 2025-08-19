@@ -18,7 +18,15 @@
     <label>Phone Number: <input type="text" name="PhoneNmbr" value="<%= employee.PhoneNmbr %>" required></label><br>
     <label>ID Card Number: <input type="text" name="IDCardNmbr" value="<%= employee.IDCardNmbr %>" required></label><br>
     <label>Passport Number: <input type="text" name="PassportNmbr" value="<%= employee.PassportNmbr %>" required></label><br>
-    <label>Manager ID: <input type="text" name="MgrID" value="<%= employee.MgrID %>"></label><br>
+    <label for="EmplID">Manager:</label>
+    <select name="EmplID" id="EmplID">
+      <option value="">No Manager</option>
+      <% managers.forEach(manager => { %>
+      <option value="<%= manager.EmplID %>" <%= (employee.EmplID == manager.EmplID) ? 'selected' : '' %>>
+        <%= manager.FirstName%> <%= manager.LastName %>
+      </option>
+      <% }) %>
+    </select> <br>
     <button type="submit">Save</button>
   </form>
   <form action="/admin/employee/delete/<%= employee.EmplID %>" method="POST" style="margin-top:20px;">

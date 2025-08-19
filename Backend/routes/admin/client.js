@@ -3,13 +3,11 @@ const router = express.Router();
 const { sql, getPool } = require('../../util/db');
 
 
-
-
 // GET /admin/client/read
 router.get('/read', async (req, res) => {
   try {
     const pool = await getPool();
-    const result = await pool.request().query('select * from vw_ClientWithContacts');
+    const result = await pool.request().query('SELECT * FROM vw_ClientWithContacts');
     const rows = result.recordset;
 
     const clientMap = {};
@@ -29,7 +27,7 @@ router.get('/read', async (req, res) => {
       }
 
       if (row.ContactPersonID) {
-        clientMap[row.TaxID].Contacts.push({
+          clientMap[row.TaxID].Contacts.push({
           ContactPersonID: row.ContactPersonID,
           ContactName: row.ContactName,
           Description: row.Description,
@@ -52,7 +50,6 @@ router.get('/read', async (req, res) => {
     res.status(500).send('Database Error');
   }
 });
-
 
 
 // GET /admin/client/insert
@@ -95,7 +92,6 @@ router.get('/update/:taxId', async (req, res) => {
     res.status(500).send('Error');
   }
 });
-
 
 
 // POST /admin/client/upsert

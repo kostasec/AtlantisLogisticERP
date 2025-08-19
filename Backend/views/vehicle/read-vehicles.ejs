@@ -8,33 +8,29 @@
 <body>
     <h1><%= pageTitle %></h1>
 
-    <% if (vehicles && vehicles.length > 0) { %>
+    <% if (compositions && compositions.length > 0) { %>
         <table border="1">
             <thead>
                 <tr>
-                    <th>VehicleType</th>
-                    <th>Make</th>
-                    <th>Model</th>
-                    <th>RegistrationTag</th>
-                    <th>DriverName</th>
-                    <th>Action</th>
+                    <th>Composition</th>
+                    <th>Truck</th>
+                    <th>Trailer</th>
+                    <th>Driver Name</th>
                 </tr>
             </thead>
             <tbody>
-                <% vehicles.forEach(vehicle => { %>
+                <% compositions.forEach(composition => { %>
                     <tr>
-                        <td><%= vehicle.VehicleType %></td>
-                        <td><%= vehicle.Make %></td>
-                        <td><%= vehicle.Model %></td>
-                        <td><%= vehicle.RegistrationTag %></td>
-                        <td><%= vehicle.DriverName === 'N/A' ? 'No Driver' : vehicle.DriverName %></td>
-                        <td><a href="/admin/vehicle/update/<%= vehicle.VehicleID %>">Change</a></td>
+                        <td><%= composition.Composition %></td>
+                        <td><%= composition.Truck %></td>
+                        <td><%= composition.Trailer %></td>
+                        <td><%= composition.DriverName && composition.DriverName.trim() ? composition.DriverName : 'No Driver' %></td>
                     </tr>
                 <% }) %>
             </tbody>
         </table>
     <% } else { %>
-        <h1>No Vehicles Found!</h1>
+        <h1>No Compositions Found!</h1>
     <% } %>
 
     <%- include('../includes/end.ejs') %>

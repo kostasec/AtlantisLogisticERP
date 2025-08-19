@@ -234,6 +234,16 @@ CREATE TABLE Trailer (
     FOREIGN KEY (TrailerID) REFERENCES Vehicle(VehicleID)
 );
 GO
+
+-- ==============
+-- Table: Car
+-- ==============
+CREATE TABLE Car (
+    CarID INT PRIMARY KEY,
+    FOREIGN KEY (CarID) REFERENCES Vehicle(VehicleID)
+);
+GO
+
 -- ==========================
 -- Trigger: InsertVehicleType
 -- ==========================
@@ -249,6 +259,9 @@ BEGIN
 
     INSERT INTO Trailer (TrailerID)
     SELECT VehicleID FROM inserted WHERE VehicleType = 'Trailer';
+
+    INSERT INTO Car(CarID)
+    SELECT VehicleID FROM inserted WHERE VehicleType = 'Car';
 
 END;
 GO

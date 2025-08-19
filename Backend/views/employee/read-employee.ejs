@@ -18,32 +18,30 @@
                         <th>Last Name</th>
                         <th>Street And Number</th>
                         <th>City</th>
-                        <th>ZIP Code</th>
                         <th>Country</th>
-                        <th>Email</th>
                         <th>Phone</th>
+                        <th>Email</th>
                         <th>ID Card</th>
                         <th>Passport</th>
                         <th>Manager</th>
-                        <th>Action</th>
+                        <th>Vehicle</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <% employees.forEach(emp => { %>
+                    <% employees.forEach(employee => { %>
                         <tr>
-                            <td><%= emp.EmplType %></td>
-                            <td><%= emp.FirstName %></td>
-                            <td><%= emp.LastName %></td>
-                            <td><%= emp.StreetAndNmbr %></td>
-                            <td><%= emp.City %></td>
-                            <td><%= emp.ZIPCode %></td>
-                            <td><%= emp.Country %></td>
-                            <td><%= emp.EmailAddress %></td>
-                            <td><%= emp.PhoneNmbr %></td>
-                            <td><%= emp.IDCardNmbr %></td>
-                            <td><%= emp.PassportNmbr %></td>
-                            <td><%= emp.ManagerName && emp.ManagerName.trim() ? emp.ManagerName : 'No Manager' %></td>
-                            <td><a href="/admin/employee/update/<%= emp.EmplID %>">Change</a></td>
+                            <td><%= employee.EmplType %></td>
+                            <td><%= employee.FirstName %></td>
+                            <td><%= employee.LastName %></td>
+                            <td><%= employee.StreetAndNmbr %></td>
+                            <td><%= employee.City %></td>
+                            <td><%= employee.Country %></td>
+                            <td><%= employee.PhoneNmbr %></td>
+                            <td><%= employee.EmailAddress %></td>
+                            <td><%= employee.IDCardNmbr %></td>
+                            <td><%= employee.PassportNmbr %></td>
+                            <td><%= employee.Manager && employee.Manager.trim() ? employee.Manager : 'No Manager' %></td>
+                            <td><%= employee.Vehicle %></td>
                         </tr>
                     <% }) %>
                 </tbody>
