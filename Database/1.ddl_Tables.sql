@@ -11,29 +11,17 @@ JOIN sys.tables t ON fk.parent_object_id = t.object_id;
 EXEC sp_executesql @sql;
 GO
 
--- ==============================
--- DROP trigger InsertVehicleType
--- ==============================
-IF OBJECT_ID('trg_InsertVehicleType', 'TR') IS NOT NULL
-    DROP TRIGGER trg_InsertVehicleType;
-GO
--- ===========================
--- DROP view VATRecapitulation
--- ===========================
-IF OBJECT_ID('vw_VATRecapitulation', 'V') IS NOT NULL
-    DROP VIEW vw_VATRecapitulation;
-GO
--- ===============================
--- DROP view OutgoingInvoiceAmount
--- ===============================
-IF OBJECT_ID('vw_OutgoingInvoiceAmount', 'V') IS NOT NULL
-    DROP VIEW vw_OutgoingInvoiceAmount;
-GO
--- ===========================
+-- ==============
 -- DROP Tables
--- ============================
-IF OBJECT_ID('VehicleInspection', 'U') IS NOT NULL
-    DROP TABLE VehicleInspection;
+-- ===============
+IF OBJECT_ID('CarInspection', 'U') IS NOT NULL
+    DROP TABLE CarInspection;
+GO
+IF OBJECT_ID('TruckInspection', 'U') IS NOT NULL
+    DROP TABLE TruckInspection;
+GO
+IF OBJECT_ID('TrailerInspection', 'U') IS NOT NULL
+    DROP TABLE TrailerInspection;
 GO
 IF OBJECT_ID('EmployeeInspection', 'U') IS NOT NULL
     DROP TABLE EmployeeInspection;
@@ -53,14 +41,26 @@ GO
 IF OBJECT_ID('TravelExpensesEUR', 'U') IS NOT NULL
     DROP TABLE TravelExpensesEUR;
 GO
-IF OBJECT_ID('ExternalCarrierService', 'U') IS NOT NULL
-    DROP TABLE ExternalCarrierService;
+IF OBJECT_ID('TaxService', 'U') IS NOT NULL
+    DROP TABLE TaxService;
+GO
+IF OBJECT_ID('TransportationService', 'U') IS NOT NULL
+    DROP TABLE TransportationService;
+GO
+IF OBJECT_ID('OutsorcingService', 'U') IS NOT NULL
+    DROP TABLE OutsorcingService;
 GO
 IF OBJECT_ID('Service', 'U') IS NOT NULL
     DROP TABLE Service;
 GO
 IF OBJECT_ID('VATExamptionReason', 'U') IS NOT NULL
     DROP TABLE VATExamptionReason;
+GO
+IF OBJECT_ID('EmployeeCar', 'U') IS NOT NULL
+    DROP TABLE EmployeeCar;
+GO
+IF OBJECT_ID('DriverComposition', 'U') IS NOT NULL
+    DROP TABLE DriverComposition;
 GO
 IF OBJECT_ID('Composition', 'U') IS NOT NULL
     DROP TABLE Composition;
@@ -70,6 +70,12 @@ IF OBJECT_ID('Trailer', 'U') IS NOT NULL
 GO
 IF OBJECT_ID('Truck', 'U') IS NOT NULL
     DROP TABLE Truck;
+GO
+IF OBJECT_ID('Car', 'U') IS NOT NULL
+    DROP TABLE Car;
+GO
+IF OBJECT_ID('dbo.DocumentStatusList', 'U') IS NOT NULL
+    DROP TABLE dbo.DocumentStatusList;
 GO
 IF OBJECT_ID('dbo.PaymentStatusList', 'U') IS NOT NULL
     DROP TABLE dbo.PaymentStatusList;
@@ -116,6 +122,7 @@ CREATE TABLE Client (
 	IsActive BIT NOT NULL DEFAULT 1
 );
 GO
+
 -- ====================
 -- Table: ContactPerson
 -- ====================
@@ -123,12 +130,33 @@ CREATE TABLE ContactPerson(
     ContactName VARCHAR(255) NOT NULL,
     Description VARCHAR(255),
     PhoneNmbr VARCHAR(50),
-    Email VARCHAR(100),
+    PersonEmail VARCHAR(100),
     TaxID VARCHAR(50) NOT NULL,
     CONSTRAINT fk_ContactPerson_TaxID FOREIGN KEY (TaxID) REFERENCES Client(TaxID),
     CONSTRAINT pk_ContactPerson PRIMARY KEY(TaxID, ContactName)
 );
 GO
+
+-- =========================
+-- Table: DocumentStatusList 
+-- =========================
+CREATE TABLE DocumentStatusList (
+    DStatusID TINYINT PRIMARY KEY,
+    DStatusName VARCHAR(10) NOT NULL,
+    
+);
+GO
+
+-- ===========================
+-- Table: ProcessingStatusList 
+-- ===========================
+CREATE TABLE ProcessingStatusList (
+    ProcessingStatusID TINYINT PRIMARY KEY,
+    ProcessingStatusName VARCHAR(10) NOT NULL,
+    
+);
+GO
+
 -- ========================
 -- Table: PaymentStatusList 
 -- ========================
@@ -138,36 +166,37 @@ CREATE TABLE PaymentStatusList (
     
 );
 GO
--- ===========================
--- Table: ProcessingStatusList
--- ===========================
-CREATE TABLE ProcessingStatusList (
-    ProcessingStatusID TINYINT PRIMARY KEY,
-    ProcessingStatusName VARCHAR(20) NOT NULL,
-);
-GO
+
 -- ======================
 -- Table: IncomingInvoice
 -- ======================
 CREATE TABLE IncomingInvoice (
     InvoiceNmbr INT PRIMARY KEY,
     Amount NUMERIC(18, 2) NOT NULL,
+    TransactionDate DATE NOT NULL,
     DueDate DATE NOT NULL,
     IssueDate DATE NOT NULL,
+    DocumentStatus TINYINT NOT NULL
+	CONSTRAINT fk_IncomingInvoice_DocumentStatus FOREIGN KEY (DocumentStatus) REFERENCES
+	DocumentStatusList(DStatusID),
     PaymentStatus TINYINT NOT NULL
-	CONSTRAINT fk_IncomingInvoice_PaymentStatusID FOREIGN KEY (PaymentStatus) REFERENCES PaymentStatusList(PaymentStatusID),
-	ProcessingStatus TINYINT NOT NULL
-	CONSTRAINT fk_IncomingInvoice_ProcessingStatusID FOREIGN KEY (ProcessingStatus) REFERENCES ProcessingStatusList (ProcessingStatusID),
+    CONSTRAINT fk_IncomingInvoice_PaymentStatusID FOREIGN KEY (PaymentStatus) REFERENCES           
+	PaymentStatusList(PaymentStatusID),
+    ProcessingStatus TINYINT NOT NULL
+	CONSTRAINT fk_IncomingInvoice_ProcessingStatusID FOREIGN KEY (ProcessingStatus) REFERENCES
+	ProcessingStatusList (ProcessingStatusID),
     TaxID VARCHAR(50) NOT NULL,
     CONSTRAINT fk_IncomingInvoice_TaxID FOREIGN KEY (TaxID) REFERENCES Client(TaxID)
 );
 GO
+
 -- ======================
 -- Table: OutgoingInvoice
 -- ======================
 CREATE TABLE OutgoingInvoice (
     InvoiceID INT IDENTITY(1,1) PRIMARY KEY,
     OutInvoiceNmbr VARCHAR(50) UNIQUE NOT NULL,
+    Currency VARCHAR(10) NOT NULL,
     ReferenceNmbr VARCHAR(50) NOT NULL,
     OrderNmbr VARCHAR(50),
     TransDate DATE NOT NULL,
@@ -175,14 +204,20 @@ CREATE TABLE OutgoingInvoice (
     DueDate DATE NOT NULL,
     Attachment NVARCHAR(500), -- file path
     Note VARCHAR(255),
+    DocumentStatus TINYINT NOT NULL
+	CONSTRAINT fk_OutgoingInvoice_DocumentStatus FOREIGN KEY (DocumentStatus)
+	REFERENCES DocumentStatusList(DStatusID),
     PaymentStatus TINYINT NOT NULL
-	CONSTRAINT fk_OutgoingInvoice_PaymentStatusID FOREIGN KEY (PaymentStatus) REFERENCES PaymentStatusList(PaymentStatusID),
-	ProcessingStatus TINYINT NOT NULL
-	CONSTRAINT fk_OutgoingInvoice_ProcessingStatusID FOREIGN KEY (ProcessingStatus) REFERENCES ProcessingStatusList (ProcessingStatusID),
+	CONSTRAINT fk_OutgoingInvoice_PaymentStatusID FOREIGN KEY (PaymentStatus) 
+	REFERENCES PaymentStatusList(PaymentStatusID),
+    ProcessingStatus TINYINT NOT NULL
+	CONSTRAINT fk_OutgoingInvoice_ProcessingStatusID FOREIGN KEY (ProcessingStatus) 
+	REFERENCES ProcessingStatusList (ProcessingStatusID),
     TaxID VARCHAR(50) NOT NULL,
     CONSTRAINT fk_OutgoingInvoice_TaxID FOREIGN KEY (TaxID) REFERENCES Client(TaxID)
 );
 GO
+
 -- ===============
 -- Table: Employee
 -- ================
@@ -205,66 +240,44 @@ CREATE TABLE Employee (
     CONSTRAINT fk_Employee_MgrID FOREIGN KEY (MgrID) REFERENCES Employee(EmplID)
 );
 GO
--- ==============
--- Table: Vehicle
--- ==============
-CREATE TABLE Vehicle (
-    VehicleID INT IDENTITY(1,1) PRIMARY KEY,
-    VehicleType VARCHAR(20) NOT NULL,
-    Make VARCHAR(50) NOT NULL,
-    Model VARCHAR(50) NOT NULL,
-    RegistrationTag VARCHAR(20) NOT NULL,
-    EmplID INT NULL,
-    CONSTRAINT fk_Vehicle_EmplID FOREIGN KEY (EmplID) REFERENCES Employee(EmplID)
-);
-GO
+
 -- ============
 -- Table: Truck
 -- ============
 CREATE TABLE Truck (
-    TruckID INT PRIMARY KEY,
-    FOREIGN KEY (TruckID) REFERENCES Vehicle(VehicleID)
+    TruckID INT IDENTITY(1,1) PRIMARY KEY,
+    Make VARCHAR(50) NOT NULL,
+    Model VARCHAR(50) NOT NULL,
+    RegistrationTag VARCHAR(20) NOT NULL,
+    Status VARCHAR(10) NOT NULL
+
 );
 GO
+
 -- ==============
 -- Table: Trailer
 -- ==============
 CREATE TABLE Trailer (
-    TrailerID INT PRIMARY KEY,
-    FOREIGN KEY (TrailerID) REFERENCES Vehicle(VehicleID)
+    TrailerID INT IDENTITY(1,1) PRIMARY KEY,
+    Make VARCHAR(50) NOT NULL,
+    Model VARCHAR(50) NOT NULL,
+    RegistrationTag VARCHAR(20) NOT NULL,
+    Status VARCHAR(10) NOT NULL
 );
 GO
 
--- ==============
+-- ==========
 -- Table: Car
--- ==============
-CREATE TABLE Car (
-    CarID INT PRIMARY KEY,
-    FOREIGN KEY (CarID) REFERENCES Vehicle(VehicleID)
+-- ==========
+CREATE TABLE Car(
+    CarrID INT IDENTITY(1,1) PRIMARY KEY,
+    Make VARCHAR(50) NOT NULL,
+    Model VARCHAR(50) NOT NULL,
+    RegistrationTag VARCHAR(20) NOT NULL,
+    Status VARCHAR(10) NOT NULL
 );
 GO
 
--- ==========================
--- Trigger: InsertVehicleType
--- ==========================
-CREATE TRIGGER trg_InsertVehicleType
-ON Vehicle
-AFTER INSERT
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-    INSERT INTO Truck (TruckID)
-    SELECT VehicleID FROM inserted WHERE VehicleType = 'Truck';
-
-    INSERT INTO Trailer (TrailerID)
-    SELECT VehicleID FROM inserted WHERE VehicleType = 'Trailer';
-
-    INSERT INTO Car(CarID)
-    SELECT VehicleID FROM inserted WHERE VehicleType = 'Car';
-
-END;
-GO
 -- ==================
 -- Table: Composition
 -- ==================
@@ -276,6 +289,33 @@ CREATE TABLE Composition (
     CONSTRAINT pk_Composition PRIMARY KEY (TruckID, TrailerID)
 );
 GO
+
+-- ========================
+-- Table: DriverComposition
+-- ========================
+CREATE TABLE DriverComposition (
+    DriverID INT NOT NULL,
+    TruckID INT NOT NULL,
+    TrailerID INT NOT NULL,
+    FOREIGN KEY (DriverID) REFERENCES Employee(EmplID),
+    FOREIGN KEY (TruckID) REFERENCES Truck(TruckID),
+    FOREIGN KEY (TrailerID) REFERENCES Trailer(TrailerID),
+    CONSTRAINT pk_DriverComposition PRIMARY KEY (DriverID, TruckID, TrailerID)
+);
+GO
+
+-- ==================
+-- Table: EmployeeCar
+-- ==================
+CREATE TABLE EmployeeCar (
+    EmplID INT NOT NULL,
+    CarID INT NOT NULL,
+    FOREIGN KEY (EmplID) REFERENCES Employee(EmplID),
+    FOREIGN KEY (CarID) REFERENCES Car(CarrID),
+    CONSTRAINT pk_EmployeeCar PRIMARY KEY (EmplID, CarID)
+);
+GO
+
 -- ==================
 -- Table: VATCodeList
 -- ==================
@@ -284,44 +324,73 @@ CREATE TABLE VATCodeList(
     VATPercentage DECIMAL(3,2)
 );
 GO
+
 -- =========================
 -- Table: VATExamptionReason
 -- =========================
 CREATE TABLE VATExamptionReason(
     VATCode VARCHAR(6) NOT NULL,
-	VATExamptionCode VARCHAR(50) NOT NULL,
+    VATExamptionCode VARCHAR(50) NOT NULL,
     CONSTRAINT fk_VATExamptionReason_VATCode FOREIGN KEY (VATCode) REFERENCES VATCodeList (VATCode),
     CONSTRAINT pk_VATExamptionReason PRIMARY KEY (VATCode,VATExamptionCode)
 );
 GO
+
 -- ==============
 -- Table: Service
 -- ==============
-CREATE TABLE Service (
-    ServiceID INT IDENTITY(1,1) PRIMARY KEY,
-    ServiceName VARCHAR(100) NOT NULL,
+CREATE TABLE Service(
+	ServiceID INT IDENTITY(1,1) PRIMARY KEY,
+	ServiceType VARCHAR(20)
+);
+GO
+
+-- ============================
+-- Table: TransportationService
+-- ============================
+CREATE TABLE TransportationService (
+    ServiceID INT,
+    Route VARCHAR(100) NOT NULL,
     Price DECIMAL(18, 2) NOT NULL,
-	Currency VARCHAR(10) NOT NULL,
-	TransportationType VARCHAR(10)
-	CONSTRAINT ck_Service_TransportationType CHECK (TransportationType IN ('Our', 'External')), 
     TruckID INT NULL,
     TrailerID INT NULL,
-    CONSTRAINT fk_Service_TruckTrailer FOREIGN KEY (TruckID, TrailerID)
-    REFERENCES Composition(TruckID, TrailerID),
+    CONSTRAINT fk_TranService_ServiceID FOREIGN KEY(ServiceID)
+    REFERENCES Service(ServiceID),
+    CONSTRAINT pk_TransportationService PRIMARY KEY(ServiceID)
    
 );
 GO
--- =============================
--- Table: ExternalCarrierService
--- =============================
-CREATE TABLE ExternalCarrierService(
-	ServiceID INT IDENTITY(1,1) PRIMARY KEY,
-	RegistrationTag VARCHAR(50) NOT NULL
+
+-- =================
+-- Table: TaxService
+-- =================
+CREATE TABLE TaxService(
+	ServiceID INT,
+	Name VARCHAR(100),
+	Price DECIMAL(18,2),
+	CONSTRAINT fk_TaxService_ServiceID FOREIGN KEY(ServiceID)
+    REFERENCES Service(ServiceID),
+    CONSTRAINT pk_TaxService PRIMARY KEY(ServiceID)	
 );
 GO
--- ============
+
+-- ==============================
+-- Table: OutsourcingServiceTable
+-- ==============================
+CREATE TABLE OutsourcingServiceTable (
+	ServiceID INT,
+	Route VARCHAR(100),
+	Price DECIMAL(18,2),
+	RegTag VARCHAR(50),
+	CONSTRAINT fk_TaxService_ServiceID FOREIGN KEY(ServiceID)
+    REFERENCES Service(ServiceID),
+    CONSTRAINT pk_TaxService PRIMARY KEY(ServiceID)	
+);
+GO
+
+-- ===========
 -- Table: Item
--- ============
+-- ===========
 CREATE TABLE Item(
 	InvoiceID INT NOT NULL,
 	ServiceID INT NOT NULL,
@@ -331,9 +400,11 @@ CREATE TABLE Item(
 	CONSTRAINT pk_Item PRIMARY KEY(InvoiceID, ServiceID),
 	CONSTRAINT fk_Item_Vat FOREIGN KEY (VATCode, VATExamptionCode) REFERENCES VATExamptionReason (VATCode, VATExamptionCode)
 );
--- =========================
+GO
+
+-- ========================
 -- Table: TravelExpensesRSD
--- =========================
+-- ========================
 CREATE TABLE TravelExpensesRSD (
     OrderNmbr VARCHAR(50) PRIMARY KEY,
     Date DATE NOT NULL,
@@ -343,9 +414,10 @@ CREATE TABLE TravelExpensesRSD (
     CONSTRAINT fk_TravelRSD_EmplID FOREIGN KEY (EmplID) REFERENCES Employee (EmplID)
 );
 GO
--- =========================
+
+-- ========================
 -- Table: TravelExpensesEUR
--- =========================
+-- ========================
 CREATE TABLE TravelExpensesEUR (
     OrderNmbr VARCHAR(50) PRIMARY KEY,
     Date DATE NOT NULL,
@@ -355,6 +427,7 @@ CREATE TABLE TravelExpensesEUR (
     CONSTRAINT fk_TravelEUR_EmplID FOREIGN KEY (EmplID) REFERENCES Employee (EmplID)
 );
 GO
+
 -- ====================
 -- Table: WithdrawalRSD
 -- ====================
@@ -363,9 +436,10 @@ CREATE TABLE WithdrawalRSD(
     AmountRSD INT,
     Date DATE NOT NULL,
     EmplID INT NOT NULL,
-    CONSTRAINT fk_WithdrawlRSD_EmplID FOREIGN KEY (EmplID) REFERENCES Employee(EmplID)
+    CONSTRAINT fk_WithdrawalRSD_EmplID FOREIGN KEY (EmplID) REFERENCES Employee(EmplID)
 );
 GO
+
 -- ====================
 -- Table: WithdrawalEUR
 -- ====================
@@ -374,9 +448,10 @@ CREATE TABLE WithdrawalEUR(
     AmountEUR INT,
     Date DATE NOT NULL,
     EmplID INT NOT NULL,
-    CONSTRAINT fk_WithdrawlEUR_EmplID FOREIGN KEY (EmplID) REFERENCES Employee(EmplID)
+    CONSTRAINT fk_WithdrawalEUR_EmplID FOREIGN KEY (EmplID) REFERENCES Employee(EmplID)
 );
 GO
+
 -- =================
 -- Table: Inspection
 -- =================
@@ -386,67 +461,63 @@ CREATE TABLE Inspection (
 
 );
 GO
--- ========================
+
+-- =========================
 -- Table: EmployeeInspection
 -- =========================
 CREATE TABLE EmployeeInspection (
     EmployeeID INT NOT NULL,
     InspectionID INT NOT NULL,
-	Date DATE NOT NULL,
-
-    CONSTRAINT fk_EmployeeInspection_EmployeeID FOREIGN KEY (EmployeeID) REFERENCES Employee(EmplID),
-    CONSTRAINT fk_EmployeeInspection_InspectionID FOREIGN KEY (InspectionID) REFERENCES Inspection(InspectionID),
-	PRIMARY KEY (EmployeeID, InspectionID)
+    Date DATE NOT NULL,
+    CONSTRAINT fk_EmployeeInspection_EmployeeID FOREIGN KEY (EmployeeID) 
+    REFERENCES Employee(EmplID),
+    CONSTRAINT fk_EmployeeInspection_InspectionID FOREIGN KEY (InspectionID) 
+    REFERENCES Inspection(InspectionID),
+    PRIMARY KEY (EmployeeID, InspectionID)
 );
 GO
--- =========================
--- Table: VehicleInspection
--- =========================
-CREATE TABLE VehicleInspection (
-    VehicleID INT NOT NULL,
+
+-- ======================
+-- Table: TruckInspection
+-- ======================
+CREATE TABLE TruckInspection (
+    TruckID INT NOT NULL,
     InspectionID INT NOT NULL,
     Date DATE NOT NULL,
-	
-    CONSTRAINT fk_VehicleInspection_VehicleID FOREIGN KEY (VehicleID) REFERENCES Vehicle(VehicleID),
-    CONSTRAINT fk_VehicleInspection_DateID FOREIGN KEY (InspectionID) REFERENCES Inspection(InspectionID),
-	PRIMARY KEY (VehicleID, InspectionID)
+    CONSTRAINT fk_TruckInspection_TruckID FOREIGN KEY (TruckID) 
+    REFERENCES Truck(TruckID),
+    CONSTRAINT fk_TruckInspection_InspectionID FOREIGN KEY (InspectionID) 
+    REFERENCES Inspection(InspectionID),
+    PRIMARY KEY (TruckID, InspectionID)
 );
 GO
 
--- ==========================
--- View: OutgoingInvoicePrice
--- ==========================
-CREATE VIEW vw_OutgoingInvoiceAmount AS
-SELECT 
-    i.InvoiceID,
-
-    CAST(SUM(s.Price) AS DECIMAL(18, 2)) AS Price,
-    CAST(SUM(s.Price * ISNULL(i.Discount, 0)) AS DECIMAL(18, 2)) AS Discount,
-    CAST(SUM(s.Price * (1 - ISNULL(i.Discount, 0))) AS DECIMAL(18, 2)) AS Amount,
-    CAST(SUM(s.Price * (1 - ISNULL(i.Discount, 0)) * ISNULL(v.VATPercentage, 0)) AS DECIMAL(18, 2)) AS VAT,
-    CAST(SUM(s.Price * (1 - ISNULL(i.Discount, 0)) * (1 + ISNULL(v.VATPercentage, 0))) AS DECIMAL(18, 2)) AS TotalAmount,
-
-    MAX(s.Currency) AS Currency
-
-FROM Item i
-JOIN Service s ON i.ServiceID = s.ServiceID
-JOIN VATCodeList v ON i.VATCode = v.VATCode
-GROUP BY i.InvoiceID;
+-- ========================
+-- Table: TrailerInspection
+-- ========================
+CREATE TABLE TrailerInspection (
+    TrailerID INT NOT NULL,
+    InspectionID INT NOT NULL,
+    Date DATE NOT NULL,
+    CONSTRAINT fk_TrailerInspection_TrailerID FOREIGN KEY (TrailerID) 
+    REFERENCES Trailer(TrailerID),
+    CONSTRAINT fk_TrailerInspection_InspectionID FOREIGN KEY (InspectionID) 
+    REFERENCES Inspection(InspectionID),
+    PRIMARY KEY (TrailerID, InspectionID)
+);
 GO
 
--- =======================
--- View: VATRecapitulation
--- =======================
-CREATE VIEW vw_VATRecapitulation AS
-SELECT 
-    i.InvoiceID,
-    i.ServiceID,
-    i.VATCode,
-    CAST(s.Price * (1 - ISNULL(i.Discount, 0)) AS DECIMAL(18,2)) AS NetAmount,
-    CAST(s.Price * (1 - ISNULL(i.Discount, 0)) * ISNULL(v.VATPercentage, 0) AS DECIMAL(18,2)) AS VATAmount
-FROM Item i
-JOIN Service s ON i.ServiceID = s.ServiceID
-JOIN VATCodeList v ON i.VATCode = v.VATCode;
+-- ====================
+-- Table: CarInspection
+-- ====================
+CREATE TABLE CarInspection (
+    CarID INT NOT NULL,
+    InspectionID INT NOT NULL,
+    Date DATE NOT NULL,
+    CONSTRAINT fk_CarInspection_CarID FOREIGN KEY (CarID) 
+    REFERENCES Car(CarrID),
+    CONSTRAINT fk_CarInspection_InspectionID FOREIGN KEY (InspectionID) 
+    REFERENCES Inspection(InspectionID),
+    PRIMARY KEY (CarID, InspectionID)
+);
 GO
-
-

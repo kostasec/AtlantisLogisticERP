@@ -28,25 +28,24 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <% employees.forEach(employee => { %>
-                        <tr>
-                            <td><%= employee.EmplType %></td>
-                            <td><%= employee.FirstName %></td>
-                            <td><%= employee.LastName %></td>
-                            <td><%= employee.StreetAndNmbr %></td>
-                            <td><%= employee.City %></td>
-                            <td><%= employee.Country %></td>
-                            <td><%= employee.PhoneNmbr %></td>
-                            <td><%= employee.EmailAddress %></td>
-                            <td><%= employee.IDCardNmbr %></td>
-                            <td><%= employee.PassportNmbr %></td>
-                            <td><%= employee.Manager && employee.Manager.trim() ? employee.Manager : 'No Manager' %></td>
-                            <td><%= employee.Vehicle %></td>
+            <% employees.forEach(employee => { %>
+                    <tr>
+                        <td><%= employee.EmplType %></td>
+                        <td><%= employee.FirstName %></td>
+                        <td><%= employee.LastName %></td>
+                        <td><%= employee.StreetAndNmbr %></td>
+                        <td><%= employee.City %></td>
+                        <td><%= employee.Country %></td>
+                        <td><%= employee.PhoneNmbr %></td>
+                        <td><%= employee.EmailAddress %></td>
+                        <td><%= employee.IDCardNmbr %></td>
+                        <td><%= employee.PassportNmbr %></td>
+                        <td><%= employee.Manager && employee.Manager.trim() ? employee.Manager : 'No Manager' %></td>
+                        <td><%= employee.Vehicle %></td>
                         </tr>
                     <% }) %>
                 </tbody>
             </table>
-            
             </body>
             
         <% } else { %>

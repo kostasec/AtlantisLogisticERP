@@ -1,0 +1,189 @@
+-- ============================
+-- DROP view ClientWithContacts
+-- ============================
+IF OBJECT_ID('vw_ClientWithContacts', 'V') IS NOT NULL
+    DROP VIEW vw_ClientWithContacts;
+GO
+
+-- ==================================
+-- DROP view CompositionDisplay
+-- ==================================
+IF OBJECT_ID('vw_CompositionDisplay', 'V') IS NOT NULL
+    DROP VIEW vw_CompositionDisplay;
+GO
+
+-- ==================================
+-- DROP view DriverCompositionDisplay
+-- ==================================
+IF OBJECT_ID('vw_DriverCompositionDisplay', 'V') IS NOT NULL
+    DROP VIEW vw_DriverCompositionDisplay;
+GO
+
+-- ===========================================
+-- DROP view vw_OutgoingInvoiceServicesSummary
+-- ===========================================
+IF OBJECT_ID('vw_ReadOutgoingInvoice', 'V') IS NOT NULL
+    DROP VIEW vw_ReadOutgoingInvoice;
+GO
+
+-- ===============================
+-- DROP view OuInvoiceBackend
+-- ===============================
+IF OBJECT_ID('vw_OutgoingInvoiceAmount', 'V') IS NOT NULL
+    DROP VIEW vw_OutgoingInvoiceAmount;
+GO
+
+
+-- ==================================
+-- CREATE VIEW vw_ClientWithContacts
+-- ==================================
+CREATE VIEW [dbo].[vw_ClientWithContacts] AS
+SELECT 
+        c.TaxID,
+        c.ClientName,
+        c.RegNmbr,
+        c.StreetAndNmbr,
+        c.City,
+        c.ZIP,
+        c.Country,
+        c.Email,
+        cp.ContactPersonID,
+        cp.ContactName,
+        cp.Description,
+        cp.PhoneNmbr,
+        cp.PersonEmail
+FROM dbo.Client c
+LEFT JOIN dbo.ContactPerson cp ON cp.TaxID = c.TaxID
+WHERE c.IsActive = 1
+GO
+
+
+-- ==================================
+-- CREATE VIEW vw_CompositionDisplay
+-- =================================
+
+CREATE VIEW [dbo].[vw_CompositionDisplay] AS
+SELECT
+    c.TruckID,
+    c.TrailerID,
+    CONCAT(t1.RegistrationTag, '/', t2.RegistrationTag) AS CompositionName
+FROM Composition c
+JOIN Truck t1 ON t1.TruckID = c.TruckID
+JOIN Trailer t2 ON t2.TrailerID = c.TrailerID
+WHERE t1.Status= 'Active' AND t2.Status='Active';
+GO
+
+-- =======================================
+-- CREATE VIEW vw_DriverCompositionDisplay
+-- =======================================
+CREATE VIEW [dbo].[vw_DriverCompositionDisplay] AS
+SELECT
+	dc.DriverID,
+	CONCAT(e.FirstName, ' ', e.LastName) AS 'DriverName',
+    dc.TruckID,
+    dc.TrailerID,
+    CONCAT(t1.RegistrationTag, '/', t2.RegistrationTag) AS CompositionName
+FROM DriverComposition dc
+JOIN Truck t1 ON t1.TruckID = dc.TruckID
+JOIN Trailer t2 ON t2.TrailerID = dc.TrailerID
+LEFT JOIN Employee e ON e.EmplID=dc.DriverID
+WHERE t1.Status= 'Active' AND t2.Status='Active';
+GO
+
+-- =============================================
+-- CREATE VIEW vw_OutgoingInvoiceServicesSummary
+-- ==============================================
+CREATE VIEW [dbo].[vw_OutgoingInvoiceServicesSummary] AS
+SELECT 
+    
+c.ClientName AS Recipient,
+inv.outInvoiceNmbr as 'InvoiceNumber',
+s.ServiceType,
+
+CAST(
+        ISNULL(SUM(ISNULL(ts.Price, 0)), 0) + ISNULL(SUM(ISNULL(tx.Price, 0)), 0) + ISNULL(SUM(ISNULL(os.Price, 0)), 0)
+    AS DECIMAL(18, 2))
+    AS TaxBase,
+
+CAST(
+		ISNULL(i.Discount, 0)
+	AS DECIMAL(18, 2))*100
+	AS DiscountRate,
+	
+CAST(
+		ISNULL(SUM(ISNULL(ts.Price, 0) * ISNULL(i.Discount, 0)), 0)
+		+ ISNULL(SUM(ISNULL(tx.Price, 0) * ISNULL(i.Discount, 0)), 0)
+		+ ISNULL(SUM(ISNULL(os.Price, 0) * ISNULL(i.Discount, 0)), 0)
+	AS DECIMAL(18, 2))
+	AS Discount,
+
+CAST(
+		ISNULL(SUM(ISNULL(ts.Price, 0) * (1 - ISNULL(i.Discount, 0))), 0)
+		+ ISNULL(SUM(ISNULL(tx.Price, 0) * (1 - ISNULL(i.Discount, 0))), 0)
+		+ ISNULL(SUM(ISNULL(os.Price, 0) * (1 - ISNULL(i.Discount, 0))), 0)
+	AS DECIMAL(18, 2))
+    AS Subtotal,
+
+i.VatCode AS VatCode,
+
+CAST(
+	  ISNULL(v.VATPercentage, 0)
+	AS DECIMAL(18, 2))*100
+	AS VATRate,
+
+CAST(
+		ISNULL(SUM(ISNULL(ts.Price, 0) * (1 - ISNULL(i.Discount, 0)) * ISNULL(v.VATPercentage, 0)), 0)
+		+ ISNULL(SUM(ISNULL(tx.Price, 0) * (1 - ISNULL(i.Discount, 0)) * ISNULL(v.VATPercentage, 0)), 0)
+		+ ISNULL(SUM(ISNULL(os.Price, 0) * (1 - ISNULL(i.Discount, 0)) * ISNULL(v.VATPercentage, 0)), 0)
+	AS DECIMAL(18, 2))
+	AS VATAmount,
+
+CAST(
+		ISNULL(SUM(ISNULL(ts.Price, 0) * (1 - ISNULL(i.Discount, 0)) * (1 + ISNULL(v.VATPercentage, 0))), 0)
+		+ ISNULL(SUM(ISNULL(tx.Price, 0) * (1 - ISNULL(i.Discount, 0)) * (1 + ISNULL(v.VATPercentage, 0))), 0)
+		+ ISNULL(SUM(ISNULL(os.Price, 0) * (1 - ISNULL(i.Discount, 0)) * (1 + ISNULL(v.VATPercentage, 0))), 0)
+	AS DECIMAL(18, 2))
+	AS TotalAmount,
+
+	inv.Currency AS Currency,
+	ds.DStatusName AS DocumentStatus,
+	ps.ProcessingStatusName AS ProcessingStatus,
+	py.PaymentStatusName AS PaymentStatus
+
+
+FROM Item i
+LEFT JOIN Service s                   ON i.ServiceID=s.ServiceID
+LEFT JOIN TransportationService ts    ON s.ServiceID = ts.ServiceID
+LEFT JOIN TaxService tx               ON s.ServiceID = tx.ServiceID
+LEFT JOIN OutsorcingService os        ON s.ServiceID = os.ServiceID
+LEFT JOIN VATCodeList v               ON i.VATCode = v.VATCode
+LEFT JOIN OutgoingInvoice inv		  ON i.InvoiceID = inv.InvoiceID
+LEFT JOIN Client c					  ON inv.TaxID=c.TaxID
+LEFT JOIN dbo.DocumentStatusList ds   ON inv.DocumentStatus = ds.DStatusID
+LEFT JOIN dbo.ProcessingStatusList ps ON inv.ProcessingStatus = ps.ProcessingStatusID
+LEFT JOIN dbo.PaymentStatusList py    ON inv.PaymentStatus = py.PaymentStatusID
+
+
+GROUP BY inv.InvoiceID, inv.OutInvoiceNmbr,inv.Currency,I.Discount,
+I.VATCode,S.ServiceType,S.ServiceID,VATPercentage,c.ClientName, ds.DStatusName, ps.ProcessingStatusName, py.PaymentStatusName
+GO
+
+-- =================================
+-- CREATE VIEW vw_OutInvoiceBackend
+-- =================================
+CREATE VIEW [dbo].[vw_OutInvoiceBackend] AS
+SELECT
+	DocumentStatus,
+	ProcessingStatus, 
+	InvoiceNumber,
+	Recipient,
+	CONCAT(
+    FORMAT(SUM(TotalAmount), '#,###.##', 'de-DE'),
+    ' ',
+    MAX(Currency)
+	) AS TotalInvoiceAmount,
+	PaymentStatus
+
+FROM OutInvoice
+GROUP BY DocumentStatus, ProcessingStatus, Recipient, Invoicenumber, PaymentStatus, Currency
+GO

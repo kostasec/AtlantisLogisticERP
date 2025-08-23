@@ -19,9 +19,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 const employeeRoutes = require('./routes/admin/employee');
 const clientRoutes = require('./routes/admin/client');
 const outInvoiceRoutes = require('./routes/admin/outInvoice');
-const vehicleTypeRoutes = require('./routes/admin/vehicle/type');
-const vehicleTruckRoutes = require('./routes/admin/vehicle/truck');
-const vehicleTrailerRoutes = require('./routes/admin/vehicle/trailer');
+const vehicleTruckCompositionRoutes = require('./routes/admin/vehicle/truckComposition');
+const vehicleTrailerCompositionRoutes = require('./routes/admin/vehicle/trailerComposition');
 const vehicleCarRoutes = require('./routes/admin/vehicle/car');
 
 const indexRoutes = require('./routes/index');
@@ -29,9 +28,8 @@ const indexRoutes = require('./routes/index');
 app.use('/admin/employee', employeeRoutes);
 app.use('/admin/client', clientRoutes);
 app.use('/admin/outInvoice', outInvoiceRoutes);
-app.use('/admin/vehicle/type', vehicleTypeRoutes);
-app.use('/admin/vehicle/truck', vehicleTruckRoutes);
-app.use('/admin/vehicle/trailer', vehicleTrailerRoutes);
+app.use('/admin/vehicle/truckComposition', vehicleTruckCompositionRoutes);
+app.use('/admin/vehicle/trailerComposition', vehicleTrailerCompositionRoutes);
 app.use('/admin/vehicle/car', vehicleCarRoutes);
 app.use(indexRoutes);
 

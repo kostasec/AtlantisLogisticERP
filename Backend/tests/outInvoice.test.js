@@ -30,7 +30,7 @@ describe('OutInvoice routes', ()=>{
 
     it('POST /admin/outInvoice/insert should insert outgoing invoice with 2 service items', async function () {
         const invoicePayload = {
-            OutInvoiceNmbr: 'MOCHATEST-21',
+            OutInvoiceNmbr: 'MOCHATEST-33',
             Currency: 'RSD',
             ReferenceNmbr: 'REF-01',
             OrderNmbr: 'ORD-001',
@@ -79,7 +79,7 @@ describe('OutInvoice routes', ()=>{
 
    it('POST /admin/outInvoice/insert should insert outgoing invoice with 1 service item', async function () {
         const invoicePayload = {
-            OutInvoiceNmbr: 'MOCHATEST-22',
+            OutInvoiceNmbr: 'MOCHATEST-34',
             Currency: 'RSD',
             ReferenceNmbr: 'REF-01',
             OrderNmbr: 'ORD-001',
@@ -116,7 +116,7 @@ describe('OutInvoice routes', ()=>{
 
   it('POST /admin/outInvoice/insert should insert outgoing invoice with an outsorcing service item', async function () {
         const invoicePayload = {
-            OutInvoiceNmbr: 'MOCHATEST-100',
+            OutInvoiceNmbr: 'MOCHATEST-35',
             Currency: 'RSD',
             ReferenceNmbr: 'REF-01',
             OrderNmbr: 'ORD-001',

@@ -13,24 +13,25 @@
         <table border="1">
             <thead>
                 <tr>
-                    <th>Status</th>
+                    <th>Doc.Status</th>
                     <th>Proc.Status</th>
-                    <th>Recipient</th>
                     <th>Invoice Number</th>
-                    <th>Payment Status</th>
-                    
+                    <th>Recipient</th>
+                    <th>Total Amount</th>
+                    <th>Payment Status</th>   
                 </tr>
             </thead>
             <tbody>
-                <% invoices.forEach(inv => { %>
-                    <tr>
-                        <td><%= inv.DStatusName %></td>
-                        <td><%= inv.ProcessingStatusName %></td>
-                        <td><%= inv.ClientName %></td>
-                        <td><%= inv.OutInvoiceNmbr %></td>
-                        <td><%= inv.PaymentStatusName %></td>
-                    </tr>
-                <% }) %>
+    <% invoices.forEach(inv => { %>
+        <tr>
+            <td><%= inv.DocumentStatus %></td>
+            <td><%= inv.ProcessingStatus %></td>
+            <td><%= inv.InvoiceNumber %></td>
+            <td><%= inv.Recipient %></td>
+            <td><%= inv.TotalInvoiceAmount %></td>
+            <td><%= inv.PaymentStatus %></td>
+        </tr>
+<% }) %>
                 </tbody>
         </table>
 </body>

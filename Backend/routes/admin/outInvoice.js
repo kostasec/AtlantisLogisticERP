@@ -2,26 +2,18 @@ const express = require('express');
 const router = express.Router();
 const { sql, getPool } = require('../../util/db');
 
-// GET /admin/outInvoice/test-connection
-router.get('/test-connection', async (req, res) => {
-    try {
-        const pool = await getPool();
-        await pool.connect; // ovo je već povezano, može i da se izostavi
-        res.send('Database connection successful!');
-    } catch (err) {
-        res.status(500).send('Error: ' + err.message);
-    }
-});
 
 // GET /admin/outInvoice/read
 router.get('/read', async (req, res) => {
     try {
         const pool = await getPool();
-        const result = await pool.request().query('SELECT * FROM vw_ReadOutgoingInvoice');
+        const result = await pool.request().query('SELECT * FROM vw_OutInvoiceBackend');
+        
+       
         res.render('outInvoice/read-invoices', {
             pageTitle: 'Outgoing Invoices',
             path: '/admin/outInvoice/read',
-            invoices: result.recordset
+            invoices:result.recordset
         });
     } catch (err) {
         console.error('Error fetching invoices:', err);
@@ -43,7 +35,7 @@ router.get('/insert', async (req, res) => {
             paymentStatusResult
         ] = await Promise.all([
             pool.request().query(`SELECT * FROM Client WHERE IsActive=1`),
-            pool.request().query(`SELECT CompositionName FROM vw_CompositionDisplay`),
+            pool.request().query(`SELECT * FROM vw_CompositionDisplay`),
             pool.request().query(`SELECT * FROM VATExamptionReason ORDER BY VATCode, VATExamptionCode`),
             pool.request().query(`SELECT DStatusID FROM DocumentStatusList ORDER BY DStatusID`),
             pool.request().query(`SELECT ProcessingStatusID FROM ProcessingStatusList ORDER BY ProcessingStatusID`),
