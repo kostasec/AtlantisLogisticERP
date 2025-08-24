@@ -4,284 +4,414 @@
   <meta charset="UTF-8">
   <title><%= pageTitle %></title>
   <style>
+ 
+body {
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  margin: 100px;
+  background: #f9f9f9;
+  color: #333;
+}
 
-    body {
-      font-family:Arial;
-      margin: 150px;
-    }
+/* Form wrapper */
+.form-wrapper {
+  position: relative;
+  max-width: 800px;
+  margin: auto;
+}
 
-    .form-wrapper {
-      position: relative;
-      max-width: 800px;
-      margin: auto;
-    }
+/* Glavna forma */
+form {
+ 
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 25px;
+  border: 1px solid #e0e0e0;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  background: #fff;
+}
 
-    form {
-      max-width: 800px;
-      margin: 0 auto; /* Centriranje forme horizontalno */
-      padding: 20px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      transform: scale(1.2); /* Uvećanje forme za 20% */
-      transform-origin: center; /* Centriranje tačke uvećanja */
-    }
+form.dimmed {
+  opacity: 0.3;
+  pointer-events: none;
+}
 
-    form.dimmed {
-      opacity: 0.3;
-      pointer-events: none;
-  }
+/* Message box – čist panel, bez blur */
+.message-box {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #ffffff;
+  border: 1px solid #ddd;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  z-index: 10;
+  max-width: 420px;
+  text-align: center;
+  color: #333;
+}
 
-    .message-box {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: white;
-      border: 1px solid #ccc;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-      z-index: 10;
-      max-width: 400px;
-      text-align: center;
-    }
-
-    .close-btn {
-      position: absolute;
-      top: 0px;
-      left: 165px;
-      background: none;
-      border: none;
-      font-size: 22px;
-      font-weight: bold;
-      color: #777;
-      cursor: pointer;
-      z-index: 11;
-    }
-
-  .close-btn:hover {
-    color: #f14c4c;
-  }
-  
-  .close-btn-sections {
+/* Close dugmad */
+.close-btn, .close-btn-sections {
   position: absolute;
-  top: 12px;
-  left: 370px;
+  top: 10px;
+  right: 12px;
   background: none;
   border: none;
   font-size: 20px;
   font-weight: bold;
-  color: #777;
+  color: #888;
   cursor: pointer;
-  z-index: 12;
-  }
+  z-index: 11;
+  transition: color 0.2s;
+}
 
-  .close-btn-sections:hover {
-    color: #f14c4c;
-  }
+.close-btn:hover,
+.close-btn-sections:hover {
+  color: #e74c3c;
+}
 
-  #new-trailer-section {
-  position: relative;
-    }
+/* Hidden class */
+.hidden {
+  display: none;
+}
 
-  #existing-trailer-section {
-  position: relative;
-  }
+/* Naslovi */
+h1, h2, h3, h4 {
+  text-align: center;
+  margin: 10px 0;
+  font-weight: 600;
+  color: #222222;
+}
 
-  .hidden {
-      display: none;
-    }
+/* Labela i inputi */
+label {
+  display: block;
+  margin-top: 12px;
+  font-weight: 500;
+  color: #444;
+}
 
-    h1, h3, h4 {
-      text-align: center;
-    }
+input, select {
+  width: 96%;
+  padding: 12px;
+  margin-top: 6px;
+  margin-bottom: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
 
-    h1 {
-  transform: translateY(-80%); /* pola visine h3 */
-  }
+input:focus, select:focus {
+  border-color: #256cd6;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37,108,214,0.2);
+}
 
-  
+/* Buttoni */
+button {
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
 
-    label {
-      display: block;
-      margin-top: 10px;
-      font-weight: bold;
-    }
+button[type="button"] {
+  display: block;
+  margin: 20px auto;
+  background: #f1f1f1;
+  border: 1px solid #ccc;
+  color: #333;
+}
 
-    input, select, button {
-      width: 96%;
-      padding: 10px;
-      margin-top: 5px;
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
+button[type="button"]:hover {
+  background: #e0e0e0;
+}
 
-    button[type="button"] {
-    display: block; /* Prikaz kao blok element */
-    margin: 20px auto; /* Automatsko centriranje horizontalno, sa gornjim i donjim marginom */
-    }
+/* Dugmad u modalnim opcijama */
+.option-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 15px;
+}
 
-    .subsection {
-      border-top: 1px dashed #aaa;
-      padding-top: 15px;
-      margin-top: 20px;
-    }
+.option-buttons form {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
 
-    .option-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      margin-top: 10px;
-    }
+.option-buttons button {
+  background: #f9f9f9;
+  border: 1px solid #bbb;
+  color: #333;
+  font-weight: 500;
+  border-radius: 8px;
+}
 
-    .option-buttons button {
-      
-      width: auto;
-      padding: 10px 20px;
-      background-color: #eee;
-      border: 1px solid #aaa;
-      cursor: pointer;
-    }
+.option-buttons button:hover {
+  background: #256cd6;
+  color: #fff;
+  border-color: #256cd6;
+}
 
-    .option-buttons button:hover {
-      background-color: #ddd;
-    }
+/* Save dugme */
+.save-btn {
+  display: block;
+  margin: 25px auto 10px;
+  background: #256cd6;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+}
 
-    .save-btn {
-      display: block; /* Prikaz kao blok element */
-      margin: 20px auto; /* Automatsko centriranje horizontalno, sa gornjim i donjim marginom */
-      
-      background-color: #256cd6;
-      color: white;
-      font-weight: bold;
-      border: none;
-    }
+.save-btn:hover {
+  background: #1e54aa;
+}
+
+/* Subsekcije */
+.subsection {
+  border-top: 1px dashed #ccc;
+  padding-top: 20px;
+  margin-top: 20px;
+}
+
+/* Dugmad za drivere i trailere – vertikalno, full width */
+#existing-drivers-message-box .option-buttons,
+#existing-trailers-message-box .option-buttons {
+  flex-direction: column;   /* poređa dugmad po vertikali */
+  align-items: stretch;     /* rastegne dugmad preko cele širine */
+  gap: 10px;                /* razmak između dugmadi */
+}
+
+#existing-drivers-message-box .option-buttons button,
+#existing-trailers-message-box .option-buttons button {
+  width: 100%;              /* svako dugme zauzima celu širinu */
+  text-align: left;         /* tekst poravnat ulevo (ako hoćeš centrirano, stavi center) */
+  padding: 12px 16px;
+  font-size: 15px;
+  border-radius: 6px;
+}
+
+.date-select {
+  display: flex;
+  gap: 10px;
+}
+
+.date-select select {
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+
   </style>
 
   <script>
     function showTrailerMessage() {
       document.getElementById('truckForm').classList.add('dimmed');
-      document.getElementById('trailer-message-box').classList.remove('hidden');
+      document.getElementById('add-trailer-message-box').classList.remove('hidden');
     }
 
     function hideTrailerMessage() {
       document.getElementById('truckForm').classList.remove('dimmed');
-      document.getElementById('trailer-message-box').classList.add('hidden');
+      document.getElementById('add-trailer-message-box').classList.add('hidden');
     }
 
     function selectExistingTrailer() {
-      hideTrailerMessage();
-      document.getElementById('existing-trailer-section').classList.remove('hidden');
-      document.getElementById('add-trailer-btn').style.display = 'none';
+      document.getElementById('truckForm').classList.add('dimmed');
+      document.getElementById('add-trailer-message-box').classList.add('hidden');
+      document.getElementById('existing-trailers-message-box').classList.remove('hidden');
     }
 
-    function selectNewTrailer() {
+    function hideExistingTrailer(){
+      document.getElementById('truckForm').classList.remove('dimmed');
+      document.getElementById('existing-trailers-message-box').classList.add('hidden');
+    }
+
+    function selectExistingDrivers() {
+      document.getElementById('truckForm').classList.add('dimmed');
+      document.getElementById('existing-drivers-message-box').classList.remove('hidden');
+    }
+
+    function hideExistingDrivers(){
+      document.getElementById('truckForm').classList.remove('dimmed');
+      document.getElementById('existing-drivers-message-box').classList.add('hidden');
+    }
+
+    function addNewTrailer() {
       hideTrailerMessage();
       document.getElementById('new-trailer-section').classList.remove('hidden');
       document.getElementById('add-trailer-btn').style.display = 'none';
     }
 
-    function addDriver(){
-      document.getElementById('driver-section').classList.remove('hidden');
-      document.getElementById('add-driver-btn').style.display = 'none';
-    }
-
     function cancelNewTrailer() {
-    // Sakrij sekciju
-    document.getElementById('new-trailer-section').classList.add('hidden');
-    // Prikaži ponovo dugme za dodavanje
-    document.getElementById('add-trailer-btn').style.display = 'inline-block';
+      document.getElementById('new-trailer-section').classList.add('hidden');
+      document.getElementById('add-trailer-btn').style.display = 'inline-block';
     }
 
-    function cancelExistingTrailer() {
-    document.getElementById('existing-trailer-section').classList.add('hidden');
-    document.getElementById('add-trailer-btn').style.display = 'inline-block';
+    function insertTrailerIntoDbs(){
+      hideExistingTrailer();
     }
 
     document.addEventListener('keydown', function(event){
       if(event.key==='Escape'){
-        //Ako je message-box prikazana
-        const box=document.getElementById('trailer-message-box');
-        if(!box.classList.contains('hidden')){
+        if(!document.getElementById('add-trailer-message-box').classList.contains('hidden')){
           hideTrailerMessage();
+        }
+        if(!document.getElementById('existing-trailers-message-box').classList.contains('hidden')){
+          hideExistingTrailer();
+        }
+        if(!document.getElementById('existing-drivers-message-box').classList.contains('hidden')){
+          hideExistingDrivers();
         }
       }
     });
+
+    
+   // Formatiranje datuma u format "YYYY-MM-DD"
+  function formatDateToInput(date) {
+    let year = date.getFullYear();
+    let month = String(date.getMonth() + 1).padStart(2, '0');
+    let day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  // Kada se stranica učita – automatski popuni sva polja sa klasom .auto-next-year
+  window.addEventListener('DOMContentLoaded', () => {
+    const inputs = document.querySelectorAll('input.auto-next-year');
+    inputs.forEach(input => {
+      let nextYear = new Date();
+      nextYear.setFullYear(nextYear.getFullYear() + 1);
+      input.value = formatDateToInput(nextYear);
+    });
+  });
+</script>
 
   </script>
 </head>
 <body>
 
-  
-
+  <!--Add a new Truck Form-->
   <div class="form-wrapper">
     <form id="truckForm" action="/admin/vehicle/truckComposition/insert" method="POST">
-      <h3>Add New Truck</h3>
-      <label for="TruckMake">Make</label>
-      <input type="text" name="TruckMake" id="TruckMake" required>
 
-      <label for="TruckModel">Model</label>
-      <input type="text" name="TruckModel" id="TruckModel" required>
+  <div id="new-truck-section" >
+    <h2>Add a New Truck</h2>
+      <input type="text" name="TruckMake" placeholder="Make" id="TruckMake" required>
+      <input type="text" name="TruckModel" placeholder="Model" id="TruckModel" required>
+      <input type="text" name="TruckRegistrationTag" placeholder="Registration Tag" id="TruckRegistrationTag" required>
 
-      <label for="TruckRegistrationTag">Registration Tag</label>
-      <input type="text" name="TruckRegistrationTag" id="TruckRegistrationTag" required>
+  <div id="periodic-inspections-new-truck-section" class="subsection">
+      <h2>Periodic Inspections for a New Truck</h2>
 
-      <button type="button" id="add-trailer-btn" onclick="showTrailerMessage()">Add Trailer to this Truck</button>
+        <label for="RegistredUntil">Vehicle Registred until</label>
+        <input type="date" name="RegistredUntil" id="RegistredUntil" class="auto-next-year" required>
 
+        <label for="ComprehensiveCoverage">Comprehensive Coverage until</label>
+        <input type="date" name="ComprehensiveCoverage" id="ComprehensiveCoverage" class="auto-next-year" required>
 
-      <div id="existing-trailer-section" class="hidden subsection">
-        <button class ="close-btn-sections" type="button" onclick="cancelExistingTrailer()">X</button>
-        <label for="ExistingTrailerID">Existing Trailers</label> <br />
-        <select name="ExistingTrailerID" id="ExistingTrailerID">
-          <option value="">Select</option>
-          <% existingTrailers.forEach(trailer => { %>
-            <option value="<%= trailer.TrailerID %>"><%= trailer.RegistrationTag %></option>
-          <% }) %>
-        </select>
-        <button type="button" id="add-driver-btn" onclick="addDriver()">Link Driver to this Composition</button>
-      </div>
+        <label for="WhiteList">White List until</label>
+        <input type="date" name="WhiteList" id="WhiteList" class="auto-next-year" required>
 
+        <label for="CMRInsuranceUntil">CMR Insurance until</label>
+        <input type="date" name="CMRInsuranceUntil" id="CMRInsuranceUntil" class="auto-next-year" required>
 
-      <div id="new-trailer-section" class="hidden subsection">
-        <button class ="close-btn-sections" type="button" onclick="cancelNewTrailer()">X</button>
-        <h4>Add New Trailer</h4>
-        <label for="TrailerMake">Make</label>
-        <input type="text" name="TrailerMake" id="TrailerMake">
+        <label for="FireExtinguisher">Fire Extinguisher until</label>
+        <input type="date" name="FireExtinguisher" id="FireExtinguisher" class="auto-next-year" required>
 
-        <label for="TrailerModel">Model</label>
-        <input type="text" name="TrailerModel" id="TrailerModel">
+        <label for="Tachograph">Tachograph until</label>
+        <input type="date" name="Tachograph" id="Tachograph" class="auto-next-year" required>
 
-        <label for="TrailerRegistrationTag">Registration Tag</label>
-        <input type="text" name="TrailerRegistrationTag" id="TrailerRegistrationTag">
-        <button type="button" id="add-driver-btn" onclick="addDriver()">Link Driver to this Composition</button>
+  </div>
 
-      </div>
+  <button type="button" id="add-trailer-btn" onclick="showTrailerMessage()">Add Trailer to this Truck</button>
 
-      <div id="driver-section" class ="hidden subsection">
-      <button class ="close-btn-sections" type="button" onclick="cancelNewTrailer()">X</button>
-      <label for="DriverID">Link Driver</label><br />
-      <select name="DriverID" id="DriverID">
-        <option value="">Select</option>
-        <% existingDrivers.forEach(driver => { %>
-          <option value="<%= driver.EmplID %>"> <%= driver.FirstName %> <%= driver.LastName %></option>
-        <% }) %>
-      </select>
-      </div>
+  <!--Add a new Trailer Form-->
+  <div id="new-trailer-section" class="hidden subsection">
+        <button class="close-btn-sections" type="button" onclick="cancelNewTrailer()">X</button>
+        
+        <h2>Add a New Trailer</h2>
+        
+        <input type="text" name="TrailerMake" placeholder="Make" id="TrailerMake">
+        <input type="text" name="TrailerModel" placeholder="Model" id="TrailerModel">
+        <input type="text" name="TrailerRegistrationTag" placeholder="Registration Tag" id="TrailerRegistrationTag">
+  
+  <div id="periodic-inspections-newTrailer-section" class="subsection">  
+        <h2>Periodic Inspections for a New Trailer</h2>
+        <label for="RegistredUntil">Registred until</label>
+        <input type="date" name="RegistredUntil" id="RegistredUntil" class="auto-next-year" required>
 
+        <label for="ComprehensiveCoverage">Comprehensive Coverage until</label>
+        <input type="date" name="ComprehensiveCoverage" id="ComprehensiveCoverage" required>
+
+        <label for="WhiteList">White List until</label>
+        <input type="date" name="WhiteList" id="WhiteList" required>
+
+        <label for="CMRInsuranceUntil">CMR Insurance until</label>
+        <input type="date" name="CMRInsuranceUntil" id="CMRInsuranceUntil" required>
+
+        <label for="FireExtinguisher">Fire Extinguisher until</label>
+        <input type="date" name="FireExtinguisher" id="FireExtinguisher" required>
+
+        <label for="Tachograph">Tachograph until</label>
+        <input type="date" name="Tachograph" id="Tachograph" required>
+
+      <button type="button" id="add-existing-drivers-btn" onclick="selectExistingDrivers()">Link Driver to this Composition</button>
+  </div>
+  </div>
 
       <button class="save-btn" type="submit">Save</button>
     </form>
   </div>
 
-  <div id="trailer-message-box" class="message-box hidden">
-    <button class ="close-btn" onclick="hideTrailerMessage()">X</button>
+  <!-- Modal za biranje opcije trailera -->
+  <div id="add-trailer-message-box" class="message-box hidden">
+    <button class="close-btn" onclick="hideTrailerMessage()">X</button>
     <p><strong>Choose Trailer Option:</strong></p>
     <div class="option-buttons">
-      <button type="button" onclick="selectExistingTrailer()">Add Existing Trailer</button>
-      <button type="button" onclick="selectNewTrailer()">Add New Trailer</button>
+      <button type="button" id="add-existing-trailer-btn" onclick="selectExistingTrailer()">Add Existing Trailer</button>
+      <button type="button" id="add-new-trailer-btn" onclick="addNewTrailer()">Add New Trailer</button>
     </div>
+  </div>
+
+  <!-- Modal za prikaz svih postojećih trailera -->
+  <div id="existing-trailers-message-box" class="message-box hidden">
+    <button class="close-btn" onclick="hideExistingTrailer()">X</button>
+    <p><strong>Choose Existing Trailers:</strong></p>
+    <div class="option-buttons">
+      <% existingTrailers.forEach(trailer => { %>
+        <form action="/admin/vehicle/truckComposition/insert" method="POST">
+          <input type="hidden" name="TrailerID" value="<%= trailer.TrailerID %>">
+          <button type="button" id="insert-trailer-dbs" onclick="insertTrailerIntoDbs()"><%= trailer.Make %> <%= trailer.Model %>, <%= trailer.RegistrationTag %></button>
+        </form>
+      <% }) %>
+    </div>
+  </div>
+
+  <!-- Modal za prikaz postojecih vozaca -->
+  <div id="existing-drivers-message-box" class="message-box hidden">
+  <button class="close-btn" onclick="hideExistingDrivers()">X</button>
+  <p><strong>Choose Drivers:</strong></p>
+  <div class="option-buttons">
+    <% existingDrivers.forEach(driver => { %>
+     <form action="/admin/vehicle/truckComposition/insert" method="POST">
+        <input type="hidden" name="DriverID" value="<%= driver.DriverID %>">
+        <button type="button"><%= driver.FirstName %> <%= driver.LastName %></button>
+    </form>
+   <% }) %>
+  </div>
   </div>
 
 </body>

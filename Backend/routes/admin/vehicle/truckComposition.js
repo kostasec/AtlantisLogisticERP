@@ -8,7 +8,7 @@ router.get('/insert', async (req, res) => {
   try {
     const pool = await getPool();
     const trailers = await pool.request().query(`
-      SELECT TrailerID, RegistrationTag
+      SELECT *
       FROM Trailer
       WHERE Status = 'Active'
     `);
@@ -98,7 +98,6 @@ router.post('/insert', async (req, res) => {
           VALUES (@TruckID, @TrailerID)
         `);
     }
-
 
     driverID=parseInt(DriverID);
     if (trailerID) {
