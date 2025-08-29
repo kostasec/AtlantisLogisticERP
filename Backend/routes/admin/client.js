@@ -51,13 +51,121 @@ router.get('/read', async (req, res) => {
   }
 });
 
+// POST /admin/client/upsert
+router.post('/upsert', async (req, res) => {
+
+  let {
+    TaxID,
+    RegNmbr,
+    ClientName,
+    StreetAndNmbr,
+    City,
+    ZIP,
+    Country,
+    Email,
+    contacts = []
+  } = req.body;
+
+  const pool = await getPool();
+  const transaction = new sql.Transaction(pool);
+
+  try {
+    await transaction.begin();
+
+    // 1.) UPSERT Client
+    const clientExists = await new sql.Request(transaction)
+      .input('TaxID', sql.VarChar(50), TaxID)
+      .query('SELECT COUNT(1) AS Cnt FROM dbo.Client WHERE TaxID = @TaxID');
+
+    if(clientExists.recordset[0].Cnt>0){
+        await new sql.Request(transaction)
+      .input('TaxID', sql.VarChar(50), TaxID)
+      .input('RegNmbr', sql.VarChar(30), RegNmbr)
+      .input('ClientName', sql.VarChar(100), ClientName)
+      .input('StreetAndNmbr', sql.VarChar(100), StreetAndNmbr)
+      .input('City', sql.VarChar(50), City)
+      .input('ZIP', sql.VarChar(10), ZIP)
+      .input('Country', sql.VarChar(50), Country)
+      .input('Email', sql.VarChar(100), Email)
+      .query(`
+          UPDATE dbo.Client
+          SET RegNmbr = @RegNmbr,
+              ClientName = @ClientName,
+              StreetAndNmbr = @StreetAndNmbr,
+              City = @City,
+              ZIP = @ZIP,
+              Country = @Country,
+              Email = @Email,
+              IsActive = 1
+          WHERE TaxID = @TaxID
+        `);
+    } else {
+      await new sql.Request(transaction)
+        .input('TaxID', sql.VarChar(50), TaxID)
+        .input('RegNmbr', sql.VarChar(30), RegNmbr)
+        .input('ClientName', sql.VarChar(100), ClientName)
+        .input('StreetAndNmbr', sql.VarChar(100), StreetAndNmbr)
+        .input('City', sql.VarChar(50), City)
+        .input('ZIP', sql.VarChar(10), ZIP)
+        .input('Country', sql.VarChar(50), Country)
+        .input('Email', sql.VarChar(100), Email)
+        .query(`
+          INSERT INTO dbo.Client (TaxID, RegNmbr, ClientName, StreetAndNmbr, City, ZIP, Country, Email, IsActive)
+          VALUES (@TaxID, @RegNmbr, @ClientName, @StreetAndNmbr, @City, @ZIP, @Country, @Email, 1)
+        `);
+    }
+
+    // 2) Contacts
+    for(const c of contacts){
+      if(c.ContactPersonID){
+        //UPDATE postojeceg
+        await new sql.Request(transaction)
+          .input('ContactPersonID', sql.Int, parseInt(c.ContactPersonID))
+          .input('ContactName', sql.VarChar(100), c.ContactName)
+          .input('Description', sql.VarChar(200), c.Description || null)
+          .input('PhoneNmbr', sql.VarChar(50), c.PhoneNmbr || null)
+          .input('PersonEmail', sql.VarChar(100), c.PersonEmail || null)
+          .input('TaxID', sql.VarChar(50), TaxID)
+          .query(`
+            UPDATE dbo.ContactPerson
+            SET ContactName = @ContactName,
+                [Description] = @Description,
+                PhoneNmbr = @PhoneNmbr,
+                PersonEmail = @PersonEmail
+            WHERE ContactPersonID = @ContactPersonID AND TaxID = @TaxID
+          `);
+      } else {
+        //INSERT novog
+         await new sql.Request(transaction)
+          .input('TaxID', sql.VarChar(50), TaxID)
+          .input('ContactName', sql.VarChar(100), c.ContactName)
+          .input('Description', sql.VarChar(200), c.Description || null)
+          .input('PhoneNmbr', sql.VarChar(50), c.PhoneNmbr || null)
+          .input('PersonEmail', sql.VarChar(100), c.PersonEmail || null)
+          .query(`
+            INSERT INTO dbo.ContactPerson (TaxID, ContactName, [Description], PhoneNmbr, PersonEmail)
+            VALUES (@TaxID, @ContactName, @Description, @PhoneNmbr, @PersonEmail)
+          `);
+      }
+
+    }
+  
+    await transaction.commit();
+    res.redirect('/admin/client/read');
+  } catch (err) {
+    await transaction.rollback();
+    console.error('Error upserting client:', err);
+    res.status(500).send('Database Error');
+  }
+});
+
 
 // GET /admin/client/insert
 router.get('/insert', (req, res) => {
   res.render('client/upsert-client', {
     pageTitle: 'Create New Client',
     client: {},
-    contacts: [{}]
+    contacts: []
   });
 });
 
@@ -65,7 +173,6 @@ router.get('/insert', (req, res) => {
 // GET /admin/client/update/:taxId
 router.get('/update/:taxId', async (req, res) => {
   const taxId = req.params.taxId.trim();
-  
 
   try {
     const pool = await getPool();
@@ -94,67 +201,10 @@ router.get('/update/:taxId', async (req, res) => {
 });
 
 
-// POST /admin/client/upsert
-router.post('/upsert', async (req, res) => {
-
-  let {
-    TaxID,
-    RegNmbr,
-    ClientName,
-    StreetAndNmbr,
-    City,
-    ZIP,
-    Country,
-    Email,
-    contacts = []
-  } = req.body;
-
-
-
-  try {
-    const pool = await getPool();
-
-    const contactTable = new sql.Table('dbo.ContactPersonTvpType');
-    contactTable.columns.add('ContactPersonID', sql.Int);
-    contactTable.columns.add('ContactName', sql.VarChar(100));
-    contactTable.columns.add('Description', sql.VarChar(200));
-    contactTable.columns.add('PhoneNmbr', sql.VarChar(50));
-    contactTable.columns.add('PersonEmail', sql.VarChar(100));
-
-    contacts.forEach(c => {
-    contactTable.rows.add(
-    (c.ContactPersonID !== undefined && c.ContactPersonID !== '' && c.ContactPersonID !== null) ? parseInt(c.ContactPersonID) : null,
-    c.ContactName,
-    c.Description || null,
-    c.PhoneNmbr || null,
-    c.PersonEmail || null
-  );
-});
-
-
-    await pool.request()
-      .input('TaxID', sql.VarChar(50), TaxID)
-      .input('RegNmbr', sql.VarChar(30), RegNmbr)
-      .input('ClientName', sql.VarChar(100), ClientName)
-      .input('StreetAndNmbr', sql.VarChar(100), StreetAndNmbr)
-      .input('City', sql.VarChar(50), City)
-      .input('ZIP', sql.VarChar(10), ZIP)
-      .input('Country', sql.VarChar(50), Country)
-      .input('Email', sql.VarChar(100), Email)
-      .input('ContactPersons', contactTable)
-      .execute('dbo.sp_UpsertClientWithContacts');
-
-    res.redirect('/admin/client/read');
-  } catch (err) {
-    console.error('Error upserting client:', err);
-    res.status(500).send('Database Error');
-  }
-});
-
 // POST /admin/client/delete/:id
 router.post('/delete/:id', async (req, res) => {
     try {
-        const pool = await getPool();
+    const pool = await getPool();
     await pool.request()
       .input('TaxID', sql.VarChar(50), req.params.id)
       .query("UPDATE Client SET IsActive = 0 WHERE TaxID = @TaxID");
@@ -164,6 +214,7 @@ router.post('/delete/:id', async (req, res) => {
         res.status(500).send('Database error');
     }
 });
+
 
 // POST /admin/client/contact/delete/:id
 router.post('/contact/delete/:id', async (req, res) => {

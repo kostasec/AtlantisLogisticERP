@@ -18,6 +18,7 @@
     <label>Phone Number: <input type="text" name="PhoneNmbr" value="<%= employee.PhoneNmbr %>" required></label><br>
     <label>ID Card Number: <input type="text" name="IDCardNmbr" value="<%= employee.IDCardNmbr %>" required></label><br>
     <label>Passport Number: <input type="text" name="PassportNmbr" value="<%= employee.PassportNmbr %>" required></label><br>
+    
     <label for="EmplID">Manager:</label>
     <select name="EmplID" id="EmplID">
       <option value="">No Manager</option>
@@ -27,6 +28,18 @@
       </option>
       <% }) %>
     </select> <br>
+
+    <label for="Composition">Composition: </label>
+    <select name="Composition" id="Composition">
+      <option value="">No Composition</option>
+      <% compositions.forEach(composition => { %>
+        <option value="<%= composition.TruckID %>,<%= composition.TrailerID %>"
+          <%= (employee.TruckID === composition.TruckID && employee.TrailerID === composition.TrailerID) ? 'selected' : '' %>>
+          <%= composition.CompositionName %>
+        </option>
+      <% }) %>
+    </select><br>
+
     <button type="submit">Save</button>
   </form>
   <form action="/admin/employee/delete/<%= employee.EmplID %>" method="POST" style="margin-top:20px;">

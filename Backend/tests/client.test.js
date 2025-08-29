@@ -11,15 +11,18 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/admin/client', clientRouter);
 
 describe('Client routes', () => {
+
   it('GET /admin/client/read should return 200', async () => {
     const res = await request(app).get('/admin/client/read');
     expect(res.statusCode).to.equal(200);
   });
 
-  it('GET /admin/client/insert should return 200', async () => {
-    const res = await request(app).get('/admin/client/insert');
+  
+  it('GET /admin/client/update should return 200', async () =>{
+    const res = await request(app).get('/admin/client/update/RS123456789')
     expect(res.statusCode).to.equal(200);
-  });
+  } )
+
 
   it('POST /admin/client/upsert should handle missing data', async () => {
     const res = await request(app)
@@ -33,8 +36,8 @@ describe('Client routes', () => {
     const res = await request(app)
       .post('/admin/client/upsert')
       .send({
-        TaxID: 'TEST1236545',
-        RegNmbr: 'REG5123',
+        TaxID: 'BACKEST1236545',
+        RegNmbr: null,
         ClientName: 'Test Client',
         StreetAndNmbr: 'Test Street 1',
         City: 'TestCity',
@@ -53,12 +56,13 @@ describe('Client routes', () => {
     expect(res.statusCode).to.equal(302); // Očekujemo redirect na /admin/client/read
   });
 
+
   it('POST /admin/client/upsert should create client without contactperson', async () => {
     const res = await request(app)
       .post('/admin/client/upsert')
       .send({
-        TaxID: 'TESTNOCP123',
-        RegNmbr: 'REGNOCP123',
+        TaxID: 'MBTESTNOCP1233',
+        RegNmbr: 'REGBNOCP1233',
         ClientName: 'No Contact Client',
         StreetAndNmbr: 'NoContact St 1',
         City: 'NoContactCity',
@@ -70,5 +74,21 @@ describe('Client routes', () => {
     expect(res.statusCode).to.equal(302); // Očekujemo redirect na /admin/client/read
   });
 
+
+  it('POST /admin/client/delete/:id should delete client', async () => {
+  const res = await request(app)
+    .post('/admin/client/delete/HU400') // konkretna vrednost umesto :id
+    .send();
+  expect(res.statusCode).to.equal(302);
+  });
+  
+
+  it('POST /admin/client/contact/delete/:id should delete contactPerson', async()=>{
+    const res = await request(app)
+    .post('/admin/client/contact/delete/17')
+    .send({taxId: 'HU10'});
+
+   expect(res.statusCode).to.equal(302);
+  });
   
 });

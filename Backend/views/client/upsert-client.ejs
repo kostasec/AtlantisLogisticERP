@@ -4,142 +4,150 @@
   <meta charset="UTF-8">
   <title><%= pageTitle %></title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: auto; }
-    label { display: block; margin-top: 15px; font-weight: bold; }
-    input, select { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
-    table { margin-top: 20px; width: 100%; border-collapse: collapse; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    .section { margin-bottom: 30px; }
-    button { margin-top: 20px; padding: 10px 20px; }
-    .remove-btn { color: red; cursor: pointer; }
+    body {
+      font-family: "Inter", "Segoe UI", Arial, sans-serif;
+      margin: 50px;
+      background: #f9f9f9;
+      color: #333;
+    }
+
+    form {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 25px;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+      background: #fff;
+    }
+
+    h2, h3 {
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: 500;
+    }
+
+    input[type="text"],
+    input[type="email"] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .contact-form {
+      border: 1px solid #e0e0e0;
+      padding: 15px;
+      margin-top: 15px;
+      border-radius: 8px;
+      background: #fafafa;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      background-color: #1976d2;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #1565c0;
+    }
+
+    .delete-contact-btn {
+      background-color: #c62828;
+      margin-left: 10px;
+    }
+    .delete-contact-btn:hover {
+      background-color: #b71c1c;
+    }
   </style>
-  <script>
-    function reindexContacts() {
-      const tbody = document.getElementById('contacts-body');
-      const rows = Array.from(tbody.querySelectorAll('tr'));
-      rows.forEach((tr, index) => {
-        // Za svako polje ispravi name sa novim indeksom
-        const nameInput = tr.querySelector('input[name^="contacts["][name$="][ContactName]"]');
-        const descInput = tr.querySelector('input[name^="contacts["][name$="][Description]"]');
-        const phoneInput = tr.querySelector('input[name^="contacts["][name$="][PhoneNmbr]"]');
-        const emailInput = tr.querySelector('input[name^="contacts["][name$="][PersonEmail]"]');
-        const idInput = tr.querySelector('input[type="hidden"][name^="contacts["][name$="][ContactPersonID]"]');
-
-        if (nameInput) nameInput.name = `contacts[${index}][ContactName]`;
-        if (descInput) descInput.name = `contacts[${index}][Description]`;
-        if (phoneInput) phoneInput.name = `contacts[${index}][PhoneNmbr]`;
-        if (emailInput) emailInput.name = `contacts[${index}][PersonEmail]`;
-        if (idInput) idInput.name = `contacts[${index}][ContactPersonID]`;
-      });
-    }
-
-    function removeContactRow(el) {
-      const tr = el.closest('tr');
-      if (tr) {
-        tr.remove();
-        reindexContacts();
-      }
-    }
-
-    function addContactRow() {
-      const tbody = document.getElementById('contacts-body');
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td><input type="text" name="contacts[0][ContactName]" required placeholder="Name"></td>
-        <td><input type="text" name="contacts[0][Description]" placeholder="Role / Title"></td>
-        <td><input type="text" name="contacts[0][PhoneNmbr]" placeholder="Phone Number"></td>
-        <td><input type="email" name="contacts[0][PersonEmail]" placeholder="Email"></td>
-        <td>
-          <span class="remove-btn" onclick="removeContactRow(this)">Remove</span>
-          <input type="hidden" name="contacts[0][ContactPersonID]" value="">
-        </td>
-      `;
-      tbody.appendChild(row);
-      reindexContacts();
-    }
-  </script>
 </head>
 <body>
-
-  <h1><%= pageTitle %></h1>
-
   <form action="/admin/client/upsert" method="POST">
-    <div class="section">
-      <label>Tax ID:</label>
-      <input type="text" name="TaxID" value="<%= client?.TaxID || '' %>" <%= client?.TaxID ? 'readonly' : 'required' %> placeholder="PIB / MB">
-      
-      <label>Client Name:</label>
-      <input type="text" name="ClientName" value="<%= client?.ClientName || '' %>" required>
+    <h2><%= pageTitle %></h2>
 
-      <label>Registration Number:</label>
-      <input type="text" name="RegNmbr" value="<%= client?.RegNmbr || '' %>">
+    <label>Tax ID:</label>
+    <input type="text" name="TaxID" value="<%= client.TaxID || '' %>" required>
 
-      <label>Street and Number:</label>
-      <input type="text" name="StreetAndNmbr" value="<%= client?.StreetAndNmbr || '' %>">
+    <label>Registration Number:</label>
+    <input type="text" name="RegNmbr" value="<%= client.RegNmbr || '' %>">
 
-      <label>ZIP Code:</label>
-      <input type="text" name="ZIP" value="<%= client?.ZIP || '' %>">
+    <label>Client Name:</label>
+    <input type="text" name="ClientName" value="<%= client.ClientName || '' %>" required>
 
-      <label>City:</label>
-      <input type="text" name="City" value="<%= client?.City || '' %>">
+    <label>Street and Number:</label>
+    <input type="text" name="StreetAndNmbr" value="<%= client.StreetAndNmbr || '' %>">
 
-      <label>Country:</label>
-      <input type="text" name="Country" value="<%= client?.Country || '' %>">
+    <label>City:</label>
+    <input type="text" name="City" value="<%= client.City || '' %>">
 
-      <label>Email:</label>
-      <input type="email" name="Email" value="<%= client?.Email || '' %>">
+    <label>ZIP:</label>
+    <input type="text" name="ZIP" value="<%= client.ZIP || '' %>">
+
+    <label>Country:</label>
+    <input type="text" name="Country" value="<%= client.Country || '' %>">
+
+    <label>Email:</label>
+    <input type="email" name="Email" value="<%= client.Email || '' %>">
+
+    <h3>Contact Persons</h3>
+    <div id="contacts-container">
+      <% if (contacts && contacts.length > 0) { %>
+        <% contacts.forEach(function(contact, index) { %>
+          <div class="contact-form">
+            <input type="hidden" name="contacts[<%= index %>][ContactPersonID]" value="<%= contact.ContactPersonID || '' %>">
+
+            <label>Name:</label>
+            <input type="text" name="contacts[<%= index %>][ContactName]" value="<%= contact.ContactName || '' %>">
+
+            <label>Description:</label>
+            <input type="text" name="contacts[<%= index %>][Description]" value="<%= contact.Description || '' %>">
+
+            <label>Phone:</label>
+            <input type="text" name="contacts[<%= index %>][PhoneNmbr]" value="<%= contact.PhoneNmbr || '' %>">
+
+            <label>Email:</label>
+            <input type="text" name="contacts[<%= index %>][PersonEmail]" value="<%= contact.PersonEmail || '' %>">
+          </div>
+        <% }); %>
+      <% } %>
     </div>
 
-    <div class="section">
-      <h2>Contact Persons</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Phone</th>
-            <th>Email</th>
-            <th>Remove</th>
-          </tr>
-        </thead>
-        <tbody id="contacts-body">
-          <% var initialContacts = (contacts && contacts.length > 0) ? contacts : [{}]; %>
-          <% for (var index = 0; index < initialContacts.length; index++) { var contact = initialContacts[index]; %>
-            <tr>
-              <td>
-                <input type="text" name="contacts[<%= index %>][ContactName]" value="<%= contact.ContactName || '' %>">
-              </td>
-              <td>
-                <input type="text" name="contacts[<%= index %>][Description]" value="<%= contact.Description || '' %>">
-              </td>
-              <td>
-                <input type="text" name="contacts[<%= index %>][PhoneNmbr]" value="<%= contact.PhoneNmbr || '' %>">
-              </td>
-              <td>
-                <input type="email" name="contacts[<%= index %>][PersonEmail]" value="<%= contact.PersonEmail || '' %>">
-              </td>
-              <td>
-                <% if (contact.ContactPersonID) { %>
-                  <form action="/admin/client/contact/delete/<%= contact.ContactPersonID %>" method="POST" style="display:inline">
-                    <input type="hidden" name="taxId" value="<%= client.TaxID %>">
-                    <button type="submit" class="remove-btn">Remove</button>
-                  </form>
-                <% } else { %>
-                  <span class="remove-btn" onclick="removeContactRow(this)">Remove</span>
-                <% } %>
-                <input type="hidden" name="contacts[<%= index %>][ContactPersonID]" value="<%= contact.ContactPersonID ?? '' %>">
-              </td>
-            </tr>
-          <% } %>
-        </tbody>
-      </table>
-      <button type="button" onclick="addContactRow()">Add Contact</button>
-    </div>
+    <button type="button" id="add-contact-btn">Add Contact</button>
 
+    <br><br>
     <button type="submit">Save Client</button>
   </form>
 
-  <p><a href="/admin/client/read">← Back to Clients</a></p>
-
+  <script>
+    document.getElementById('add-contact-btn').addEventListener('click', function () {
+      const container = document.getElementById('contacts-container');
+      const index = container.children.length;
+      const html = `
+        <div class="contact-form">
+          <input type="hidden" name="contacts[${index}][ContactPersonID]" value="">
+          <label>Name:</label>
+          <input type="text" name="contacts[${index}][ContactName]" value="">
+          <label>Description:</label>
+          <input type="text" name="contacts[${index}][Description]" value="">
+          <label>Phone:</label>
+          <input type="text" name="contacts[${index}][PhoneNmbr]" value="">
+          <label>Email:</label>
+          <input type="text" name="contacts[${index}][PersonEmail]" value="">
+          <button type="button" class="delete-contact-btn" onclick="this.parentElement.remove()">Remove</button>
+        </div>`;
+      container.insertAdjacentHTML('beforeend', html);
+    });
+  </script>
 </body>
 </html>

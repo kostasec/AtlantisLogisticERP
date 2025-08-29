@@ -9,7 +9,6 @@ router.get('/read', async (req, res) => {
         const pool = await getPool();
         const result = await pool.request().query('SELECT * FROM vw_OutInvoiceBackend');
         
-       
         res.render('outInvoice/read-invoices', {
             pageTitle: 'Outgoing Invoices',
             path: '/admin/outInvoice/read',
