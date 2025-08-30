@@ -138,7 +138,7 @@ router.post('/insert', async(req, res)=>{
         }
 
         //6. Link driver to composition
-         const driverIDValue = parseInt(DriverID);
+        const driverIDValue = parseInt(DriverID);
         if (driverIDValue) {
             await new sql.Request(transaction)
                 .input('TruckID', sql.Int, truckID)

@@ -356,7 +356,10 @@ CREATE TABLE TransportationService (
     TrailerID INT NULL,
     CONSTRAINT fk_TranService_ServiceID FOREIGN KEY(ServiceID)
     REFERENCES Service(ServiceID),
+    CONSTRAINT fk_TransServiceComposition FOREIGN KEY(TruckID, TrailerID)
+    REFERENCES Composition(TruckID, TrailerID)
     CONSTRAINT pk_TransportationService PRIMARY KEY(ServiceID)
+    
    
 );
 GO
@@ -458,6 +461,7 @@ GO
 CREATE TABLE Inspection (
     InspectionID INT IDENTITY(1,1) PRIMARY KEY,
     Name VARCHAR(100) NOT NULL,
+    InspectionType VARCHAR(10) NOT NULL
 
 );
 GO

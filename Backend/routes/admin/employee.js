@@ -38,12 +38,19 @@ router.get('/insert', async (req, res) => {
         const compositionsResult = await pool.request().query(`
             SELECT * FROM vw_CompositionDisplay
         `);
+
+        const inspections = await pool.request().query(`
+            SELECT InspectionID, Name
+            FROM Inspection
+            WHERE InspectionType='Employee'
+        `);
         
         res.render('employee/insert-employee', {
             pageTitle: 'Add Employee',
             path: '/admin/employee/insert',
             managers: managersResult.recordset,
-            compositions: compositionsResult.recordset
+            compositions: compositionsResult.recordset,
+            inspections: inspections.recordset
         });
 
     } catch (err) {
@@ -54,26 +61,25 @@ router.get('/insert', async (req, res) => {
 
 
 // POST /admin/employee/insert
-router.post('/insert', async (req, res, next) => {
+router.post('/insert', async (req, res) => {
+    const pool = await getPool();
+    const transaction = new sql.Transaction(pool);
+
     try {
-        //
-        const mgrIdValue = req.body.MgrID && typeof req.body.MgrID === 'string' && req.body.MgrID.trim() !== '' ? req.body.MgrID.trim() : null;
-        const compositionValue = req.body.Composition && typeof req.body.Composition === 'string' && req.body.Composition.trim() !== '' ? req.body.Composition.trim() : null;
+        await transaction.begin();
+
+        const mgrIdValue = req.body.MgrID && req.body.MgrID.trim() !== '' ? req.body.MgrID.trim() : null;
+        const compositionValue = req.body.Composition && req.body.Composition.trim() !== '' ? req.body.Composition.trim() : null;
 
         let truckIdValue = null;
         let trailerIdValue = null;
 
         if (compositionValue) {
-        const [truckId, trailerId] = compositionValue.split(',');
-        truckIdValue = truckId && truckId.trim() !== '' ? truckId.trim() : null;
-        trailerIdValue = trailerId && trailerId.trim() !== '' ? trailerId.trim() : null;
+            const [truckId, trailerId] = compositionValue.split(',');
+            truckIdValue = truckId && truckId.trim() !== '' ? truckId.trim() : null;
+            trailerIdValue = trailerId && trailerId.trim() !== '' ? trailerId.trim() : null;
         }
-        // zbog primarnog kljuca koji skup dva strana kljuca u bazi - za dalje bolje da izbegavam ovaj pristup i stavljam samo primarni kljuc koji nije skup vise kljuceva
         
-        const pool = await getPool();
-        const transaction = new sql.Transaction(pool);
-        await transaction.begin();
-
         const employeeResult = await new sql.Request(transaction)
             .input('EmplType', sql.VarChar, req.body.EmplType)
             .input('FirstName', sql.VarChar, req.body.FirstName)
@@ -91,21 +97,40 @@ router.post('/insert', async (req, res, next) => {
                 INSERT INTO Employee 
                 (EmplType, FirstName, LastName, StreetAndNmbr, City, ZIPCode, Country, PhoneNmbr, EmailAddress, IDCardNmbr, PassportNmbr, MgrID)
                 VALUES 
-                (@EmplType, @FirstName, @LastName, @StreetAndNmbr, @City, @ZIPCode, @Country, @PhoneNmbr, @EmailAddress, @IDCardNmbr, @PassportNmbr, @MgrID)
+                (@EmplType, @FirstName, @LastName, @StreetAndNmbr, @City, @ZIPCode, @Country, @PhoneNmbr, @EmailAddress, @IDCardNmbr, @PassportNmbr, @MgrID);
                 SELECT SCOPE_IDENTITY() AS EmplID;
             `);
 
         const insertedEmployeeID = employeeResult.recordset[0].EmplID;
+
+        // Employee Inspections
+        for (const key in req.body) {
+            if (key.startsWith('emplInspections_')) {
+                const inspectionId = key.split('_')[1];
+                const expiryDate = req.body[key];
+                if (expiryDate && expiryDate.trim() !== "") {
+                    await new sql.Request(transaction)
+                        .input('EmployeeID', sql.Int, insertedEmployeeID)
+                        .input('InspectionID', sql.Int, parseInt(inspectionId))
+                        .input('Date', sql.Date, expiryDate)
+                        .query(`
+                            INSERT INTO EmployeeInspection (EmployeeiD, InspectionID, Date)
+                            VALUES (@EmployeeID, @InspectionID, @Date)
+                        `);
+                }
+            }
+        }
         
-        if(insertedEmployeeID){
+        // DriverComposition
+        if(compositionValue && compositionValue !== ""){
             await new sql.Request(transaction)
-            .input('DriverID', sql.Int, insertedEmployeeID)
-            .input('TruckID', sql.Int, truckIdValue)
-            .input('TrailerID', sql.Int, trailerIdValue)
-            .query(`
-                INSERT INTO DriverComposition(DriverID, TruckID, TrailerID)
-                VALUES (@DriverID, @TruckID, @TrailerID)
-            `);
+                .input('DriverID', sql.Int, insertedEmployeeID)
+                .input('TruckID', sql.Int, truckIdValue)
+                .input('TrailerID', sql.Int, trailerIdValue)
+                .query(`
+                    INSERT INTO DriverComposition(DriverID, TruckID, TrailerID)
+                    VALUES (@DriverID, @TruckID, @TrailerID)
+                `);
         }
         
         await transaction.commit();
@@ -113,7 +138,9 @@ router.post('/insert', async (req, res, next) => {
         res.redirect('/admin/employee/insert');
 
     } catch (err) {
-        if (transaction) await transaction.rollback();
+        if (transaction && transaction._aborted !== true) {
+            await transaction.rollback();
+        }
         console.error('Error inserting employee into database.', err);
         res.status(500).send('Database error');
     }
@@ -125,7 +152,6 @@ router.get('/update/:id', async (req, res) => {
     try {
         const pool = await getPool();
 
-        //Fetch employee data
         const employeeResult = await pool.request()
             .input('EmplID', sql.Int, req.params.id)
             .query('SELECT * FROM Employee WHERE EmplID = @EmplID');
@@ -134,15 +160,16 @@ router.get('/update/:id', async (req, res) => {
             return res.status(404).send('Employee is not found.');
         }
         
-        //Fetch managers data
-        const managersResult = await pool.request()
-        .query(`SELECT EmplID, FirstName, LastName 
+        const managersResult = await pool.request().query(`
+            SELECT EmplID, FirstName, LastName 
             FROM Employee 
-            WHERE EmplType LIKE '%Director%' AND Status = 'Active'`)
+            WHERE EmplType LIKE '%Director%' AND Status = 'Active'
+        `);
 
         const compositionsResult = await pool.request().query(`
             SELECT * FROM vw_CompositionDisplay
         `);
+
 
         res.render('employee/update-employee', {
             employee: employeeResult.recordset[0],
@@ -150,7 +177,7 @@ router.get('/update/:id', async (req, res) => {
             compositions: compositionsResult.recordset
         });
     } catch (err){
-        console.error('Error updating employees:', err);
+        console.error('Error loading employee for update:', err);
         res.status(500).send('Database error');
     }
 });
@@ -164,10 +191,8 @@ router.post('/update/:id', async (req, res) => {
     try {
         await transaction.begin();
 
-        const mgrIdValue = req.body.MgrID && typeof req.body.MgrID === 'string' && req.body.MgrID.trim() !== '' ? req.body.MgrID.trim() : null;
-        const compositionValue = req.body.Composition && req.body.Composition.trim() !== '' 
-            ? req.body.Composition.trim() 
-            : null;
+        const mgrIdValue = req.body.MgrID && req.body.MgrID.trim() !== '' ? req.body.MgrID.trim() : null;
+        const compositionValue = req.body.Composition && req.body.Composition.trim() !== '' ? req.body.Composition.trim() : null;
 
         let truckIdValue = null;
         let trailerIdValue = null;
@@ -210,23 +235,31 @@ router.post('/update/:id', async (req, res) => {
                 WHERE EmplID = @EmplID
             `);
 
+
         // 2. Update DriverComposition
+        if(compositionValue && compositionValue !== ""){
         await new sql.Request(transaction)
             .input('EmplID', sql.Int, req.params.id)
             .input('TruckID', sql.Int, truckIdValue)
             .input('TrailerID', sql.Int, trailerIdValue)
             .query(`
-                UPDATE DriverComposition SET
-                    TruckID = @TruckID,
-                    TrailerID = @TrailerID
+                UPDATE DriverComposition
+                SET TruckID = @TruckID,
+                 TrailerID = @TrailerID
                 WHERE DriverID = @EmplID
             `);
-
+            }
+            else{
+                await new sql.Request(transaction)
+                .input('EmplID', sql.Int, req.params.id)
+                .query('DELETE FROM DriverComposition WHERE DriverID=@EmplID');
+            }
         await transaction.commit();
         console.log('Employee updated successfully.');
         res.redirect('/admin/employee/read');
+
     } catch (err) {
-        if (transaction._aborted !== true) {
+        if (transaction && transaction._aborted !== true) {
             await transaction.rollback();
         }
         console.error('Error database updating:', err);
@@ -245,23 +278,18 @@ router.post('/delete/:id', async (req, res) => {
         await new sql.Request(transaction)
             .input('EmplID', sql.Int, req.params.id)
             .query(`UPDATE Employee SET Status = 'Inactive' WHERE EmplID = @EmplID`);
-        
-            await new sql.Request(transaction)
-            .input('EmplID', sql.Int, req.params.id)
-            .query(`DELETE FROM DriverComposition WHERE DriverID = @EmplID`);
 
-            await transaction.commit();
-            console.log('Employee deleted successfully.');
-            res.redirect('/admin/employee/read');
+        await transaction.commit();
+        console.log('Employee deleted successfully.');
+        res.redirect('/admin/employee/read');
     } catch (err) {
-        if (transaction._aborted !== true) {
+        if (transaction && transaction._aborted !== true) {
             await transaction.rollback();
         }
-        console.error('Error database updating:', err);
+        console.error('Error deleting employee:', err);
         res.status(500).send('Database error');
     }
 });
-
 
 
 module.exports = router;

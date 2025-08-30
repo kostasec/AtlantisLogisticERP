@@ -11,6 +11,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/admin/outInvoice', outInvoiceRouter);
 
 describe('OutInvoice routes', ()=>{
+    
     it('GET /admin/outInvoice/read should return 200', async() => {
         const res = await request(app).get('/admin/outInvoice/read');
         expect(res.statusCode).to.equal(200);
@@ -30,7 +31,7 @@ describe('OutInvoice routes', ()=>{
 
     it('POST /admin/outInvoice/insert should insert outgoing invoice with 2 service items', async function () {
         const invoicePayload = {
-            OutInvoiceNmbr: 'MOCHATEST-33',
+            OutInvoiceNmbr: 'TEST-300',
             Currency: 'RSD',
             ReferenceNmbr: 'REF-01',
             OrderNmbr: 'ORD-001',
@@ -48,8 +49,8 @@ describe('OutInvoice routes', ()=>{
                     ServiceType: 'Transportation',
                     Route: 'Olesnica - Subtoica',
                     Price: 100000,
-                    TruckID: 1,
-                    TrailerID: 2,
+                    TruckID: 7018,
+                    TrailerID: 5009,
                     RegTag: null,
                     Name: null,
                     Discount: null,
@@ -79,15 +80,15 @@ describe('OutInvoice routes', ()=>{
 
    it('POST /admin/outInvoice/insert should insert outgoing invoice with 1 service item', async function () {
         const invoicePayload = {
-            OutInvoiceNmbr: 'MOCHATEST-34',
-            Currency: 'RSD',
-            ReferenceNmbr: 'REF-01',
-            OrderNmbr: 'ORD-001',
+            OutInvoiceNmbr: 'TEST-600',
+            Currency: 'EUR',
+            ReferenceNmbr: 'TEST-600',
+            OrderNmbr: null,
             TransDate: '2025-08-15',
             IssueDate: '2025-08-15',
             DueDate: '2025-10-15',
             Attachment: '',
-            Note: 'Test Invoice',
+            Note: null,
             DocumentStatus: 1,
             ProcessingStatus: 1,
             PaymentStatus: 1,
@@ -97,13 +98,13 @@ describe('OutInvoice routes', ()=>{
                     ServiceType: 'Transportation',
                     Route: 'Olesnica - Subtoica',
                     Price: 100000,
-                    TruckID: 1,
-                    TrailerID: 2,
+                    TruckID: 7024,
+                    TrailerID: 5015,
                     RegTag: null,
                     Name: null,
                     Discount: null,
-                    VATCode: 'S20',
-                    VATExamptionCode: 'None'
+                    VATCode: 'Z',
+                    VATExamptionCode: 'PDV-RS-24-1-1'
                 }
             ]
         };
@@ -116,7 +117,7 @@ describe('OutInvoice routes', ()=>{
 
   it('POST /admin/outInvoice/insert should insert outgoing invoice with an outsorcing service item', async function () {
         const invoicePayload = {
-            OutInvoiceNmbr: 'MOCHATEST-35',
+            OutInvoiceNmbr: 'TEST-500',
             Currency: 'RSD',
             ReferenceNmbr: 'REF-01',
             OrderNmbr: 'ORD-001',
@@ -150,5 +151,6 @@ describe('OutInvoice routes', ()=>{
       .send(invoicePayload);
       expect(res.statusCode).to.equal(302); // očekujemo redirect ako insert prođe
   });
+  
   
 });

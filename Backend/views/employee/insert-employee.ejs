@@ -35,10 +35,19 @@
       <%= composition.CompositionName %>
     </option>
   <% }) } %>
-</select><br>
+</select>
+
+    <div class="subsection">
+    <p>Employee Inspections</p>
+    <% inspections.forEach(insp => { %>
+                <label for="empl-inspection-<%= insp.InspectionID %>"><%= insp.Name %> do</label>
+                <input type="date" name="emplInspections_<%= insp.InspectionID %>" id="empl-inspection-<%= insp.InspectionID %>">
+            <% }) %>
+    </div>
+<br>
 
     <button type="submit">Add Employee</button>
-  </form>
+  </form><br />
   <a href="/admin/employee/read">Back to all employees</a>
 </body>
 </html>
