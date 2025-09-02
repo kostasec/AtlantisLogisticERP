@@ -2,6 +2,8 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 
+const errorController = require('./controllers/error');
+
 const app = express();
 
 //View engine setup
@@ -21,7 +23,6 @@ const outInvoiceRoutes = require('./routes/admin/outInvoice');
 const vehicleTruckCompositionRoutes = require('./routes/admin/vehicle/truckComposition');
 const vehicleTrailerCompositionRoutes = require('./routes/admin/vehicle/trailerComposition');
 const vehicleCarRoutes = require('./routes/admin/vehicle/car');
-
 const indexRoutes = require('./routes/index');
 
 app.use('/admin/employee', employeeRoutes);
@@ -30,13 +31,10 @@ app.use('/admin/outInvoice', outInvoiceRoutes);
 app.use('/admin/vehicle/truckComposition', vehicleTruckCompositionRoutes);
 app.use('/admin/vehicle/trailerComposition', vehicleTrailerCompositionRoutes);
 app.use('/admin/vehicle/car', vehicleCarRoutes);
+
 app.use(indexRoutes);
+app.use(errorController.get404);
 
-
-// 404 fallback
-app.use((req, res, next) => {
-  res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
-});
 
 const server = app.listen(3000, () => {
   console.log('Server started on port 3000');

@@ -1,236 +1,31 @@
+const path = require('path');
 const express = require('express');
 const router = express.Router();
 const { sql, getPool } = require('../../util/db');
+const clientController = require('../../controllers/admin/client');
 
 
 // GET /admin/client/read
-router.get('/read', async (req, res) => {
-  try {
-    const pool = await getPool();
-    const result = await pool.request().query('SELECT * FROM vw_ClientWithContacts');
-    const rows = result.recordset;
-
-    const clientMap = {};
-    rows.forEach(row => {
-      if (!clientMap[row.TaxID]) {
-        clientMap[row.TaxID] = {
-          TaxID: row.TaxID,
-          ClientName: row.ClientName,
-          RegNmbr: row.RegNmbr,
-          StreetAndNmbr: row.StreetAndNmbr,
-          City: row.City,
-          ZIP: row.ZIP,
-          Country: row.Country,
-          Email: row.Email,
-          Contacts: []
-        };
-      }
-
-      if (row.ContactPersonID) {
-          clientMap[row.TaxID].Contacts.push({
-          ContactPersonID: row.ContactPersonID,
-          ContactName: row.ContactName,
-          Description: row.Description,
-          PhoneNmbr: row.PhoneNmbr,
-          PersonEmail: row.PersonEmail
-        });
-      }
-    });
-
-    const clients = Object.values(clientMap);
-
-    res.render('client/read-client', {
-      pageTitle: 'All Clients',
-      path: '/admin/client/read',
-      clients
-    });
-
-  } catch (err) {
-    console.error('Error fetching clients:', err);
-    res.status(500).send('Database Error');
-  }
-});
+router.get('/read', clientController.getReadClient);
 
 // POST /admin/client/upsert
-router.post('/upsert', async (req, res) => {
-
-  let {
-    TaxID,
-    RegNmbr,
-    ClientName,
-    StreetAndNmbr,
-    City,
-    ZIP,
-    Country,
-    Email,
-    contacts = []
-  } = req.body;
-
-  const pool = await getPool();
-  const transaction = new sql.Transaction(pool);
-
-  try {
-    await transaction.begin();
-
-    // 1.) UPSERT Client
-    const clientExists = await new sql.Request(transaction)
-      .input('TaxID', sql.VarChar(50), TaxID)
-      .query('SELECT COUNT(1) AS Cnt FROM dbo.Client WHERE TaxID = @TaxID');
-
-    if(clientExists.recordset[0].Cnt>0){
-        await new sql.Request(transaction)
-      .input('TaxID', sql.VarChar(50), TaxID)
-      .input('RegNmbr', sql.VarChar(30), RegNmbr)
-      .input('ClientName', sql.VarChar(100), ClientName)
-      .input('StreetAndNmbr', sql.VarChar(100), StreetAndNmbr)
-      .input('City', sql.VarChar(50), City)
-      .input('ZIP', sql.VarChar(10), ZIP)
-      .input('Country', sql.VarChar(50), Country)
-      .input('Email', sql.VarChar(100), Email)
-      .query(`
-          UPDATE dbo.Client
-          SET RegNmbr = @RegNmbr,
-              ClientName = @ClientName,
-              StreetAndNmbr = @StreetAndNmbr,
-              City = @City,
-              ZIP = @ZIP,
-              Country = @Country,
-              Email = @Email,
-              IsActive = 1
-          WHERE TaxID = @TaxID
-        `);
-    } else {
-      await new sql.Request(transaction)
-        .input('TaxID', sql.VarChar(50), TaxID)
-        .input('RegNmbr', sql.VarChar(30), RegNmbr)
-        .input('ClientName', sql.VarChar(100), ClientName)
-        .input('StreetAndNmbr', sql.VarChar(100), StreetAndNmbr)
-        .input('City', sql.VarChar(50), City)
-        .input('ZIP', sql.VarChar(10), ZIP)
-        .input('Country', sql.VarChar(50), Country)
-        .input('Email', sql.VarChar(100), Email)
-        .query(`
-          INSERT INTO dbo.Client (TaxID, RegNmbr, ClientName, StreetAndNmbr, City, ZIP, Country, Email, IsActive)
-          VALUES (@TaxID, @RegNmbr, @ClientName, @StreetAndNmbr, @City, @ZIP, @Country, @Email, 1)
-        `);
-    }
-
-    // 2) Contacts
-    for(const c of contacts){
-      if(c.ContactPersonID){
-        //UPDATE postojeceg
-        await new sql.Request(transaction)
-          .input('ContactPersonID', sql.Int, parseInt(c.ContactPersonID))
-          .input('ContactName', sql.VarChar(100), c.ContactName)
-          .input('Description', sql.VarChar(200), c.Description || null)
-          .input('PhoneNmbr', sql.VarChar(50), c.PhoneNmbr || null)
-          .input('PersonEmail', sql.VarChar(100), c.PersonEmail || null)
-          .input('TaxID', sql.VarChar(50), TaxID)
-          .query(`
-            UPDATE dbo.ContactPerson
-            SET ContactName = @ContactName,
-                [Description] = @Description,
-                PhoneNmbr = @PhoneNmbr,
-                PersonEmail = @PersonEmail
-            WHERE ContactPersonID = @ContactPersonID AND TaxID = @TaxID
-          `);
-      } else {
-        //INSERT novog
-         await new sql.Request(transaction)
-          .input('TaxID', sql.VarChar(50), TaxID)
-          .input('ContactName', sql.VarChar(100), c.ContactName)
-          .input('Description', sql.VarChar(200), c.Description || null)
-          .input('PhoneNmbr', sql.VarChar(50), c.PhoneNmbr || null)
-          .input('PersonEmail', sql.VarChar(100), c.PersonEmail || null)
-          .query(`
-            INSERT INTO dbo.ContactPerson (TaxID, ContactName, [Description], PhoneNmbr, PersonEmail)
-            VALUES (@TaxID, @ContactName, @Description, @PhoneNmbr, @PersonEmail)
-          `);
-      }
-
-    }
-  
-    await transaction.commit();
-    res.redirect('/admin/client/read');
-  } catch (err) {
-    await transaction.rollback();
-    console.error('Error upserting client:', err);
-    res.status(500).send('Database Error');
-  }
-});
+router.post('/upsert', clientController.postUpsertClient);
 
 
 // GET /admin/client/insert
-router.get('/insert', (req, res) => {
-  res.render('client/upsert-client', {
-    pageTitle: 'Create New Client',
-    client: {},
-    contacts: []
-  });
-});
+router.get('/insert', clientController.getInsertClient);
 
 
 // GET /admin/client/update/:taxId
-router.get('/update/:taxId', async (req, res) => {
-  const taxId = req.params.taxId.trim();
-
-  try {
-    const pool = await getPool();
-
-    const clientRes = await pool.request()
-      .input('taxId', sql.VarChar(50), taxId)
-      .query(`SELECT * FROM dbo.Client WHERE TaxID = @taxId`);
-
-    const contactsRes = await pool.request()
-      .input('taxId', sql.VarChar(50), taxId)
-      .query(`SELECT * FROM dbo.ContactPerson WHERE TaxID = @taxId`);
-
-    if (clientRes.recordset.length === 0) {
-      return res.status(404).send('Client not found');
-    }
-
-    res.render('client/upsert-client', {
-      pageTitle: 'Edit Client',
-      client: clientRes.recordset[0],
-      contacts: contactsRes.recordset
-    });
-  } catch (err) {
-    console.error('Error loading client for edit:', err);
-    res.status(500).send('Error');
-  }
-});
+router.get('/update/:taxId', clientController.getUpdateClient);
 
 
 // POST /admin/client/delete/:id
-router.post('/delete/:id', async (req, res) => {
-    try {
-    const pool = await getPool();
-    await pool.request()
-      .input('TaxID', sql.VarChar(50), req.params.id)
-      .query("UPDATE Client SET IsActive = 0 WHERE TaxID = @TaxID");
-        res.redirect('/admin/client/read');
-    } catch (err) {
-        console.error('Error deleting client', err);
-        res.status(500).send('Database error');
-    }
-});
+router.post('/delete/:id', clientController.postDeleteClient);
 
 
 // POST /admin/client/contact/delete/:id
-router.post('/contact/delete/:id', async (req, res) => {
-  const contactId = req.params.id;
-  const taxId = req.body.taxId;
-  try {
-    const pool = await getPool();
-    await pool.request()
-      .input('ContactPersonID', sql.Int, contactId)
-      .query('DELETE FROM dbo.ContactPerson WHERE ContactPersonID = @ContactPersonID');
-    res.redirect(`/admin/client/update/${taxId}`);
-  } catch (err) {
-    console.error('Error deleting contact person:', err);
-    res.status(500).send('Database error');
-  }
-});
+router.post('/contact/delete/:id', clientController.postDeleteClientContact);
 
 
 module.exports = router;
