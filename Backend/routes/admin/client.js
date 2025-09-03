@@ -1,7 +1,7 @@
 const path = require('path');
 const express = require('express');
 const router = express.Router();
-const { sql, getPool } = require('../../util/db');
+
 const clientController = require('../../controllers/admin/client');
 
 

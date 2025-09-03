@@ -61,7 +61,7 @@ exports.postUpsertClient = async (req, res, next) => {
     contacts = []
   } = req.body;
 
-  // Ako je prazan string, pretvori u NULL
+  
   const regNmbrValue = RegNmbr && RegNmbr.trim() !== '' ? RegNmbr.trim() : null;
 
   const pool = await getPool();
@@ -79,7 +79,7 @@ exports.postUpsertClient = async (req, res, next) => {
       // UPDATE
       await new sql.Request(transaction)
         .input('TaxID', sql.VarChar(50), TaxID)
-        .input('RegNmbr', sql.VarChar(30), regNmbrValue || null)
+        .input('RegNmbr', sql.VarChar(30), regNmbrValue)
         .input('ClientName', sql.VarChar(100), ClientName)
         .input('StreetAndNmbr', sql.VarChar(100), StreetAndNmbr)
         .input('City', sql.VarChar(50), City)
