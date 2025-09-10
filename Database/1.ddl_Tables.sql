@@ -270,7 +270,7 @@ GO
 -- Table: Car
 -- ==========
 CREATE TABLE Car(
-    CarrID INT IDENTITY(1,1) PRIMARY KEY,
+    CarID INT IDENTITY(1,1) PRIMARY KEY,
     Make VARCHAR(50) NOT NULL,
     Model VARCHAR(50) NOT NULL,
     RegistrationTag VARCHAR(20) NOT NULL,
@@ -311,7 +311,7 @@ CREATE TABLE EmployeeCar (
     EmplID INT NOT NULL,
     CarID INT NOT NULL,
     FOREIGN KEY (EmplID) REFERENCES Employee(EmplID),
-    FOREIGN KEY (CarID) REFERENCES Car(CarrID),
+    FOREIGN KEY (CarID) REFERENCES Car(CarID),
     CONSTRAINT pk_EmployeeCar PRIMARY KEY (EmplID, CarID)
 );
 GO
@@ -519,7 +519,7 @@ CREATE TABLE CarInspection (
     InspectionID INT NOT NULL,
     Date DATE NOT NULL,
     CONSTRAINT fk_CarInspection_CarID FOREIGN KEY (CarID) 
-    REFERENCES Car(CarrID),
+    REFERENCES Car(CarID),
     CONSTRAINT fk_CarInspection_InspectionID FOREIGN KEY (InspectionID) 
     REFERENCES Inspection(InspectionID),
     PRIMARY KEY (CarID, InspectionID)

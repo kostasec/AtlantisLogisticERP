@@ -1,4 +1,4 @@
-const { sql, getPool } = require('../../../util/db');
+const { sql, getPool } = require('../../util/db');
 
 exports.getInsertTruck = async (req, res, next) =>{
 

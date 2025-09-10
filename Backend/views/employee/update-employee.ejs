@@ -6,45 +6,79 @@
 </head>
 <body>
   <h1>Change Employee</h1>
-  <form action="/admin/employee/update/<%= employee.EmplID %>" method="POST">
-    <label>Employee Type: <input type="text" name="EmplType" value="<%= employee.EmplType %>" required></label><br>
-    <label>First Name: <input type="text" name="FirstName" value="<%= employee.FirstName %>" required></label><br>
-    <label>Last Name: <input type="text" name="LastName" value="<%= employee.LastName %>" required></label><br>
-    <label>Street and Number: <input type="text" name="StreetAndNmbr" value="<%= employee.StreetAndNmbr %>" required></label><br>
-    <label>City: <input type="text" name="City" value="<%= employee.City %>" required></label><br>
-    <label>ZIP Code: <input type="text" name="ZIPCode" value="<%= employee.ZIPCode %>" required></label><br>
-    <label>Country: <input type="text" name="Country" value="<%= employee.Country %>" required></label><br>
-    <label>Email: <input type="email" name="EmailAddress" value="<%= employee.EmailAddress %>"></label><br>
-    <label>Phone Number: <input type="text" name="PhoneNmbr" value="<%= employee.PhoneNmbr %>" required></label><br>
-    <label>ID Card Number: <input type="text" name="IDCardNmbr" value="<%= employee.IDCardNmbr %>" required></label><br>
-    <label>Passport Number: <input type="text" name="PassportNmbr" value="<%= employee.PassportNmbr %>" required></label><br>
+
+  <form action="/employee/update/<%= employee.EmplID %>" method="POST">
     
-    <label for="EmplID">Manager:</label>
-    <select name="EmplID" id="EmplID">
-      <option value="">No Manager</option>
-      <% managers.forEach(manager => { %>
-      <option value="<%= manager.EmplID %>" <%= (employee.EmplID == manager.EmplID) ? 'selected' : '' %>>
-        <%= manager.FirstName%> <%= manager.LastName %>
-      </option>
-      <% }) %>
-    </select> <br>
+    <fieldset>
+      <legend>Employee Details</legend>
 
-    <label for="Composition">Composition: </label>
-    <select name="Composition" id="Composition">
-      <option value="">No Composition</option>
-      <% compositions.forEach(composition => { %>
-        <option value="<%= composition.TruckID %>,<%= composition.TrailerID %>"
-          <%= (employee.TruckID === composition.TruckID && employee.TrailerID === composition.TrailerID) ? 'selected' : '' %>>
-          <%= composition.CompositionName %>
-        </option>
-      <% }) %>
-    </select><br>
+      <input type="text" name="EmplType" value="<%= employee.EmplType %>" placeholder="Employee Type" required /> <br />
+      <input type="text" name="FirstName" value="<%= employee.FirstName %>" placeholder="First Name" required /> <br />
+      <input type="text" name="LastName" value="<%= employee.LastName %>" placeholder="Last Name" required /> <br />
+      <input type="text" name="StreetAndNmbr" value="<%= employee.StreetAndNmbr %>" placeholder="Street and Number" required /> <br />
+      <input type="text" name="City" value="<%= employee.City %>" placeholder="City" required /> <br />
+      <input type="text" name="ZIPCode" value="<%= employee.ZIPCode %>" placeholder="ZIP Code" /> <br />
+      <input type="text" name="Country" value="<%= employee.Country %>" placeholder="Country" required /> <br />
+      <input type="text" name="PhoneNmbr" value="<%= employee.PhoneNmbr %>" placeholder="Phone Number" required /> <br />
+      <input type="email" name="EmailAddress" value="<%= employee.EmailAddress %>" placeholder="Email Address" required /> <br />
+      <input type="text" name="IDCardNmbr" value="<%= employee.IDCardNmbr %>" placeholder="ID Card Number" required /> <br />
+      <input type="text" name="PassportNmbr" value="<%= employee.PassportNmbr %>" placeholder="Passport Number" required /> <br />
+    </fieldset>
 
-    <button type="submit">Save</button>
+    <fieldset>
+      <legend>Organizational</legend>
+
+      <label for="MgrID">Manager:</label>
+      <select name="MgrID" id="MgrID">
+        <option value="">No Manager</option>
+        <% managers.forEach(manager => { %>
+          <option value="<%= manager.EmplID %>" <%= (employee.MgrID == manager.EmplID) ? 'selected' : '' %>>
+            <%= manager.FirstName %> <%= manager.LastName %>
+          </option>
+        <% }) %>
+      </select><br />
+
+      <label for="Vehicle">Vehicle:</label>
+      <select name="Vehicle" id="Vehicle">
+        <option value="">No Vehicle</option>
+
+        <% if (typeof compositions !== 'undefined' && compositions.length > 0) { %>
+          <optgroup label="Compositions">
+            <% compositions.forEach(comp => { 
+              const isSelected = driverComposition 
+                && driverComposition.TruckID === comp.TruckID 
+                && driverComposition.TrailerID === comp.TrailerID;
+            %>
+              <option value="composition:<%= comp.TruckID %>,<%= comp.TrailerID %>" <%= isSelected ? 'selected' : '' %>>
+                <%= comp.CompositionName %>
+              </option>
+            <% }) %>
+          </optgroup>
+        <% } %>
+
+        <% if (typeof cars !== 'undefined' && cars.length > 0) { %>
+          <optgroup label="Cars">
+            <% cars.forEach(car => {
+              const isSelectedCar = employeeCar && employeeCar.CarID === car.CarID;
+            %>
+              <option value="car:<%= car.CarID %>" <%= isSelectedCar ? 'selected' : '' %>>
+                <%= car.RegistrationTag %>
+              </option>
+            <% }) %>
+          </optgroup>
+        <% } %>
+      </select><br />
+    </fieldset>
+
+
+    <br>
+    <button type="submit">Save Changes</button>
   </form>
-  <form action="/admin/employee/delete/<%= employee.EmplID %>" method="POST" style="margin-top:20px;">
+
+  <form action="/employee/delete/<%= employee.EmplID %>" method="POST" style="margin-top:20px;">
     <button type="submit" style="color:red;">Delete</button>
   </form>
-  <a href="/admin/employee/read">Back to all employees</a>
+
+  <a href="/employee/read">Back to all employees</a>
 </body>
 </html>

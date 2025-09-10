@@ -1,14 +1,14 @@
-const { sql, getPool } = require('../../util/db');
+const { sql, getPool } = require('../util/db');
+const OutInvoice = require('../models/OutInvoice');
 
 exports.getReadInvoice = async (req, res, next) => {
     try {
-        const pool = await getPool();
-        const result = await pool.request().query('SELECT * FROM vw_OutInvoiceBackend');
-        
+        const result = await OutInvoice.fetchAll();
+
         res.render('outInvoice/read-invoices', {
             pageTitle: 'Outgoing Invoices',
-            path: '/admin/outInvoice/read',
-            invoices:result.recordset
+            path: '/outInvoice/read',
+            invoices: result.recordset
         });
     } catch (err) {
         console.error('Error fetching invoices:', err);
@@ -16,8 +16,8 @@ exports.getReadInvoice = async (req, res, next) => {
     }
 };
 
-
-exports.getInsertInvocie = async (req, res, next) => {
+// Render the insert invoice form with lookup data
+exports.getInsertInvoice = async (req, res, next) => {
     try {
         const pool = await getPool();
 
@@ -39,7 +39,7 @@ exports.getInsertInvocie = async (req, res, next) => {
 
         res.render('outInvoice/insert-outInvoice', {
             pageTitle: 'New Invoice',
-            path: '/admin/outInvoice/insert',
+            path: '/outInvoice/insert',
             clients: clientResult.recordset,
             compositions: compositionResult.recordset,
             vatReasons: vatResult.recordset,
@@ -53,8 +53,8 @@ exports.getInsertInvocie = async (req, res, next) => {
     }
 };
 
-
-exports.poistInsertInvoice = async (req, res, next) => {
+// Handle creating a new invoice with items
+exports.postInsertInvoice = async (req, res, next) => {
   let {
     OutInvoiceNmbr,
     Currency,

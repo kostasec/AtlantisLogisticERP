@@ -1,8 +1,7 @@
-const path = require('path');
 const express = require('express');
 const router = express.Router();
 
-const truckCompositionController = require('../../../controllers/admin/vehicle/truckComposition');
+const truckCompositionController = require('../../controllers/vehicle/truckComposition');
 
 
 // GET: Insert Truck

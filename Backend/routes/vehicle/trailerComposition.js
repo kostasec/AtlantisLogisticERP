@@ -1,8 +1,7 @@
-const path = require('path');
 const express = require('express');
 const router = express.Router();
 
-const trailerCompositionController = require('../../../controllers/admin/vehicle/trailerComposition');
+const trailerCompositionController = require('../../controllers/vehicle/trailerComposition');
 
 //GET: Insert Trailer
 router.get('/insert', trailerCompositionController.getInsertTrailer);

@@ -1,19 +1,19 @@
--- ============================
--- DROP view ClientWithContacts
--- ============================
+-- ===============================
+-- DROP view vw_ClientWithContacts
+-- ===============================
 IF OBJECT_ID('vw_ClientWithContacts', 'V') IS NOT NULL
     DROP VIEW vw_ClientWithContacts;
 GO
 
 -- ==================================
--- DROP view CompositionDisplay
+-- DROP view vw_CompositionDisplay
 -- ==================================
 IF OBJECT_ID('vw_CompositionDisplay', 'V') IS NOT NULL
     DROP VIEW vw_CompositionDisplay;
 GO
 
 -- ==================================
--- DROP view DriverCompositionDisplay
+-- DROP vw_DriverCompositionDisplay
 -- ==================================
 IF OBJECT_ID('vw_DriverCompositionDisplay', 'V') IS NOT NULL
     DROP VIEW vw_DriverCompositionDisplay;
@@ -26,13 +26,19 @@ IF OBJECT_ID('vw_ReadOutgoingInvoice', 'V') IS NOT NULL
     DROP VIEW vw_ReadOutgoingInvoice;
 GO
 
--- ===============================
--- DROP view OuInvoiceBackend
--- ===============================
+-- =============================
+-- DROP view vw_OuInvoiceBackend
+-- ============================
 IF OBJECT_ID('vw_OutgoingInvoiceAmount', 'V') IS NOT NULL
     DROP VIEW vw_OutgoingInvoiceAmount;
 GO
 
+-- ===============================
+-- DROP view vw_EmployeeBack
+-- ===============================
+IF OBJECT_ID('vw_EmployeeBackt', 'V') IS NOT NULL
+    DROP VIEW vw_EmployeeBack;
+GO
 
 -- ==================================
 -- CREATE VIEW vw_ClientWithContacts
@@ -186,4 +192,28 @@ SELECT
 
 FROM OutInvoice
 GROUP BY DocumentStatus, ProcessingStatus, Recipient, Invoicenumber, PaymentStatus, Currency
+GO
+
+-- ===========================
+-- CREATE VIEW vw_EmployeeBack
+-- ===========================
+ CREATE VIEW [dbo].[vw_EmployeeBack] AS
+ SELECT e.EmplType, E.EmplID, e.FirstName, e.LastName, e.StreetAndNmbr, e.City, e.Country, e.PhoneNmbr, 
+		e.EmailAddress, e.IDCardNmbr, e.PassportNmbr,m.FirstName+' '+m.LastName AS 'Manager', 
+		c.CompositionName AS 'Vehicle',
+		e.Status
+            FROM Employee e 
+            LEFT JOIN vw_DriverCompositionDisplay c on (e.EmplID=c.DriverID)
+            LEFT JOIN Employee m on (m.EmplID=e.MgrID)
+            WHERE e.EmplType='Driver'			
+UNION
+SELECT e.EmplType, E.EmplID, e.FirstName, e.LastName, e.StreetAndNmbr, e.City, e.Country, e.PhoneNmbr, e.EmailAddress, 
+		e.IDCardNmbr, e.PassportNmbr,m.FirstName+' '+m.LastName AS 'Manager', 
+		c.RegistrationTag AS 'Vehicle',
+		e.Status
+            FROM Employee e
+            LEFT JOIN EmployeeCar ec ON (e.EmplID=ec.EmplID)
+            LEFT JOIN Car c ON (c.CarID=ec.CarID)
+            LEFT JOIN Employee m ON (m.EmplID=e.MgrID)
+            WHERE e.EmplType NOT IN ('Driver')
 GO

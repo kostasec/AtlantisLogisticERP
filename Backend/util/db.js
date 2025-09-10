@@ -10,13 +10,23 @@ const config = {
     }
 };
 
-// Funkcija za dobijanje konekcije sa bazom
-async function getPool() {
-    return await sql.connect(config);
+let poolPromise;
+try {
+  poolPromise = new sql.ConnectionPool(config)
+    .connect()
+    .then(pool => {
+      console.log('Connected to SQL Server');
+      return pool;
+    })
+    .catch(err => {
+      console.error('Database Connection Failed!', err);
+      throw err;
+    });
+} catch (err) {
+  console.error('SQL Server connection error:', err);
 }
 
 module.exports = {
-    sql,
-    getPool,
-    config
+  sql,
+  getPool: () => poolPromise
 };

@@ -1,26 +1,25 @@
-const path = require('path');
 const express = require('express');
 const router = express.Router();
 
-const clientController = require('../../controllers/admin/client');
+const clientController = require('../controllers/client');
 
 
-// GET /admin/client/read
+// GET /client/read
 router.get('/read', clientController.getReadClient);
 
-// POST /admin/client/upsert
+// POST /client/upsert
 router.post('/upsert', clientController.postUpsertClient);
 
-// GET /admin/client/insert
+// GET /client/insert
 router.get('/insert', clientController.getInsertClient);
 
-// GET /admin/client/update/:taxId
+// GET /client/update/:taxId
 router.get('/update/:taxId', clientController.getUpdateClient);
 
-// POST /admin/client/delete/:id
+// POST /client/delete/:id
 router.post('/delete/:id', clientController.postDeleteClient);
 
-// POST /admin/client/contact/delete/:id
+// POST /client/contact/delete/:id
 router.post('/contact/delete/:id', clientController.postDeleteClientContact);
 
 

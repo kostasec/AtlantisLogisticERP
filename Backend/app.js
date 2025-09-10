@@ -17,20 +17,20 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 //Routes
-const employeeRoutes = require('./routes/admin/employee');
-const clientRoutes = require('./routes/admin/client');
-const outInvoiceRoutes = require('./routes/admin/outInvoice');
-const vehicleTruckCompositionRoutes = require('./routes/admin/vehicle/truckComposition');
-const vehicleTrailerCompositionRoutes = require('./routes/admin/vehicle/trailerComposition');
-const vehicleCarRoutes = require('./routes/admin/vehicle/car');
+const employeeRoutes = require('./routes/employee');
+const clientRoutes = require('./routes/client');
+const outInvoiceRoutes = require('./routes/outInvoice');
+const vehicleTruckCompositionRoutes = require('./routes/vehicle/truckComposition');
+const vehicleTrailerCompositionRoutes = require('./routes/vehicle/trailerComposition');
+const vehicleCarRoutes = require('./routes/vehicle/car');
 const indexRoutes = require('./routes/index');
 
-app.use('/admin/employee', employeeRoutes);
-app.use('/admin/client', clientRoutes);
-app.use('/admin/outInvoice', outInvoiceRoutes);
-app.use('/admin/vehicle/truckComposition', vehicleTruckCompositionRoutes);
-app.use('/admin/vehicle/trailerComposition', vehicleTrailerCompositionRoutes);
-app.use('/admin/vehicle/car', vehicleCarRoutes);
+app.use('/employee', employeeRoutes);
+app.use('/client', clientRoutes);
+app.use('/outInvoice', outInvoiceRoutes);
+app.use('/vehicle/truckComposition', vehicleTruckCompositionRoutes);
+app.use('/vehicle/trailerComposition', vehicleTrailerCompositionRoutes);
+app.use('/vehicle/car', vehicleCarRoutes);
 
 app.use(indexRoutes);
 app.use(errorController.get404);
