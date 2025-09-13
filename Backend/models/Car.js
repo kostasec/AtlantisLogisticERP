@@ -1,6 +1,14 @@
 const { sql, getPool } = require('../util/db');
 
 class Car{
+
+    static async fetchAll(){
+        const pool = await getPool();
+        return pool.request().query(`
+            SELECT * FROM Car
+            `)
+    }    
+
     static async insert(carId, make, model, registrationTag, status, transaction){
         return new sql.Request(transaction)
         .input('CarID', sql.Int, carId)
@@ -23,13 +31,7 @@ class Car{
                 WHERE CarID=@CarID
             `);
         }
-
-    static async fetchAll(){
-        const pool = await getPool();
-        return pool.request().query(`
-            SELECT * FROM Car
-            `)
-    }    
     }
+    
 
 module.exports = Car;

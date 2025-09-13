@@ -67,6 +67,15 @@ class DriverComposition {
         WHERE DriverID = @DriverID
       `);
   }
+
+  static async deleteEmployee(id, transaction){
+      return new sql.Request(transaction)
+      .input('DriverID', sql.Int, id)
+      .query(`
+        DELETE FROM DriverComposition
+        WHERE EmplID = @DriverID
+      `);
+  }
 }
 
 module.exports = DriverComposition;

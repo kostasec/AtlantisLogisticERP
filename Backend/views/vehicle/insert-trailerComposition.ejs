@@ -203,7 +203,7 @@ function selectDriver(id) {
 
 
 <div class="form-wrapper">
-<form id="trailerForm" action="/admin/vehicle/trailerComposition/insert" method="POST">
+<form id="trailerForm" action="/vehicle/trailerComposition/insert" method="POST">
     <div id="new-trailer-section">
         <h2>Add a New Trailer</h2>
         <input type="text" name="TrailerMake" placeholder="Make" required>
@@ -245,12 +245,12 @@ function selectDriver(id) {
         <button type="button" onclick="selectExistingTruck()">Add Existing Truck</button>
         <button type="button" onclick="addNewTruck()">Add New Truck</button>
     </div>
-    <% if (existingTucks && existingTucks.length > 0) { %>
+    <% if (existingTrucks && existingTrucks.length > 0) { %>
         <div id="existing-trucks-message-box" class="message-box hidden">
             <button class="close-btn" onclick="hideExistingTruck()">X</button>
             <p><strong>Choose Existing Trucks:</strong></p>
             <div class="option-buttons">
-                <% existingTucks.forEach(truck => { %>
+                <% existingTrucks.forEach(truck => { %>
                     <button type="button" onclick="selectTruck('<%= truck.TruckID %>')">
                         <%= truck.Make %> <%= truck.Model %>, <%= truck.RegistrationTag %>
                     </button>

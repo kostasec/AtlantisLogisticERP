@@ -8,12 +8,12 @@ const Car = require('../models/Car');
 const EmployeeCar = require('../models/EmployeeCar');
 
 // READ all employees
-exports.getReadEmployee = async (req, res) => {
+exports.getReadEmployee = async (req, res, next) => {
   try {
     const employees = await Employee.fetchAll();
     res.render('employee/read-employee', {
       pageTitle: 'All Employees',
-      path: '/admin/employee/read',
+      path: '/employee/read',
       employees: employees.recordset
     });
   } catch (err) {
@@ -23,20 +23,20 @@ exports.getReadEmployee = async (req, res) => {
 };
 
 // GET insert form
-exports.getInsertEmployee = async (req, res) => {
+exports.getInsertEmployee = async (req, res, next) => {
   try {
     const managers = await Employee.fetchManagers();
     const compositions = await Composition.fetchAll();
-    const inspections = await EmployeeInspection.fetchAll();
     const cars = await Car.fetchAll();
-
+    const inspections = await EmployeeInspection.fetchAll();
+    
     res.render('employee/insert-employee', {
       pageTitle: 'Add Employee',
-      path: '/admin/employee/insert',
+      path: '/employee/insert',
       managers: managers.recordset,
       compositions: compositions.recordset,
-      inspections: inspections.recordset,
-      cars: cars.recordset
+      cars: cars.recordset,
+      inspections: inspections.recordset 
     });
   } catch (err) {
     console.error('Error fetching data for insert:', err);
@@ -45,7 +45,7 @@ exports.getInsertEmployee = async (req, res) => {
 };
 
 // POST insert employee
-exports.postInsertEmployee = async (req, res) => {
+exports.postInsertEmployee = async (req, res, next) => {
   const pool = await getPool();
   const transaction = new sql.Transaction(pool);
 
@@ -94,27 +94,26 @@ exports.postInsertEmployee = async (req, res) => {
 };
 
 // GET update form
-exports.getUpdateEmployee = async (req, res) => {
+exports.getUpdateEmployee = async (req, res, next) => {
   try {
     const employeeResult = await Employee.findById(req.params.id);
     if (employeeResult.recordset.length === 0) {
       return res.status(404).send('Employee not found.');
     }
-
     // Uzimamo i trenutnu kompoziciju zaposlenog radi pre-selekcije u EJS-u
     const driverCompositionResult = await DriverComposition.findByDriverId(req.params.id);
-    const managers = await Employee.fetchManagers();
-    const compositions = await Composition.fetchAll();
-    const cars = await Car.fetchAll();
     const employeeCarResult = await EmployeeCar.findByEmployeeId(req.params.id);
+    const compositions = await Composition.fetchAll();
+    const managers = await Employee.fetchManagers();
+    const cars = await Car.fetchAll();
 
     res.render('employee/update-employee', {
       employee: employeeResult.recordset[0],
-      managers: managers.recordset,
-      compositions: compositions.recordset,
       driverComposition: driverCompositionResult.recordset[0] || null,
-      cars: cars.recordset,
-      employeeCar: employeeCarResult.recordset[0] || null
+      employeeCar: employeeCarResult.recordset[0] || null,
+      compositions: compositions.recordset,
+      managers: managers.recordset,
+      cars: cars.recordset
     });
   } catch (err) {
     console.error('Error loading employee for update:', err);
@@ -122,13 +121,12 @@ exports.getUpdateEmployee = async (req, res) => {
   }
 };
 
-exports.postUpdateEmployee = async (req, res) => {
+exports.postUpdateEmployee = async (req, res, next) => {
   const pool = await getPool();
   const transaction = new sql.Transaction(pool);
 
   try {
     await transaction.begin();
-
     await Employee.update(req.params.id, req.body, transaction);
 
     // Vehicle
@@ -158,14 +156,15 @@ exports.postUpdateEmployee = async (req, res) => {
 };
 
 // POST delete (soft delete)
-exports.postDeleteEmployee = async (req, res) => {
+exports.postDeleteEmployee = async (req, res, next) => {
   const pool = await getPool();
   const transaction = new sql.Transaction(pool);
 
   try {
     await transaction.begin();
     await Employee.softDelete(req.params.id, transaction);
-    await EmployeeCar.delete(parseInt(req.params.id), transaction);
+    await EmployeeCar.delete(req.params.id, transaction);
+    await DriverComposition.delete(req.params.id, transaction);
     await transaction.commit();
     console.log('Employee deleted successfully.');
     res.redirect('/employee/read');

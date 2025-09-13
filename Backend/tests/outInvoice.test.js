@@ -1,37 +1,37 @@
 const request = require('supertest');
 const express = require('express');
 const { expect } = require('chai');
-const outInvoiceRouter = require('../routes/admin/outInvoice');
+const outInvoiceRouter = require('../routes/outInvoice');
 
 const app = express();
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/../views');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/admin/outInvoice', outInvoiceRouter);
+app.use('/outInvoice', outInvoiceRouter);
 
 describe('OutInvoice routes', ()=>{
     
-    it('GET /admin/outInvoice/read should return 200', async() => {
-        const res = await request(app).get('/admin/outInvoice/read');
+    it('GET /outInvoice/read should return 200', async() => {
+        const res = await request(app).get('/outInvoice/read');
         expect(res.statusCode).to.equal(200);
     });
 
-    it('GET /admin/outInvoice/insert should return 200', async () => {
-        const res = await request(app).get('/admin/outInvoice/insert');
+    it('GET /outInvoice/insert should return 200', async () => {
+        const res = await request(app).get('/outInvoice/insert');
         expect(res.statusCode).to.equal(200);
     });
 
-    it('POST /admin/outInvoice/insert should handle missing data', async () => {
+   it('POST /outInvoice/insert should handle missing data', async () => {
         const res = await request(app)
-          .post('/admin/outInvoice/insert')
+          .post('/outInvoice/insert')
           .send({}); // empty body
         expect(res.statusCode).to.equal(500); //we're expecting error due to empty body
     });
 
-    it('POST /admin/outInvoice/insert should insert outgoing invoice with 2 service items', async function () {
+    it('POST /outInvoice/insert should insert outgoing invoice with 2 service items', async function () {
         const invoicePayload = {
-            OutInvoiceNmbr: 'TEST-300',
+            OutInvoiceNmbr: 'TEST-14000',
             Currency: 'RSD',
             ReferenceNmbr: 'REF-01',
             OrderNmbr: 'ORD-001',
@@ -49,8 +49,8 @@ describe('OutInvoice routes', ()=>{
                     ServiceType: 'Transportation',
                     Route: 'Olesnica - Subtoica',
                     Price: 100000,
-                    TruckID: 7018,
-                    TrailerID: 5009,
+                    TruckID: 8010,
+                    TrailerID: 6003,
                     RegTag: null,
                     Name: null,
                     Discount: null,
@@ -72,17 +72,17 @@ describe('OutInvoice routes', ()=>{
             ]
         };
        const res = await request(app)
-      .post('/admin/outInvoice/insert')
+      .post('/outInvoice/insert')
       .set('Content-Type', 'application/json') // eksplicitno, mada i nije neophodno
       .send(invoicePayload);
       expect(res.statusCode).to.equal(302); // očekujemo redirect ako insert prođe
   });
 
-   it('POST /admin/outInvoice/insert should insert outgoing invoice with 1 service item', async function () {
+   it('POST /outInvoice/insert should insert outgoing invoice with 1 service item', async function () {
         const invoicePayload = {
-            OutInvoiceNmbr: 'TEST-600',
+            OutInvoiceNmbr: 'TESTMODEL-1700',
             Currency: 'EUR',
-            ReferenceNmbr: 'TEST-600',
+            ReferenceNmbr: 'TESTMODEL-600',
             OrderNmbr: null,
             TransDate: '2025-08-15',
             IssueDate: '2025-08-15',
@@ -109,17 +109,17 @@ describe('OutInvoice routes', ()=>{
             ]
         };
        const res = await request(app)
-      .post('/admin/outInvoice/insert')
+      .post('/outInvoice/insert')
       .set('Content-Type', 'application/json') // eksplicitno, mada i nije neophodno
       .send(invoicePayload);
       expect(res.statusCode).to.equal(302); // očekujemo redirect ako insert prođe
   });
 
-  it('POST /admin/outInvoice/insert should insert outgoing invoice with an outsorcing service item', async function () {
+  it('POST /outInvoice/insert should insert outgoing invoice with an outsorcing service item', async function () {
         const invoicePayload = {
-            OutInvoiceNmbr: 'TEST-500',
+            OutInvoiceNmbr: 'TESTMODEL-1800',
             Currency: 'RSD',
-            ReferenceNmbr: 'REF-01',
+            ReferenceNmbr: 'TESTMODEL-700',
             OrderNmbr: 'ORD-001',
             TransDate: '2025-08-15',
             IssueDate: '2025-08-15',
@@ -146,11 +146,11 @@ describe('OutInvoice routes', ()=>{
             ]
         };
       const res = await request(app)
-      .post('/admin/outInvoice/insert')
+      .post('/outInvoice/insert')
       .set('Content-Type', 'application/json') // eksplicitno, mada i nije neophodno
       .send(invoicePayload);
       expect(res.statusCode).to.equal(302); // očekujemo redirect ako insert prođe
   });
-  
+
   
 });

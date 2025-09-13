@@ -1,40 +1,40 @@
 const request = require('supertest');
 const express = require('express');
 const { expect } = require('chai');
-const clientRouter = require('../routes/admin/client');
+const clientRouter = require('../routes/client');
 
 const app = express();
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/../views');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/admin/client', clientRouter);
+app.use('/client', clientRouter);
 
 describe('Client routes', () => {
 
-  it('GET /admin/client/read should return 200', async () => {
-    const res = await request(app).get('/admin/client/read');
+  it('GET /client/read should return 200', async () => {
+    const res = await request(app).get('/client/read');
     expect(res.statusCode).to.equal(200);
   });
 
   
-  it('GET /admin/client/update should return 200', async () =>{
-    const res = await request(app).get('/admin/client/update/RS123456789')
+  it('GET /client/update should return 200', async () =>{
+    const res = await request(app).get('/client/update/RS123456789')
     expect(res.statusCode).to.equal(200);
   } )
 
 
-  it('POST /admin/client/upsert should handle missing data', async () => {
+  it('POST /client/upsert should handle missing data', async () => {
     const res = await request(app)
-      .post('/admin/client/upsert')
+      .post('/client/upsert')
       .send({}); // empty body
     expect(res.statusCode).to.equal(500); //we're expecting error due to empty body
     });
 
 
-  it('POST /admin/client/upsert should create client with valid data', async () => {
+  it('POST /client/upsert should create client with valid data', async () => {
     const res = await request(app)
-      .post('/admin/client/upsert')
+      .post('/client/upsert')
       .send({
         TaxID: 'BACKEST1236545',
         RegNmbr: null,
@@ -53,13 +53,13 @@ describe('Client routes', () => {
           }
         ]
       });
-    expect(res.statusCode).to.equal(302); // Očekujemo redirect na /admin/client/read
+    expect(res.statusCode).to.equal(302); // Očekujemo redirect na /client/read
   });
 
 
-  it('POST /admin/client/upsert should create client without contactperson', async () => {
+  it('POST /client/upsert should create client without contactperson', async () => {
     const res = await request(app)
-      .post('/admin/client/upsert')
+      .post('/client/upsert')
       .send({
         TaxID: 'MBTESTNOCP1233',
         RegNmbr: 'REGBNOCP1233',
@@ -71,21 +71,21 @@ describe('Client routes', () => {
         Email: 'nocontact@example.com',
         contacts: [] // Nema kontakata
       });
-    expect(res.statusCode).to.equal(302); // Očekujemo redirect na /admin/client/read
+    expect(res.statusCode).to.equal(302); // Očekujemo redirect na /client/read
   });
 
 
-  it('POST /admin/client/delete/:id should delete client', async () => {
+  it('POST /client/delete/:id should delete client', async () => {
   const res = await request(app)
-    .post('/admin/client/delete/HU400') // konkretna vrednost umesto :id
+    .post('/client/delete/HU400') // konkretna vrednost umesto :id
     .send();
   expect(res.statusCode).to.equal(302);
   });
   
 
-  it('POST /admin/client/contact/delete/:id should delete contactPerson', async()=>{
+  it('POST /client/contact/delete/:id should delete contactPerson', async()=>{
     const res = await request(app)
-    .post('/admin/client/contact/delete/17')
+    .post('/client/contact/delete/17')
     .send({taxId: 'HU10'});
 
    expect(res.statusCode).to.equal(302);

@@ -104,10 +104,6 @@ GO
 IF OBJECT_ID('Employee', 'U') IS NOT NULL
     DROP TABLE Employee;
 GO
-IF OBJECT_ID('Vehicle', 'U') IS NOT NULL
-    DROP TABLE Vehicle;
-GO
-
 -- =============
 -- Table: Client
 -- =============

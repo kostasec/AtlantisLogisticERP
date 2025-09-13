@@ -10,6 +10,15 @@ class Client{
             `);
     }
 
+    static async fetchClient(){
+        const pool = await getPool();
+        return pool.request().query(`
+            SELECT *
+            FROM Client
+            WHERE IsActive=1
+            `);
+    }
+
     static async findClientByTaxId(taxId){
         const pool = await getPool();
         return pool.request()

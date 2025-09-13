@@ -2,14 +2,24 @@
 const { sql, getPool } = require('../util/db');
 
 class Employee {
+  
   static async fetchAll() {
     const pool = await getPool();
- 
     return pool.request().query(`
       SELECT * FROM vw_EmployeeBack
       WHERE Status='Active'
     `);
   }
+
+  static async fetchDrivers(){
+    const pool = await getPool();
+    return pool.request().query(`
+        SELECT EmplID, FirstName, LastName
+        FROM Employee
+        WHERE EmplType='Driver'
+        `);
+  }
+  
 
   static async findById(id) {
     const pool = await getPool();
