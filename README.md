@@ -9,11 +9,15 @@
 A portfolio and business-ready project for managing a transportation company.  
 
 ## Features
-- Employee and client management  
-- Trucks, trailers, and vehicle compositions  
-- Driver assignments  
-- Outgoing invoices with items and VAT calculation  
-- Service catalog with tax compliance  
+- **Employee Management** – manage drivers, office staff, and managers with full personal records  
+- **Client & Contacts** – register business clients and their contact persons  
+- **Vehicle Management** – track trucks, trailers, and cars with registration details  
+- **Compositions** – pair trucks with trailers and assign drivers  
+- **Services & Pricing** – maintain a catalog of transport services with pricing  
+- **Invoices** – create outgoing invoices with line items and discounts  
+- **VAT Handling** – built-in VAT codes, exemption reasons, and automatic calculation  
+- **Document Notes & Attachments** – add notes and upload supporting files to invoices  
+- **Status Tracking** – follow invoice processing and payment status  
 
 ## Stack
 - **Backend**: Node.js (Express)  
