@@ -26,13 +26,6 @@ IF OBJECT_ID('vw_ReadOutgoingInvoice', 'V') IS NOT NULL
     DROP VIEW vw_ReadOutgoingInvoice;
 GO
 
--- =============================
--- DROP view vw_OuInvoiceBackend
--- ============================
-IF OBJECT_ID('vw_OutgoingInvoiceAmount', 'V') IS NOT NULL
-    DROP VIEW vw_OutgoingInvoiceAmount;
-GO
-
 -- ===============================
 -- DROP view vw_EmployeeBack
 -- ===============================
@@ -172,26 +165,6 @@ LEFT JOIN dbo.PaymentStatusList py    ON inv.PaymentStatus = py.PaymentStatusID
 
 GROUP BY inv.InvoiceID, inv.OutInvoiceNmbr,inv.Currency,I.Discount,
 I.VATCode,S.ServiceType,S.ServiceID,VATPercentage,c.ClientName, ds.DStatusName, ps.ProcessingStatusName, py.PaymentStatusName
-GO
-
--- =================================
--- CREATE VIEW vw_OutInvoiceBackend
--- =================================
-CREATE VIEW [dbo].[vw_OutInvoiceBackend] AS
-SELECT
-	DocumentStatus,
-	ProcessingStatus, 
-	InvoiceNumber,
-	Recipient,
-	CONCAT(
-    FORMAT(SUM(TotalAmount), '#,###.##', 'de-DE'),
-    ' ',
-    MAX(Currency)
-	) AS TotalInvoiceAmount,
-	PaymentStatus
-
-FROM OutInvoice
-GROUP BY DocumentStatus, ProcessingStatus, Recipient, Invoicenumber, PaymentStatus, Currency
 GO
 
 -- ===========================

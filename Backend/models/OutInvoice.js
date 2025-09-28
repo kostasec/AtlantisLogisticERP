@@ -4,7 +4,19 @@ class OutInvoice {
     static async fetchAll() {
         const pool = await getPool();
         return pool.request().query(`
-            SELECT * FROM vw_OutInvoiceBackend
+        SELECT
+	          DocumentStatus,
+	          ProcessingStatus, 
+	          InvoiceNumber,
+	          Recipient,
+	          CONCAT(
+            FORMAT(SUM(TotalAmount), '#,###.##', 'de-DE'),
+            ' ',
+            MAX(Currency)
+	          ) AS TotalInvoiceAmount,
+	          PaymentStatus
+        FROM vw_OutgoingInvoiceServicesSummary
+        GROUP BY DocumentStatus, ProcessingStatus, Recipient, Invoicenumber, PaymentStatus, Currency
         `);
     }
 

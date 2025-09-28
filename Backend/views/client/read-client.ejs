@@ -75,10 +75,10 @@
         <% } %>
 
         <div class="actions">
-          <form action="/client/update/<%= client.TaxID %>">
+          <form action="/admin/client/update/<%= client.TaxID %>">
             <button type="submit">Edit Client</button>
           </form>
-          <form action="/client/delete/<%= client.TaxID %>" method="POST" onsubmit="return confirm('Delete this client?');">
+          <form action="/admin/client/delete/<%= client.TaxID %>" method="POST" onsubmit="return confirm('Delete this client?');">
             <button type="submit">Delete Client</button>
           </form>
         </div>
