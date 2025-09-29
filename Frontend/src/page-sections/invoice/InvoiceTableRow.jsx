@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router';
 import format from 'date-fns/format';
 import isValid from 'date-fns/isValid'; // MUI
 
-import Chip from '@mui/material/Chip';
 import Checkbox from '@mui/material/Checkbox';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
@@ -14,6 +13,7 @@ import DeleteOutline from '@mui/icons-material/DeleteOutline';
 import RemoveRedEye from '@mui/icons-material/RemoveRedEye'; // CUSTOM COMPONENTS
 
 import FlexBox from '@/components/flexbox/FlexBox';
+import StatusBadge from '@/components/status-badge';
 import { TableMoreMenuItem, TableMoreMenu } from '@/components/table'; // CUSTOM DATA TYPES
 import { useTranslation } from 'react-i18next';
 
@@ -54,15 +54,28 @@ export default function InvoiceTableRow(props) {
       <TableCell align="center" padding="normal" sx={{ verticalAlign: 'middle' }}>
         <FlexBox justifyContent="center" alignItems="center">
           {(() => {
-            const status = (invoice.DocumentStatus || '').toString();
-            const ok = /^(sent|delivered)$/i.test(status);
-            return <Chip variant="outlined" size="small" label={status || '-'} sx={{
-              borderColor: ok ? 'success.main' : 'error.main',
-              color: ok ? 'success.main' : 'error.main',
-              fontWeight: 500,
-              py: 0.25,
-              lineHeight: 1
-            }} />;
+            const status = (invoice.DocumentStatus || '').toString().toLowerCase();
+            let statusType = 'error'; // default
+            
+            switch (status) {
+              case 'delivered':
+                statusType = 'success';
+                break;
+              case 'sent':
+                statusType = 'primary';
+                break;
+              case 'pending':
+                statusType = 'warning';
+                break;
+              case 'failed':
+              case 'rejected':
+                statusType = 'error';
+                break;
+              default:
+                statusType = 'error';
+            }
+            
+            return <StatusBadge type={statusType}>{invoice.DocumentStatus || '-'}</StatusBadge>;
           })()}
         </FlexBox>
       </TableCell>
@@ -70,15 +83,34 @@ export default function InvoiceTableRow(props) {
       <TableCell align="center" padding="normal" sx={{ verticalAlign: 'middle' }}>
         <FlexBox justifyContent="center" alignItems="center">
           {(() => {
-            const pStatus = (invoice.ProcessingStatus || '').toString();
-            const okP = /^(sent|accepted)$/i.test(pStatus);
-            return <Chip variant="outlined" size="small" label={pStatus || '-'} sx={{
-              borderColor: okP ? 'success.main' : 'error.main',
-              color: okP ? 'success.main' : 'error.main',
-              fontWeight: 500,
-              py: 0.25,
-              lineHeight: 1
-            }} />;
+            const pStatus = (invoice.ProcessingStatus || '').toString().toLowerCase();
+            let statusType = 'error'; // default
+            
+            switch (pStatus) {
+              case 'accepted':
+              case 'completed':
+              case 'approved':
+                statusType = 'success';
+                break;
+              case 'pending':
+              case 'processing':
+              case 'in review':
+                statusType = 'warning';
+                break;
+              case 'sent':
+              case 'submitted':
+                statusType = 'primary';
+                break;
+              case 'rejected':
+              case 'failed':
+              case 'cancelled':
+                statusType = 'error';
+                break;
+              default:
+                statusType = 'error';
+            }
+            
+            return <StatusBadge type={statusType}>{invoice.ProcessingStatus || '-'}</StatusBadge>;
           })()}
         </FlexBox>
       </TableCell>

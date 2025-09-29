@@ -9,6 +9,7 @@ const ForgetPassword = lazy(() => import('@/pages/sessions/forget-password')); /
 const LoginDemoWithAuth0 = lazy(() => import('@/pages/auth-demo/auth0/login'));
 const LoginDemoWithJWT = lazy(() => import('@/pages/auth-demo/jwt/login'));
 const RegisterDemoWithJWT = lazy(() => import('@/pages/auth-demo/jwt/register'));
+
 // Firebase components removed
 const LoginDemoWithAmplify = lazy(() => import('@/pages/auth-demo/amplify/login'));
 const RegisterDemoWithAmplify = lazy(() => import('@/pages/auth-demo/amplify/register'));

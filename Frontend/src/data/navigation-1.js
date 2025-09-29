@@ -5,46 +5,24 @@ import MoneyIcon from '@/icons/MoneyIcon';
 import Email from '@/icons/Email';
 import Menu from '@/icons/Menu';
 export const navigations = [
-  // {
-  //   type: 'label',
-  //   label: 'Dashboard'
-  // }, {
-  //   name: 'Analytics',
-  //   icon: duotone.PersonChalkboard,
-  //   children: [{
-  //     name: 'Analytics 1',
-  //     path: '/dashboard'
-  //   }, {
-  //     name: 'Analytics 2',
-  //     path: '/dashboard/analytics-2'
-  //   }]
-  // }, {
-  //   name: 'Finance',
-  //   icon: duotone.MessagesDollar,
-  //   children: [{
-  //     name: 'Finance 1',
-  //     path: '/dashboard/finance'
-  //   }, {
-  //     name: 'Finance 2',
-  //     path: '/dashboard/finance-2'
-  //   }]
-  // }, {
-  //   name: 'Logistics',
-  //   path: '/dashboard/logistics',
-  //   icon: duotone.DiagramProject
-  // }, {
-  //   name: 'Marketing',
-  //   path: '/dashboard/marketing',
-  //   icon: duotone.LayerGroup
-  // }, {
-  //   type: 'label',
-  //   label: 'Management'
-  // },{
-  //   name: 'Account',
-  //   icon: duotone.Accounts,
-  //   path: '/dashboard/account'
-  // },
-   {
+ {
+     type: 'label',
+     label: 'Dashboard'
+   },{
+      name: 'Finance',
+      icon: duotone.MessagesDollar,
+      children: [{
+      name: 'Finance 1',
+      path: '/dashboard/finance'
+     }]
+   },{
+      name: 'Logistics',
+      path: '/dashboard/logistics',
+      icon: duotone.DiagramProject
+   },{
+      type: 'label',
+      label: 'Management'
+   },{
      name: 'Invoices',
      icon: duotone.Invoice,
      children: [{
@@ -58,7 +36,7 @@ export const navigations = [
     path: '/dashboard/create-invoice'
      }]
    }, 
-   /*{
+   {
     name: 'Data Table',
     icon: duotone.DataTable,
     children: [{
@@ -66,7 +44,7 @@ export const navigations = [
     path: '/dashboard/data-table-1'
    }]
    },
-   */{
+   {
     name: 'Clients',
     icon: duotone.UserList,
     path: '/dashboard/client'

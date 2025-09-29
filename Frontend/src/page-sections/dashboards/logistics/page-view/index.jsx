@@ -2,14 +2,7 @@ import Grid from '@mui/material/Grid2';
 import Stack from '@mui/material/Stack'; // CUSTOM PAGE SECTION COMPONENTS
 
 import Footer from '../../_common/Footer';
-import Shipments from '../shipments';
-import QuickGuide from '../QuickGuide';
-import Shippings from '../shippings';
-import RoleManagement from '../RoleManagement';
 import CompanyProgress from '../CompanyProgress';
-import VisitsByCountry from '../VisitsByCountry';
-import ShipmentHistory from '../ShipmentHistory';
-import OurTransportation from '../OurTransportation';
 import TopSellingCategories from '../TopSellingCategories';
 export default function LogisticsPageView() {
   return <div className="pt-2 pb-4">
@@ -21,7 +14,7 @@ export default function LogisticsPageView() {
         lg: 5,
         xs: 12
       }}>
-          <Shipments />
+         
         </Grid>
 
         {
@@ -32,8 +25,7 @@ export default function LogisticsPageView() {
         xs: 12
       }}>
           <Stack spacing={3}>
-            <Shippings />
-            <QuickGuide />
+            
           </Stack>
         </Grid>
 
@@ -54,7 +46,7 @@ export default function LogisticsPageView() {
         md: 4,
         xs: 12
       }}>
-          <RoleManagement />
+          
         </Grid>
 
         {
@@ -64,7 +56,7 @@ export default function LogisticsPageView() {
         md: 4,
         xs: 12
       }}>
-          <OurTransportation />
+          
         </Grid>
 
         {
@@ -84,7 +76,7 @@ export default function LogisticsPageView() {
         md: 4,
         xs: 12
       }}>
-          <VisitsByCountry />
+          
         </Grid>
 
         {
@@ -94,7 +86,7 @@ export default function LogisticsPageView() {
         md: 8,
         xs: 12
       }}>
-          <ShipmentHistory />
+          
         </Grid>
 
         {

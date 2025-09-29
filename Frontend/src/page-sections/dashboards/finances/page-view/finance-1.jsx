@@ -2,39 +2,28 @@ import Grid from '@mui/material/Grid2';
 import Stack from '@mui/material/Stack'; // CUSTOM PAGE SECTION COMPONENTS
 
 import Footer from '../../_common/Footer';
-import Audits from '../Audits';
-import Reports from '../Reports';
-import Balance from '../Balance';
-import DebitCard from '../DebitCard';
-import MySavings from '../MySavings';
-import Investment from '../Investment';
-import Installment from '../Installment';
-import TopActivity from '../TopActivity';
-import Transactions from '../Transactions';
-import QuickTransfer from '../QuickTransfer';
-import CurrentCurrency from '../CurrentCurrency';
 import CustomerTransaction from '../CustomerTransaction';
 export default function Finance1PageView() {
   return <div className="pt-2 pb-4">
       <Grid container spacing={3}>
         {
-        /* MY BALANCE CARD */
+        /* II Payment Carries */
       }
         <Grid size={{
         md: 6,
         xs: 12
       }}>
-          <Balance />
+        <CustomerTransaction title="Incoming Invoices for Payment" subtitle="Carries"/>
         </Grid>
-
         {
-        /* CURRENT CURRENCY CHART CARD */
-      }
+      /* II Payment Others */
+        }
         <Grid size={{
         md: 6,
         xs: 12
       }}>
-          <CurrentCurrency />
+        <CustomerTransaction title="Incoming Invoices for Payment" subtitle="Others"/>
+          
         </Grid>
 
         {
@@ -44,7 +33,7 @@ export default function Finance1PageView() {
         md: 8,
         xs: 12
       }}>
-          <Transactions />
+          
         </Grid>
 
         {
@@ -54,7 +43,7 @@ export default function Finance1PageView() {
         md: 4,
         xs: 12
       }}>
-          <DebitCard />
+          
         </Grid>
 
         {
@@ -65,8 +54,7 @@ export default function Finance1PageView() {
         xs: 12
       }}>
           <Stack spacing={3}>
-            <QuickTransfer />
-            <Installment />
+           
           </Stack>
         </Grid>
 
@@ -77,7 +65,7 @@ export default function Finance1PageView() {
         md: 8,
         xs: 12
       }}>
-          <CustomerTransaction />
+         
         </Grid>
 
         {
@@ -87,7 +75,7 @@ export default function Finance1PageView() {
         md: 8,
         xs: 12
       }}>
-          <Investment />
+          
         </Grid>
 
         {
@@ -97,7 +85,7 @@ export default function Finance1PageView() {
         md: 4,
         xs: 12
       }}>
-          <TopActivity />
+         
         </Grid>
 
         {
@@ -107,7 +95,7 @@ export default function Finance1PageView() {
         md: 4,
         xs: 12
       }}>
-          <MySavings />
+          
         </Grid>
 
         {
@@ -117,7 +105,7 @@ export default function Finance1PageView() {
         md: 4,
         xs: 12
       }}>
-          <Audits />
+          
         </Grid>
 
         {
@@ -127,7 +115,7 @@ export default function Finance1PageView() {
         md: 4,
         xs: 12
       }}>
-          <Reports />
+          
         </Grid>
 
         {

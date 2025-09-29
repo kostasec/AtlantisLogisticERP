@@ -18,52 +18,28 @@ import { FlexBetween, FlexBox } from '@/components/flexbox'; // COMMON DASHBOARD
 
 import { BodyTableCell, HeadTableCell } from '../_common'; // CUSTOM UTILS METHOD
 
-import { currency } from '@/utils/currency'; // CUSTOM DUMMY DATA SET
+import { currency } from '@/utils/currency';
 
-const TRANSACTIONS = [{
-  id: 1,
-  total: 356.25,
-  createdAt: new Date('August 31, 2022 10:30:00'),
-  user: {
-    id: 11,
-    name: 'Arikunn',
-    image: '/static/user/user-13.png'
-  }
-}, {
-  id: 2,
-  total: 165.58,
-  createdAt: new Date('August 30, 2022 13:30:00'),
-  user: {
-    id: 21,
-    name: 'Ikauwis',
-    image: '/static/user/user-14.png'
-  }
-}, {
-  id: 3,
-  total: 463.25,
-  createdAt: new Date('August 29, 2022 19:30:00'),
-  user: {
-    id: 31,
-    name: 'Dayet',
-    image: '/static/user/user-15.png'
-  }
-}, {
-  id: 4,
-  total: 185.58,
-  createdAt: new Date('August 28, 2022 16:30:00'),
-  user: {
-    id: 41,
-    name: 'Ikauwis',
-    image: '/static/user/user-13.png'
-  }
-}];
-export default function CustomerTransaction() {
+
+export default function CustomerTransaction({ 
+  transactions = [], 
+  title,
+  subtitle = null 
+}) {
   const getColor = useCallback(index => {
     return index % 2 === 1 ? 'action.selected' : 'transparent';
   }, []);
+
   return <Card>
       <FlexBetween p={3}>
-        <Typography variant="h6">Customer Transactions</Typography>
+        <div>
+          <Typography variant="h6">{title}</Typography>
+          {subtitle && (
+            <Typography variant="body2" color="text.secondary" mt={0.5}>
+              {subtitle}
+            </Typography>
+          )}
+        </div>
 
         <FlexBox gap={1}>
           <Typography variant="body2" lineHeight={1} sx={{
@@ -90,40 +66,75 @@ export default function CustomerTransaction() {
       }}>
           <TableHead>
             <TableRow>
-              <HeadTableCell>TRANSACTION</HeadTableCell>
-              <HeadTableCell>DATE</HeadTableCell>
-              <HeadTableCell>TIME</HeadTableCell>
+              <HeadTableCell>CLIENT</HeadTableCell>
+              <HeadTableCell>INVOICE</HeadTableCell>
+              <HeadTableCell>DUE DATE</HeadTableCell>
               <HeadTableCell>AMOUNT</HeadTableCell>
+              <HeadTableCell>ACTION</HeadTableCell>
             </TableRow>
           </TableHead>
 
           <TableBody>
-            {TRANSACTIONS.map((item, index) => <TableRow key={index} sx={{
-            backgroundColor: getColor(index)
-          }}>
-                <BodyTableCell>
-                  <FlexBox gap={1}>
-                    <Avatar variant="rounded" src={item.user.image} />
-
-                    <div>
-                      <Typography variant="body2" color="text.primary" fontWeight={500}>
-                        {item.user.name}
-                      </Typography>
-
-                      <Typography variant="caption">{item.user.id}</Typography>
-                    </div>
-                  </FlexBox>
-                </BodyTableCell>
-
-                <BodyTableCell>{format(new Date(item.createdAt), 'dd MMM, yyyy')}</BodyTableCell>
-                <BodyTableCell>{format(new Date(item.createdAt), 'hh:mm a')}</BodyTableCell>
-
-                <BodyTableCell>
-                  <Typography variant="body2" color="text.primary" fontWeight={500}>
-                    {currency(item.total)}
+            {transactions.length === 0 ? (
+              <TableRow>
+                <BodyTableCell colSpan={5} align="center">
+                  <Typography variant="body2" color="text.secondary" py={4}>
+                    No transactions available
                   </Typography>
                 </BodyTableCell>
-              </TableRow>)}
+              </TableRow>
+            ) : (
+              transactions.map((transaction, index) => (
+                <TableRow key={transaction.id || index} sx={{
+                  backgroundColor: getColor(index)
+                }}>
+                  <BodyTableCell>
+                    <FlexBox gap={1}>
+                      {transaction.clientAvatar && (
+                        <Avatar 
+                          src={transaction.clientAvatar} 
+                          alt={transaction.clientName}
+                          sx={{ width: 32, height: 32 }}
+                        />
+                      )}
+
+                      <div>
+                        <Typography variant="body2" color="text.primary" fontWeight={500}>
+                          {transaction.clientName || '-'}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {transaction.clientEmail || '-'}
+                        </Typography>
+                      </div>
+                    </FlexBox>
+                  </BodyTableCell>
+
+                  <BodyTableCell>
+                    <Typography variant="body2" color="text.primary">
+                      {transaction.invoiceNumber || '-'}
+                    </Typography>
+                  </BodyTableCell>
+
+                  <BodyTableCell>
+                    <Typography variant="body2" color="text.secondary">
+                      {transaction.dueDate ? format(new Date(transaction.dueDate), 'dd MMM, yyyy') : '-'}
+                    </Typography>
+                  </BodyTableCell>
+
+                  <BodyTableCell>
+                    <Typography variant="body2" color="text.primary" fontWeight={500}>
+                      {transaction.amount ? currency(transaction.amount) : '-'}
+                    </Typography>
+                  </BodyTableCell>
+
+                  <BodyTableCell>
+                    <IconButton size="small" color="secondary">
+                      <Tune fontSize="small" />
+                    </IconButton>
+                  </BodyTableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </Scrollbar>

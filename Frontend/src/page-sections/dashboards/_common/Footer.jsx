@@ -46,50 +46,10 @@ export default function Footer() {
   return <StyledCard>
       <div>
         <Typography variant="body1" fontSize={20} fontWeight={500}>
-          Uko Admin Template
+          Atlantis Logistic Doo
         </Typography>
 
-        <Typography variant="body2" color="text.secondary" sx={{
-        mb: 3
-      }}>
-          Clean UI & well documented
-        </Typography>
-
-        <Button href="https://mui.com/store/items/uko-client-admin-dashboard/">Buy Now</Button>
       </div>
 
-      <div>
-        <div className="buttons">
-          <IconButton>
-            <Twitter />
-          </IconButton>
-
-          <IconButton>
-            <LinkedIn />
-          </IconButton>
-
-          <IconButton>
-            <FacebookRounded />
-          </IconButton>
-
-          <IconButton>
-            <GitHub />
-          </IconButton>
-        </div>
-
-        <FlexBox alignItems="center" gap={2}>
-          <Link className="link" href="/about">
-            About
-          </Link>
-
-          <Link className="link" href="/">
-            Support
-          </Link>
-
-          <Link className="link" href="/">
-            Terms & Conditions
-          </Link>
-        </FlexBox>
-      </div>
     </StyledCard>;
 }

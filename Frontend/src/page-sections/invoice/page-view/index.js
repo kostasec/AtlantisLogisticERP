@@ -1,4 +1,3 @@
-export { default as IncomingInvoice } from './invoice-list';
-export { OutgoingInvoice } from './invoice-list';
+export { default as IncomingInvoice } from './incoming-invoice';
+export { default as OutgoingInvoice } from './outgoing-invoice';
 export { default as CreateInvoicePageView } from './create-invoice';
-export { default as InvoiceDetailsPageView } from './invoice-details';
