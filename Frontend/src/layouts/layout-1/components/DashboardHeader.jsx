@@ -57,10 +57,12 @@ export default function DashboardHeader() {
 
         {upSm && <Fragment>
             <LanguagePopover />
+            <NotificationsPopover />
             
           </Fragment>}
 
-        
+
+        <ProfilePopover />
       </StyledToolBar>
     </DashboardHeaderRoot>;
 }

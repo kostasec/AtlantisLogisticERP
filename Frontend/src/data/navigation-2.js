@@ -44,10 +44,6 @@ export const navigation = [{
     path: '/dashboard/job-management'
   }]
 }, {
-  name: 'Profile',
-  Icon: duotone.UserProfile,
-  path: '/dashboard/profile'
-}, {
   name: 'Account',
   Icon: duotone.Accounts,
   path: '/dashboard/account'

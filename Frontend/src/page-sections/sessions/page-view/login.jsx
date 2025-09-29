@@ -43,8 +43,8 @@ export default function LoginPageView() {
   };
 
   const initialValues = {
-    email: 'jason@ui-lib.com',
-    password: 'dummyPass',
+    email: 'atlantis@gmail.com',
+    password: 'atlantis',
     remember: true
   };
   const methods = useForm({

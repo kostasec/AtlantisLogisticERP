@@ -37,9 +37,6 @@ const InvoiceCreate = lazy(() => import('@/pages/invoice/create'));
 const InvoiceDetails = lazy(() => import('@/pages/invoice/details')); // PRODUCT RELATED PAGES
 
 
-
-const Profile = lazy(() => import('@/pages/profile')); // REACT DATA TABLE PAGE
-
 const DataTable1 = lazy(() => import('@/pages/data-tables/table-1')); // OTHER BUSINESS RELATED PAGES
 
 const FileManager = lazy(() => import('@/pages/file-manager')); // SUPPORT RELATED PAGES
@@ -150,9 +147,6 @@ export const DashboardRoutes = [{
     path: 'invoice-details',
     element: <InvoiceDetails />
   },{
-    path: 'profile',
-    element: <Profile />
-  }, {
     path: 'data-table-1',
     element: <DataTable1 />
   }, {

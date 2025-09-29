@@ -9,8 +9,7 @@ const ForgetPassword = lazy(() => import('@/pages/sessions/forget-password')); /
 const LoginDemoWithAuth0 = lazy(() => import('@/pages/auth-demo/auth0/login'));
 const LoginDemoWithJWT = lazy(() => import('@/pages/auth-demo/jwt/login'));
 const RegisterDemoWithJWT = lazy(() => import('@/pages/auth-demo/jwt/register'));
-const LoginDemoWithFirebase = lazy(() => import('@/pages/auth-demo/firebase/login'));
-const RegisterDemoWithFirebase = lazy(() => import('@/pages/auth-demo/firebase/register'));
+// Firebase components removed
 const LoginDemoWithAmplify = lazy(() => import('@/pages/auth-demo/amplify/login'));
 const RegisterDemoWithAmplify = lazy(() => import('@/pages/auth-demo/amplify/register'));
 const VerifyDemoWithAmplify = lazy(() => import('@/pages/auth-demo/amplify/verify'));
@@ -42,15 +41,6 @@ export const AuthRoutes = [// AUTHENTICATION PAGES ROUTES
   }, {
     path: 'register',
     element: <RegisterDemoWithJWT />
-  }]
-}, {
-  path: 'firebase',
-  children: [{
-    path: 'login',
-    element: <LoginDemoWithFirebase />
-  }, {
-    path: 'register',
-    element: <RegisterDemoWithFirebase />
   }]
 }, {
   path: 'amplify',

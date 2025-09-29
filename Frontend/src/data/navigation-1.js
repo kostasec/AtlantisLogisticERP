@@ -39,11 +39,7 @@ export const navigations = [
   // }, {
   //   type: 'label',
   //   label: 'Management'
-  // }, {
-  //   name: 'Profile',
-  //   icon: duotone.UserProfile,
-  //   path: '/dashboard/profile'
-  // }, {
+  // },{
   //   name: 'Account',
   //   icon: duotone.Accounts,
   //   path: '/dashboard/account'

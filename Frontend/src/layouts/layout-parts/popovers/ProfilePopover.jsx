@@ -58,13 +58,6 @@ export default memo(function ProfilePopover() {
     };
 
     return <Box pt={1}>
-          <Text onClick={handleMenuItem('/dashboard/profile')}>Set Status</Text>
-          <Text onClick={handleMenuItem('/dashboard/profile')}>Profile & Account</Text>
-          <Text onClick={handleMenuItem('/dashboard/account')}>Settings</Text>
-          <Text onClick={handleMenuItem('/dashboard/profile')}>Manage Team</Text>
-          <Divider sx={{
-        my: 1
-      }} />
           <Text onClick={logout}>Sign Out</Text>
         </Box>;
   }, [navigate, logout]);
