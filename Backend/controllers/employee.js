@@ -11,6 +11,47 @@ const EmployeeCar = require('../models/EmployeeCar');
 exports.getReadEmployee = async (req, res, next) => {
   try {
     const employees = await Employee.fetchAll();
+    
+    // Provjeri da li je zahtjev za API (JSON)
+    if (req.headers.accept && req.headers.accept.includes('application/json')) {
+      // Transformiraj podatke za frontend format
+      const transformedEmployees = employees.recordset.map(employee => {
+        // Spoji adresna polja u jedno
+        let address = '';
+        if (employee.StreetAndNmbr) {
+          address += employee.StreetAndNmbr;
+        }
+        if (employee.City) {
+          address += (address ? ', ' : '') + employee.City;
+        }
+        if (employee.ZIP) {
+          address += (address ? ' ' : '') + employee.ZIP;
+        }
+        if (employee.Country) {
+          address += (address ? ', ' : '') + employee.Country;
+        }
+
+        return {
+          employeeId: employee.EmplID,
+          firstName: employee.FirstName,
+          lastName: employee.LastName,
+          fullName: `${employee.FirstName} ${employee.LastName}`,
+          employeeType: employee.EmplType,
+          address: address,
+          phoneNumber: employee.PhoneNmbr,
+          manager: employee.Manager,
+          passportNumber: employee.PassportNmbr,
+          vehicle: employee.Vehicle
+        };
+      });
+
+      return res.json({
+        success: true,
+        data: transformedEmployees
+      });
+    }
+
+    // Inače vrati HTML stranicu
     res.render('employee/read-employee', {
       pageTitle: 'All Employees',
       path: '/employee/read',
@@ -18,7 +59,14 @@ exports.getReadEmployee = async (req, res, next) => {
     });
   } catch (err) {
     console.error('Error fetching employees:', err);
-    res.status(500).send('Database Error');
+    if (req.headers.accept && req.headers.accept.includes('application/json')) {
+      res.status(500).json({
+        success: false,
+        message: 'Database Error'
+      });
+    } else {
+      res.status(500).send('Database Error');
+    }
   }
 };
 

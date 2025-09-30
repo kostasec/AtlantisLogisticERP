@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router'; // MUI
+import { Outlet, useLocation } from 'react-router'; // MUI
 
 import useMediaQuery from '@mui/material/useMediaQuery';
 // CUSTOM COMPONENTS
@@ -11,6 +11,7 @@ import Footer from '@/components/footer'; // DASHBOARD LAYOUT BASED CONTEXT PROV
 
 import LayoutProvider from './context/layoutContext';
 export default function DashboardLayoutV1() {
+  const location = useLocation();
   const downLg = useMediaQuery(theme => theme.breakpoints.down('lg'));
   return <LayoutProvider>
       {
@@ -27,7 +28,7 @@ export default function DashboardLayoutV1() {
         {
         /* MAIN CONTENT RENDER SECTION */
       }
-        <Outlet />
+  <Outlet key={location.pathname} />
 
         {
         /* GLOBAL FOOTER */

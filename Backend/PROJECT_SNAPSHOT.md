@@ -90,6 +90,3 @@ Backend/
 - API pozivi iz React-a idu na postojeće Express rute
 - Modeli i logika ostaju na backendu, frontend šalje/uzima podatke preko API-ja
 
----
-
-Ovaj snapshot možeš koristiti kao osnovu za generisanje React frontenda u Copilot-u ili drugom generatoru.

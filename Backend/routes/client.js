@@ -22,5 +22,7 @@ router.post('/delete/:id', clientController.postDeleteClient);
 // POST /client/contact/delete/:id
 router.post('/contact/delete/:id', clientController.postDeleteClientContact);
 
+// API endpoint za frontend
+router.get('/api', clientController.getClientsAPI);
 
 module.exports = router;

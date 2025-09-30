@@ -12,7 +12,7 @@ export const routes = () => {
   return [// INITIAL / INDEX PAGE
   {
     path: '/',
-    element: <Navigate to="/login" replace />
+    element: <Navigate to="/dashboard/client" replace />
   }, // GLOBAL ERROR PAGE
   {
     path: '*',

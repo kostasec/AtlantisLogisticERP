@@ -22,8 +22,6 @@ import InvoiceTableRow from '../InvoiceTableRow';
 import InvoiceTableHead from '../InvoiceTableHead';
 import InvoiceTableActions from '../InvoiceTableActions'; // CUSTOM DUMMY DATA
 
-import { OUTGOING_INVOICE_LIST } from '@/cevData/invoices'; // STYLED COMPONENT
-
 const StyledAvatar = styled(Avatar)(({
   theme
 }) => ({
@@ -167,7 +165,7 @@ function InvoiceTablePageView({
     </Card>;
 }
 
-export const OutgoingInvoice = ({ initialInvoices = OUTGOING_INVOICE_LIST, ...props }) => (
+export const OutgoingInvoice = ({ initialInvoices = [], ...props }) => (
   <InvoiceTablePageView title="Outgoing Invoice" initialInvoices={initialInvoices} partyKey="Recipient" partyLabel="Recipient" {...props} />
 );
 

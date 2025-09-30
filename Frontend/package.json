@@ -1,8 +1,9 @@
 {
-  "name": "uko-vite",
+  "name": "client",
   "private": true,
   "version": "4.0.0",
   "type": "module",
+  "proxy": "http://localhost:5000",
   "scripts": {
     "dev": "vite",
     "preview": "vite preview",

@@ -1,7 +1,6 @@
 import { lazy, Suspense } from 'react';
 import LayoutV1 from '@/layouts/layout-1';
 import useSettings from '@/hooks/useSettings';
-import { AuthGuard } from '@/components/auth';
 import { LoadingProgress } from '@/components/loader'; 
 
 // ALL DASHBOARD PAGES
@@ -13,6 +12,10 @@ const Logistics = lazy(() => import('@/pages/dashboard/logistics'));
 const ClientView= lazy(() => import('@/pages/cev/client'));
 const EmployeeView= lazy(() => import('@/pages/cev/employee'));
 const VehicleView= lazy(() => import('@/pages/cev/vehicle'));
+
+// TEST COMPONENTS
+const ClientTest = lazy(() => import('@/components/ClientTest'));
+const EmployeeTest = lazy(() => import('@/components/EmployeeTest'));
 
 
  // ALL INVOICE RELATED PAGES
@@ -32,11 +35,11 @@ const ActiveLayout = () => {
   const {
     settings
   } = useSettings();
-  return <AuthGuard>
-      <Suspense fallback={<LoadingProgress />}>
-        <LayoutV1 />
-      </Suspense>
-    </AuthGuard>;
+  return (
+    <Suspense fallback={<LoadingProgress />}>
+      <LayoutV1 />
+    </Suspense>
+  );
 };
 
 export const DashboardRoutes = [{
@@ -57,6 +60,12 @@ export const DashboardRoutes = [{
   } ,{
     path: 'client',
     element: <ClientView />
+  },{
+    path: 'client-test',
+    element: <ClientTest />
+  },{
+    path: 'employee-test',
+    element: <EmployeeTest />
   },{
     path: 'vehicle',
     element: <VehicleView />

@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useState } from 'react'; // MUI
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'; // MUI
 
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
@@ -17,13 +17,14 @@ import Scrollbar from '@/components/scrollbar'; // CUSTOM DUMMY DATA
 import { BodyTableRow, BodyTableCell, HeadTableCell } from './styles'; // TABLE COLUMN SHAPE
 
 import { columns } from '../columns';
-export default function DataTablePageView({ initialData = [] }) {
-  const [userList, setUserList] = useState(initialData);
-  const [allUsers, setAllUsers] = useState(initialData);
+export default function DataTablePageView({ initialData }) {
+  const stableData = useMemo(() => initialData ?? [], [initialData]);
+  const [userList, setUserList] = useState(stableData);
+  const [allUsers, setAllUsers] = useState(stableData);
   useEffect(() => {
-    setUserList(initialData);
-    setAllUsers(initialData);
-  }, [initialData]);
+    setUserList(stableData);
+    setAllUsers(stableData);
+  }, [stableData]);
   const [rowSelection, setRowSelection] = useState({});
   const table = useReactTable({
     columns,

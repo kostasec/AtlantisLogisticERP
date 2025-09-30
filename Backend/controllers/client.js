@@ -37,6 +37,38 @@ exports.getReadClient = async (req, res, next) => {
 
     const clients = Object.values(clientMap);
 
+    // Provjeri da li je zahtjev za API (JSON)
+    if (req.headers.accept && req.headers.accept.includes('application/json')) {
+      // Transformiraj podatke za frontend format
+      const transformedClients = clients.map(client => ({
+        id: client.TaxID,
+        taxId: client.TaxID,
+        clientName: client.ClientName,
+        regNmbr: client.RegNmbr,
+        adress: `${client.StreetAndNmbr}, ${client.City} ${client.ZIP}, ${client.Country}`,
+        email: client.Email,
+        contacts: client.Contacts.map(contact => ({
+          contactPersonID: contact.ContactPersonID,
+          name: contact.ContactName,
+          description: contact.Description,
+          phoneNumber: contact.PhoneNmbr,
+          email: contact.PersonEmail
+        })),
+        contactPerson: client.Contacts.length > 0 ? {
+          name: client.Contacts[0].ContactName,
+          description: client.Contacts[0].Description,
+          phoneNumber: client.Contacts[0].PhoneNmbr,
+          email: client.Contacts[0].PersonEmail
+        } : null
+      }));
+
+      return res.json({
+        success: true,
+        data: transformedClients
+      });
+    }
+
+    // Inače vrati HTML stranicu
     res.render('client/read-client', {
       pageTitle: 'All Clients',
       path: '/client/read',
@@ -45,7 +77,68 @@ exports.getReadClient = async (req, res, next) => {
 
   } catch (err) {
     console.error('Error fetching clients:', err);
-    res.status(500).send('Database Error');
+    if (req.headers.accept && req.headers.accept.includes('application/json')) {
+      res.status(500).json({
+        success: false,
+        message: 'Database Error'
+      });
+    } else {
+      res.status(500).send('Database Error');
+    }
+  }
+};
+
+// API endpoint za frontend
+exports.getClientsAPI = async (req, res, next) => {
+  try {
+    const result = await Client.fetchAll();
+    const rows = result.recordset;
+
+    const clientMap = {};
+    rows.forEach(row => {
+      if (!clientMap[row.TaxID]) {
+        clientMap[row.TaxID] = {
+          id: row.TaxID,
+          taxId: row.TaxID,
+          clientName: row.ClientName,
+          regNmbr: row.RegNmbr,
+          adress: `${row.StreetAndNmbr}, ${row.City} ${row.ZIP}, ${row.Country}`,
+          email: row.Email,
+          contacts: []
+        };
+      }
+
+      if (row.ContactPersonID) {
+        clientMap[row.TaxID].contacts.push({
+          contactPersonID: row.ContactPersonID,
+          name: row.ContactName,
+          description: row.Description,
+          phoneNumber: row.PhoneNmbr,
+          email: row.PersonEmail
+        });
+      }
+    });
+
+    const clients = Object.values(clientMap);
+    
+    // Dodajemo contactPerson kao prvi kontakt ako postoji
+    clients.forEach(client => {
+      if (client.contacts.length > 0) {
+        client.contactPerson = client.contacts[0];
+      }
+    });
+
+    res.json({
+      success: true,
+      data: clients
+    });
+
+  } catch (err) {
+    console.error('Error fetching clients:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Database Error'
+    });
   }
 };
 

@@ -1,6 +1,7 @@
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const errorController = require('./controllers/error');
 
@@ -11,6 +12,10 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 //Middleware
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175'], // Vite ports
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -35,8 +40,8 @@ app.use(indexRoutes);
 app.use(errorController.get404);
 
 
-const server = app.listen(3000, () => {
-  console.log('Server started on port 3000');
+const server = app.listen(5000, () => {
+  console.log('Server started on port 5000');
 });
 
 // Proper shutdown handler
