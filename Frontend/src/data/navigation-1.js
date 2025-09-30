@@ -1,5 +1,6 @@
 // CUSTOM ICON COMPONENT
-import duotone from '@/icons/duotone'
+import duotone from '@/icons/duotone';
+import sidebar from '@/icons/sidebar';
 import Car from '@/icons/Car';
 import MoneyIcon from '@/icons/MoneyIcon';
 import Email from '@/icons/Email';
@@ -9,16 +10,13 @@ export const navigations = [
      type: 'label',
      label: 'Dashboard'
    },{
-      name: 'Finance',
-      icon: duotone.MessagesDollar,
-      children: [{
-      name: 'Finance 1',
-      path: '/dashboard/finance'
-     }]
+      name: 'Dates',
+      path: '/dashboard/finance',
+      icon: duotone.Calender
    },{
-      name: 'Logistics',
+      name: 'Statistics',
       path: '/dashboard/logistics',
-      icon: duotone.DiagramProject
+      icon: duotone.Dashboard
    },{
       type: 'label',
       label: 'Management'
@@ -64,7 +62,7 @@ export const navigations = [
     icon: Menu
   },{
     name: 'Inspections',
-    icon: duotone.Calender
+    icon: duotone.DataTable
   }, {
     name: 'File Manager',
     icon: duotone.Folder,

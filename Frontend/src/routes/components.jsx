@@ -2,7 +2,7 @@ import { Fragment, lazy, Suspense } from 'react';
 import { Outlet } from 'react-router';
 import Container from '@mui/material/Container'; // CUSTOM COMPONENTS
 
-import Footer from '@/layouts/root/footer/Footer';
+import Footer from '@/components/footer';
 import Header from '@/layouts/root/Navigation';
 import { LoadingProgress } from '@/components/loader'; // ALL MUI COMPONENT SHOWCASE PAGES
 

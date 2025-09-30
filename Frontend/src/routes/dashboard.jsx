@@ -1,6 +1,5 @@
 import { lazy, Suspense } from 'react';
 import LayoutV1 from '@/layouts/layout-1';
-import LayoutV2 from '@/layouts/layout-2';
 import useSettings from '@/hooks/useSettings';
 import { AuthGuard } from '@/components/auth';
 import { LoadingProgress } from '@/components/loader'; 
@@ -35,7 +34,7 @@ const ActiveLayout = () => {
   } = useSettings();
   return <AuthGuard>
       <Suspense fallback={<LoadingProgress />}>
-        {settings.activeLayout === 'layout2' ? <LayoutV2 /> : <LayoutV1 />}
+        <LayoutV1 />
       </Suspense>
     </AuthGuard>;
 };

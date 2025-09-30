@@ -6,7 +6,8 @@ import MobileSidebar from './components/MobileSidebar';
 import DashboardHeader from './components/DashboardHeader';
 import DashboardSidebar from './components/DashboardSidebar';
 import LayoutBodyWrapper from './components/LayoutBodyWrapper';
-import LayoutSetting from '@/layouts/layout-parts/LayoutSetting'; // DASHBOARD LAYOUT BASED CONTEXT PROVIDER
+import LayoutSetting from '@/layouts/layout-parts/LayoutSetting';
+import Footer from '@/components/footer'; // DASHBOARD LAYOUT BASED CONTEXT PROVIDER
 
 import LayoutProvider from './context/layoutContext';
 export default function DashboardLayoutV1() {
@@ -27,6 +28,11 @@ export default function DashboardLayoutV1() {
         /* MAIN CONTENT RENDER SECTION */
       }
         <Outlet />
+
+        {
+        /* GLOBAL FOOTER */
+      }
+        <Footer />
 
         {
         /* LAYOUT SETTING SECTION */

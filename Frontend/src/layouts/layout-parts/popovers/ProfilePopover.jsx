@@ -2,14 +2,10 @@ import { memo, useCallback } from 'react';
 import { useNavigate } from 'react-router'; // MUI
 
 import Box from '@mui/material/Box';
-import Avatar from '@mui/material/Avatar';
-import Divider from '@mui/material/Divider';
-import { styled } from '@mui/material/styles';
+import { styled, alpha } from '@mui/material/styles';
 import Typography from '@mui/material/Typography'; // CUSTOM COMPONENTS
 
 import PopoverLayout from './_PopoverLayout';
-import FlexBox from '@/components/flexbox/FlexBox';
-import AvatarLoading from '@/components/avatar-loading'; // CUSTOM DEFINED HOOK
 
 import useAuth from '@/hooks/useAuth'; // STYLED COMPONENTS
 
@@ -24,10 +20,27 @@ const Text = styled('p')(({
     backgroundColor: theme.palette.action.hover
   }
 }));
-const AVATAR_STYLES = {
-  width: 35,
-  height: 35
-};
+const UserTag = styled('span')(({ theme }) => ({
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: '6px 14px',
+  borderRadius: 999,
+  fontWeight: 600,
+  letterSpacing: 1,
+  fontSize: 12,
+  minWidth: 56,
+  background: theme.palette.mode === 'dark' ? 'linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.05) 100%)' : 'linear-gradient(135deg, rgba(37,99,235,0.16) 0%, rgba(37,99,235,0.08) 100%)',
+  color: theme.palette.mode === 'dark' ? theme.palette.common.white : theme.palette.primary[700],
+  border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.28)' : alpha(theme.palette.primary.main, 0.35)}`,
+  boxShadow: theme.palette.mode === 'dark' ? '0 10px 25px -18px rgba(0,0,0,0.9)' : `0 10px 25px -18px ${alpha(theme.palette.primary.main, 0.9)}`,
+  transition: 'transform 150ms ease, box-shadow 150ms ease',
+  backdropFilter: 'blur(8px)',
+  '&:hover': {
+    transform: 'translateY(-1px)',
+    boxShadow: theme.palette.mode === 'dark' ? '0 14px 38px -20px rgba(0,0,0,0.95)' : `0 14px 38px -20px ${alpha(theme.palette.primary.main, 1)}`
+  }
+}));
 export default memo(function ProfilePopover() {
   const navigate = useNavigate();
   const {
@@ -35,31 +48,19 @@ export default memo(function ProfilePopover() {
     user
   } = useAuth();
   const displayName = user?.name ?? 'Guest User';
-  const email = user?.email ?? 'guest@example.com';
-  const avatarSrc = user?.avatar || '/static/avatar/020-man-4.svg';
-  const SELECT_BUTTON = <AvatarLoading alt={displayName} src={avatarSrc} percentage={100} sx={AVATAR_STYLES} />;
-  const TITLE = <FlexBox alignItems="center" gap={1} p={2} pt={1}>
-      <Avatar src={avatarSrc} alt={displayName} sx={AVATAR_STYLES} />
-
-      <div>
-        <Typography variant="body2" fontWeight={500}>
-          {displayName}
-        </Typography>
-
-        <Typography variant="body2" color="text.secondary" fontSize={12}>
-          {email}
-        </Typography>
-      </div>
-    </FlexBox>;
+  const SELECT_BUTTON = <UserTag>{displayName}</UserTag>;
+  const TITLE = <Box px={2} py={1.5}>
+      <Typography variant="body2" fontWeight={600}>
+        {displayName}
+      </Typography>
+    </Box>;
   const RENDER_CONTENT = useCallback(onClose => {
-    const handleMenuItem = path => () => {
-      navigate(path);
-      onClose();
-    };
-
     return <Box pt={1}>
-          <Text onClick={logout}>Sign Out</Text>
+          <Text onClick={() => {
+        logout();
+        onClose();
+      }}>Sign Out</Text>
         </Box>;
-  }, [navigate, logout]);
+  }, [logout]);
   return <PopoverLayout maxWidth={230} minWidth={200} showMoreButton={false} selectButton={SELECT_BUTTON} title={TITLE} renderContent={RENDER_CONTENT} />;
 });

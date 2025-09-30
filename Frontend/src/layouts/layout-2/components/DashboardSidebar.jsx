@@ -9,7 +9,7 @@ import Scrollbar from '@/components/scrollbar'; // CUSTOM DEFINED HOOK
 
 import useLayout from '@/layouts/layout-2/context/useLayout'; // CUSTOM NAVIGATION DATA
 
-import { navigation } from '@/data/navigation-2'; // STYLED COMPONENTS
+import { navigations as navigation } from '@/data/navigation-1'; // STYLED COMPONENTS
 
 import { Dot, LogoBox, MainMenu, SubMenuItem, NavItemButton, SecondarySideBar, MobileSidebarWrapper } from '@/layouts/layout-2/styles';
 import { useTranslation } from 'react-i18next';

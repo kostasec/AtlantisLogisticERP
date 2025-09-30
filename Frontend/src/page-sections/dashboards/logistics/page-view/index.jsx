@@ -1,7 +1,6 @@
 import Grid from '@mui/material/Grid2';
 import Stack from '@mui/material/Stack'; // CUSTOM PAGE SECTION COMPONENTS
 
-import Footer from '../../_common/Footer';
 import CompanyProgress from '../CompanyProgress';
 import TopSellingCategories from '../TopSellingCategories';
 export default function LogisticsPageView() {
@@ -33,7 +32,7 @@ export default function LogisticsPageView() {
         /* COMPANY PROGRESS CARD */
       }
         <Grid size={{
-        md: 8,
+        md: 12,
         xs: 12
       }}>
           <CompanyProgress />
@@ -63,7 +62,7 @@ export default function LogisticsPageView() {
         /* TOP SELLING CATEGORIES CARD */
       }
         <Grid size={{
-        md: 8,
+        md: 12,
         xs: 12
       }}>
           <TopSellingCategories />
@@ -89,12 +88,6 @@ export default function LogisticsPageView() {
           
         </Grid>
 
-        {
-        /* FOOTER CARD */
-      }
-        <Grid size={12}>
-          <Footer />
-        </Grid>
       </Grid>
     </div>;
 }

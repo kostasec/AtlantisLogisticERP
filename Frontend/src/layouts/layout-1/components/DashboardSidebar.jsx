@@ -7,9 +7,7 @@ import useLayout from '@/layouts/layout-1/context/useLayout'; // CUSTOM COMPONEN
 
 import MultiLevelMenu from './MultiLevelMenu';
 import Link from '@/components/link';
-import Scrollbar from '@/components/scrollbar';
-import FlexBetween from '@/components/flexbox/FlexBetween';
-import UserAccount from '@/layouts/layout-parts/UserAccount'; // CUSTOM ICON COMPONENT
+import FlexBetween from '@/components/flexbox/FlexBetween'; // CUSTOM ICON COMPONENT
 
 import ArrowLeftToLine from '@/icons/duotone/ArrowLeftToLine'; // STYLED COMPONENTS
 
@@ -36,15 +34,31 @@ export default function DashboardSidebar() {
 }
 const SidebarContent = memo(({
   isCompact
-}) => <Scrollbar autoHide clickOnTrack={false} sx={{
+}) => <Box sx={{
+  flex: 1,
+  minHeight: 0,
+  overflowY: 'auto',
   overflowX: 'hidden',
-  maxHeight: `calc(100vh - ${TOP_HEADER_AREA}px)`
+  px: 3,
+  pt: 0.3,
+  pb: 3,
+  '&::-webkit-scrollbar': {
+    width: '6px'
+  },
+  '&::-webkit-scrollbar-track': {
+    background: 'rgba(0,0,0,0.1)',
+    borderRadius: '3px'
+  },
+  '&::-webkit-scrollbar-thumb': {
+    background: 'rgba(0,0,0,0.3)',
+    borderRadius: '3px',
+    '&:hover': {
+      background: 'rgba(0,0,0,0.5)'
+    }
+  }
 }}>
-    <Box height="100%" px={3} pt={2}>
-      <MultiLevelMenu sidebarCompact={isCompact} />
-      {!isCompact}
-    </Box>
-  </Scrollbar>);
+    <MultiLevelMenu sidebarCompact={isCompact} />
+  </Box>);
 const SidebarHeader = memo(({
   isCompact,
   onToggle

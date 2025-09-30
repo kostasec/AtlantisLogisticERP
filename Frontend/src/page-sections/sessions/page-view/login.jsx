@@ -76,18 +76,13 @@ export default function LoginPageView() {
           Sign In
         </Typography>
 
-        <Typography variant="body2" fontWeight={500} mt={1} mb={6} color="text.secondary">
-          New user?{' '}
-          <Box fontWeight={500} component={Link} href="/register">
-            Create an Account
-          </Box>
-        </Typography>
+
 
         <FormProvider methods={methods} onSubmit={handleFormSubmit}>
           <Grid container spacing={2}>
             <Grid size={12}>
               <Typography variant="body1" fontSize={16} mb={1.5}>
-                Login with your email id
+                
               </Typography>
 
               <TextField fullWidth name="email" placeholder="Enter your work email" />
@@ -113,7 +108,7 @@ export default function LoginPageView() {
                 </FlexBox>
 
                 <Box fontSize={13} component={Link} fontWeight={500} color="error.500" href="/forget-password">
-                  Forget Password?
+                  Forgot Password?
                 </Box>
               </FlexBetween>
             </Grid>
@@ -126,21 +121,7 @@ export default function LoginPageView() {
           </Grid>
         </FormProvider>
 
-        <StyledDivider>OR</StyledDivider>
-
-        <FlexBox justifyContent="center" flexWrap="wrap" gap={2}>
-          <SocialButton onClick={handleGoogle}>
-            <GoogleIcon className="icon" />
-          </SocialButton>
-
-          <SocialButton>
-            <Facebook className="icon facebook" />
-          </SocialButton>
-
-          <SocialButton>
-            <Twitter className="icon twitter" />
-          </SocialButton>
-        </FlexBox>
+       
       </Box>
     </Layout>;
 }

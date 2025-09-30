@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box';
-import Footer from './footer/Footer';
+import Footer from '@/components/footer';
 export default function RootLayout({
   children
 }) {

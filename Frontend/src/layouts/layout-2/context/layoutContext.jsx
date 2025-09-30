@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router'; // MUI
 
 import useMediaQuery from '@mui/material/useMediaQuery';
 // CUSTOM NAVIGATION DATA
-import { navigation } from '@/data/navigation-2'; // TYPES
+import { navigations as navigation } from '@/data/navigation-1'; // TYPES
 
 // ==============================================================
 export const LayoutContext = createContext({});

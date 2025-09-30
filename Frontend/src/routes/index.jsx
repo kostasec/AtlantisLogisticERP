@@ -7,7 +7,7 @@ import { ComponentRoutes } from './components'; // GLOBAL ERROR PAGE
 
 const ErrorPage = lazy(() => import('@/pages/404')); // LANDING / INITIAL PAGE
 
-const Landing = lazy(() => import('@/pages/landing'));
+
 export const routes = () => {
   return [// INITIAL / INDEX PAGE
   {

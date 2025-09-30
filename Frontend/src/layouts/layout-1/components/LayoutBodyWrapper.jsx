@@ -23,6 +23,8 @@ export default function LayoutBodyWrapper({
     sidebarCompact
   } = useLayout();
   return <RootStyled compact={sidebarCompact}>
-      <Container maxWidth="lg">{children}</Container>
+  <Container maxWidth="lg" sx={{ pb: { xs: 2, md: 3 } }}>
+        {children}
+      </Container>
     </RootStyled>;
 }

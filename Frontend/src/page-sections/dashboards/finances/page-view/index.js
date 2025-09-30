@@ -1,1 +1,1 @@
-export { default as Finance1PageView } from './finance-1';
+export { Finance1PageView } from './finance-1';

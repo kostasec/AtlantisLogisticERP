@@ -21,7 +21,7 @@ import { BodyTableCell, HeadTableCell } from '../_common'; // CUSTOM UTILS METHO
 import { currency } from '@/utils/currency';
 
 
-export default function CustomerTransaction({ 
+export default function TransactionTable({ 
   transactions = [], 
   title,
   subtitle = null 
@@ -79,7 +79,7 @@ export default function CustomerTransaction({
               <TableRow>
                 <BodyTableCell colSpan={5} align="center">
                   <Typography variant="body2" color="text.secondary" py={4}>
-                    No transactions available
+                    No invoices available
                   </Typography>
                 </BodyTableCell>
               </TableRow>
