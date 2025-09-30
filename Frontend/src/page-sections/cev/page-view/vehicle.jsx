@@ -10,7 +10,7 @@ import HeadingArea from '../HeadingArea';
 import GridCard from '../GridCard';
 
 import { paginate } from '@/utils/paginate';
-import { VEHICLE_LIST } from '@/__fakeData__/vehicle';
+import { VEHICLE_LIST } from '@/cevData/vehicle';
 
 import LocalShipping from '@/icons/Car';
 import AccountCircle from '@/icons/User';

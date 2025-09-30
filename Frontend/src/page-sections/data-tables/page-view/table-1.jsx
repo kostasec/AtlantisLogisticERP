@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useState } from 'react'; // MUI
+import { Fragment, useCallback, useEffect, useState } from 'react'; // MUI
 
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
@@ -14,13 +14,16 @@ import TableColumnFilter from '../table-column-filter/TableColumnFilter'; // CUS
 
 import Scrollbar from '@/components/scrollbar'; // CUSTOM DUMMY DATA
 
-import { DATA } from '@/__fakeData__/data-tables'; // CUSTOM STYLED COMPONENTS
-
 import { BodyTableRow, BodyTableCell, HeadTableCell } from './styles'; // TABLE COLUMN SHAPE
 
 import { columns } from '../columns';
-export default function DataTablePageView() {
-  const [userList, setUserList] = useState([...DATA]);
+export default function DataTablePageView({ initialData = [] }) {
+  const [userList, setUserList] = useState(initialData);
+  const [allUsers, setAllUsers] = useState(initialData);
+  useEffect(() => {
+    setUserList(initialData);
+    setAllUsers(initialData);
+  }, [initialData]);
   const [rowSelection, setRowSelection] = useState({});
   const table = useReactTable({
     columns,
@@ -41,14 +44,14 @@ export default function DataTablePageView() {
 
   const handleSearch = useCallback(text => {
     if (text) {
-      const updatedUserList = userList.filter(item => {
+      const updatedUserList = allUsers.filter(item => {
         return item.name.toLowerCase().includes(text.toLowerCase());
       });
       setUserList(updatedUserList);
     } else {
-      setUserList([...DATA]);
+      setUserList(allUsers);
     }
-  }, [userList]); // RESET ALL COLUMN FILTERING IF EXIST
+  }, [allUsers]); // RESET ALL COLUMN FILTERING IF EXIST
 
   const handleResetColumnFilter = useCallback(() => {
     table.resetColumnFilters();
@@ -58,6 +61,7 @@ export default function DataTablePageView() {
     const userIdList = SELECTED_ROWS.map(row => row.original.id);
     const updatesUserList = userList.filter(user => !userIdList.includes(user.id));
     setUserList(updatesUserList);
+    setAllUsers(updatesUserList);
     setRowSelection({});
   }, [SELECTED_ROWS, userList]);
   return <div className="pt-2 pb-4">

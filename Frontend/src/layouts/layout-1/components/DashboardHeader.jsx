@@ -1,68 +1,67 @@
-import { Fragment, use, useState } from 'react'; // MUI
-
-import Box from '@mui/material/Box';
+import { Fragment, use } from 'react';
 import IconButton from '@mui/material/IconButton';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import ClickAwayListener from '@mui/material/ClickAwayListener';
-// SITE SETTINGS CONTEXT FILE
-import { SettingsContext } from '@/contexts/settingsContext'; // CUSTOM ICON COMPONENTS
+import { styled, alpha } from '@mui/material/styles';
+import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
 
-import Menu from '@/icons/Menu';
-import MenuLeft from '@/icons/MenuLeft';
+import { SettingsContext } from '@/contexts/settingsContext';
 import ThemeIcon from '@/icons/ThemeIcon';
-import Search from '@/icons/duotone/Search';
-import MenuLeftRight from '@/icons/MenuLeftRight'; // LAYOUT BASED HOOK
-
-import useLayout from '@/layouts/layout-1/context/useLayout'; // CUSTOM COMPONENTS
-
-import SearchBar from '@/layouts/layout-parts/SearchBar';
-import ProfilePopover from '@/layouts/layout-parts/popovers/ProfilePopover';
-import ServicePopover from '@/layouts/layout-parts/popovers/ServicePopover';
 import LanguagePopover from '@/layouts/layout-parts/popovers/LanguagePopover';
-import NotificationsPopover from '@/layouts/layout-parts/popovers/NotificationsPopover'; // STYLED COMPONENTS
-
+import NotificationsPopover from '@/layouts/layout-parts/popovers/NotificationsPopover';
 import { DashboardHeaderRoot, StyledToolBar } from '@/layouts/layout-1/styles';
-export default function DashboardHeader() {
-  const {
-    handleOpenMobileSidebar
-  } = useLayout();
-  const [openSearchBar, setSearchBar] = useState(false);
-  const {
-    settings,
-    saveSettings
-  } = use(SettingsContext);
-  const upSm = useMediaQuery(theme => theme.breakpoints.up('sm'));
-  const downMd = useMediaQuery(theme => theme.breakpoints.down(1200));
+import useAuth from '@/hooks/useAuth';
 
-  const handleChangeDirection = value => {
-    saveSettings({ ...settings,
-      direction: value
-    });
-  };
+const SignOutButton = styled(Button)(({ theme }) => ({
+  minWidth: 36,
+  width: 36,
+  height: 36,
+  padding: 0,
+  borderRadius: '50%',
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  background: theme.palette.mode === 'dark'
+    ? alpha(theme.palette.error.light, 0.18)
+    : alpha(theme.palette.error.main, 0.16),
+  border: `1px solid ${theme.palette.mode === 'dark' ? alpha(theme.palette.error.light, 0.3) : alpha(theme.palette.error.main, 0.35)}`,
+  color: theme.palette.mode === 'dark' ? theme.palette.error.light : theme.palette.error.main,
+  transition: 'background 150ms ease, transform 150ms ease',
+  '&:hover': {
+    background: theme.palette.mode === 'dark'
+      ? alpha(theme.palette.error.light, 0.28)
+      : alpha(theme.palette.error.main, 0.24),
+    transform: 'translateY(-1px)'
+  }
+}));
+
+export default function DashboardHeader() {
+  const { logout } = useAuth();
+  const { settings, saveSettings } = use(SettingsContext);
+  const upSm = useMediaQuery(theme => theme.breakpoints.up('sm'));
 
   const handleChangeTheme = value => {
-    saveSettings({ ...settings,
+    saveSettings({
+      ...settings,
       theme: value
     });
   };
 
-  return <DashboardHeaderRoot position="sticky">
+  return (
+    <DashboardHeaderRoot position="sticky">
       <StyledToolBar sx={{ justifyContent: 'flex-end' }}>
-        {
-        /* THEME SWITCH BUTTON */
-      }
-        <IconButton onClick={() => handleChangeTheme(settings.theme === 'light' ? 'dark' : 'light')}>
-          <ThemeIcon />
-        </IconButton>
-
-        {upSm && <Fragment>
-            <LanguagePopover />
-            <NotificationsPopover />
-            
-          </Fragment>}
-
-
-        <ProfilePopover />
+        <Stack direction="row" spacing={1.5} alignItems="center">
+          <IconButton onClick={() => handleChangeTheme(settings.theme === 'light' ? 'dark' : 'light')}>
+            <ThemeIcon />
+          </IconButton> 
+          <NotificationsPopover />
+          <LanguagePopover />
+          <SignOutButton onClick={logout} disableElevation>
+            <PowerSettingsNewIcon fontSize="small" />
+          </SignOutButton>
+        </Stack>
       </StyledToolBar>
-    </DashboardHeaderRoot>;
+    </DashboardHeaderRoot>
+  );
 }

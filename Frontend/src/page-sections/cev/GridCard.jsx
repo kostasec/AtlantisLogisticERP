@@ -1,6 +1,8 @@
+import { useState, useCallback } from 'react';
 import Stack from '@mui/material/Stack';
-import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Collapse from '@mui/material/Collapse';
 import { styled } from '@mui/material/styles';
 
 const StyledRoot = styled('div')(({ theme }) => ({
@@ -13,7 +15,19 @@ const StyledRoot = styled('div')(({ theme }) => ({
   }
 }));
 
-export default function EntityGridCard({ avatar, title, subtitle, fields = [] }) {
+export default function EntityGridCard({
+  title,
+  subtitle,
+  fields = [],
+  contactPerson,
+  contactIcons = {}
+}) {
+  const [showContact, setShowContact] = useState(false);
+
+  const toggleContact = useCallback(() => {
+    setShowContact(prev => !prev);
+  }, []);
+
   return (
     <StyledRoot>
       <Stack direction="row" alignItems="center" spacing={1}>
@@ -38,6 +52,51 @@ export default function EntityGridCard({ avatar, title, subtitle, fields = [] })
           </Typography>
         </Stack>
       ))}
+
+      {contactPerson && (
+        <>
+          <Button
+            variant="text"
+            size="small"
+            sx={{ mt: 2, px: 0 }}
+            onClick={toggleContact}
+          >
+            {showContact ? 'Hide Contact Person' : 'Show Contact Person'}
+          </Button>
+
+          <Collapse in={showContact} timeout="auto" unmountOnExit>
+            <Stack spacing={0.5} mt={1}>
+              <Stack direction="row" alignItems="center" spacing={1}>
+                {contactIcons.name && <contactIcons.name className="icon" />}
+                <Typography variant="body2" color="text.primary">
+                  {contactPerson.name || '-'}
+                </Typography>
+              </Stack>
+
+              <Stack direction="row" alignItems="center" spacing={1}>
+                {contactIcons.description && <contactIcons.description className="icon" />}
+                <Typography variant="body2" color="text.secondary">
+                  {contactPerson.description || '-'}
+                </Typography>
+              </Stack>
+
+              <Stack direction="row" alignItems="center" spacing={1}>
+                {contactIcons.phoneNumber && <contactIcons.phoneNumber className="icon" />}
+                <Typography variant="body2" color="text.primary">
+                  {contactPerson.phoneNumber || '-'}
+                </Typography>
+              </Stack>
+
+              <Stack direction="row" alignItems="center" spacing={1}>
+                {contactIcons.email && <contactIcons.email className="icon" />}
+                <Typography variant="body2" color="text.primary">
+                  {contactPerson.email || '-'}
+                </Typography>
+              </Stack>
+            </Stack>
+          </Collapse>
+        </>
+      )}
     </StyledRoot>
   );
 }

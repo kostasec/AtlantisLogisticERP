@@ -11,7 +11,7 @@ import HeadingArea from '../HeadingArea';
 import GridCard from '../GridCard';
 
 import { paginate } from '@/utils/paginate';
-import { CLIENT_LIST } from '@/__fakeData__/clients';
+import { CLIENT_LIST } from '@/cevData/clients';
 
 import HomeOutlined from '@/icons/HomeOutlined';
 import Email from '@/icons/Email';
@@ -19,6 +19,9 @@ import ReceiptOutlined from '@/icons/ReceiptOutlined';
 import Key from '@/icons/Key';
 import User from '@/icons/User';
 import Add from '@/icons/Add';
+import InfoIcon from '@mui/icons-material/InfoOutlined';
+import CallIcon from '@mui/icons-material/CallOutlined';
+import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 
 export default function ClientPageView() {
   const { t } = useTranslation();
@@ -63,6 +66,18 @@ export default function ClientPageView() {
                   { icon: HomeOutlined, label: t('Address'), value: client.adress },
                   { icon: Email, label: t('Email'), value: client.email }
                 ]}
+                contactPerson={client.contactPerson ? {
+                  name: client.contactPerson.name,
+                  description: client.contactPerson.description,
+                  phoneNumber: client.contactPerson.phoneNumber,
+                  email: client.contactPerson.email
+                } : null}
+                contactIcons={{
+                  name: User,
+                  description: InfoIcon,
+                  phoneNumber: CallIcon,
+                  email: AlternateEmailIcon
+                }}
                 sx={{ width: '100%' }}
               />
             </div>

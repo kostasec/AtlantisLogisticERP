@@ -11,7 +11,7 @@ import HeadingArea from '../HeadingArea';
 import GridCard from '../GridCard';
 
 import { paginate } from '@/utils/paginate';
-import { USER_LIST } from '@/__fakeData__/users';
+import { USER_LIST } from '@/cevData/users';
 
 import Call from '@/icons/Call';
 import Email from '@/icons/Email';

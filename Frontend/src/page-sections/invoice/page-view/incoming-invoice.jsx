@@ -23,7 +23,7 @@ import InvoiceTableRow from '../InvoiceTableRow';
 import InvoiceTableHead from '../InvoiceTableHead';
 import InvoiceTableActions from '../InvoiceTableActions'; // CUSTOM DUMMY DATA
 
-import { INCOMING_INVOICE_LIST, OUTGOING_INVOICE_LIST } from '@/__fakeData__/invoices'; // STYLED COMPONENT
+import { INCOMING_INVOICE_LIST, OUTGOING_INVOICE_LIST } from '@/cevData/invoices'; // STYLED COMPONENT
 
 const StyledAvatar = styled(Avatar)(({
   theme
