@@ -22,7 +22,7 @@ import InvoiceTableRow from '../InvoiceTableRow';
 import InvoiceTableHead from '../InvoiceTableHead';
 import InvoiceTableActions from '../InvoiceTableActions'; // CUSTOM DUMMY DATA
 
-import { INCOMING_INVOICE_LIST, OUTGOING_INVOICE_LIST } from '@/cevData/invoices'; // STYLED COMPONENT
+import { OUTGOING_INVOICE_LIST } from '@/cevData/invoices'; // STYLED COMPONENT
 
 const StyledAvatar = styled(Avatar)(({
   theme
@@ -35,7 +35,7 @@ const StyledAvatar = styled(Avatar)(({
   }
 }));
 
-const normalizeInvoices = list => list.map(item => ({
+const normalizeInvoices = list => (Array.isArray(list) ? list : []).map(item => ({
   ...item,
   date: item.date ? new Date(item.date) : null,
   SendDate: item.SendDate ? new Date(item.SendDate) : null,
@@ -44,7 +44,7 @@ const normalizeInvoices = list => list.map(item => ({
 
 function InvoiceTablePageView({
   title,
-  initialInvoices,
+  initialInvoices = [],
   partyKey,
   partyLabel
 }) {
@@ -167,8 +167,8 @@ function InvoiceTablePageView({
     </Card>;
 }
 
-export const IncomingInvoice = props => <InvoiceTablePageView title="Incoming Invoice" initialInvoices={INCOMING_INVOICE_LIST} partyKey="Sender" partyLabel="Sender" {...props} />;
+export const OutgoingInvoice = ({ initialInvoices = OUTGOING_INVOICE_LIST, ...props }) => (
+  <InvoiceTablePageView title="Outgoing Invoice" initialInvoices={initialInvoices} partyKey="Recipient" partyLabel="Recipient" {...props} />
+);
 
-export const OutgoingInvoice = props => <InvoiceTablePageView title="Outgoing Invoice" initialInvoices={OUTGOING_INVOICE_LIST} partyKey="Recipient" partyLabel="Recipient" {...props} />;
-
-export default IncomingInvoice;
+export default OutgoingInvoice;

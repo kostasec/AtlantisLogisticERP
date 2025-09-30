@@ -28,7 +28,6 @@ const buildInvoice = ({
 export const INCOMING_INVOICE_LIST = [
   buildInvoice({
     sender: 'Thomas Shelby',
-    recipient: 'Shelby Company Limited',
     documentStatus: 'Sent',
     processingStatus: 'Accepted',
     sendDate: new Date(2024, 4, 11),
@@ -39,7 +38,6 @@ export const INCOMING_INVOICE_LIST = [
   }),
   buildInvoice({
     sender: 'Ada Thorne',
-    recipient: 'Birmingham Council',
     documentStatus: 'Sent',
     processingStatus: 'Pending',
     sendDate: new Date(2024, 5, 2),
@@ -50,7 +48,6 @@ export const INCOMING_INVOICE_LIST = [
   }),
   buildInvoice({
     sender: 'Finn Shelby',
-    recipient: 'Small Heath Supplies',
     documentStatus: 'Delivered',
     processingStatus: 'Accepted',
     sendDate: new Date(2024, 3, 27),
@@ -63,7 +60,6 @@ export const INCOMING_INVOICE_LIST = [
 
 export const OUTGOING_INVOICE_LIST = [
   buildInvoice({
-    sender: 'Shelby Company Limited',
     recipient: 'Grace Burgess',
     documentStatus: 'Sent',
     processingStatus: 'Pending',
@@ -74,7 +70,6 @@ export const OUTGOING_INVOICE_LIST = [
     email: 'grace.burgess@example.com'
   }),
   buildInvoice({
-    sender: 'Shelby Company Limited',
     recipient: 'Aberama Gold',
     documentStatus: 'Delivered',
     processingStatus: 'Accepted',
@@ -85,7 +80,6 @@ export const OUTGOING_INVOICE_LIST = [
     email: 'aberama.gold@example.com'
   }),
   buildInvoice({
-    sender: 'Shelby Company Limited',
     recipient: 'Alfie Solomons',
     documentStatus: 'Delivered',
     processingStatus: 'Accepted',
