@@ -1,4 +1,4 @@
-# Atlantis IS - Transportation Company Management System
+# Atlantis Logistic ERP - Transportation Company Management System
 
 ## 📋 Overview
 
