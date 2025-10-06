@@ -52,7 +52,7 @@ Atlantis IS/
 - **Proper Indexing** for performance
 - **Entity Models**: Cars, Trucks, Trailers, Employees, Clients, Invoices, Inspections
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 ### Backend
 - **Node.js** - Runtime environment
@@ -127,7 +127,7 @@ npm run dev
 # Application will run on http://localhost:5173
 ```
 
-## 🔧 Configuration
+## Configuration
 
 ### Backend Configuration
 
@@ -196,7 +196,7 @@ Test files include:
 - `employee.test.js` - Employee management tests
 - `outInvoice.test.js` - Invoice processing tests
 
-## 📡 API Endpoints
+## API Endpoints
 
 ### Vehicle Management
 - `GET /api/vehicles` - Get all vehicles
