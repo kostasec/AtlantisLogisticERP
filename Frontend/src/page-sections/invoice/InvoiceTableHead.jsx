@@ -51,8 +51,8 @@ export default function InvoiceTableHead({
     { id: 'documentStatus', numeric: true, disablePadding: false, label: t('Status') },
     { id: 'processingStatus', numeric: true, disablePadding: false, label: t('Proc. Status') },
     { id: partyKey, numeric: true, disablePadding: false, label: t(partyLabel) },
-    { id: 'sentDate', numeric: true, disablePadding: false, label: t('Sent Date') },
-    { id: 'deliveredDate', numeric: true, disablePadding: false, label: t('Delivered Date') },
+    { id: 'sentDate', numeric: true, disablePadding: false, label: t('Sent to SEF') },
+    { id: 'deliveredDate', numeric: true, disablePadding: false, label: t('Delivered to SEF') },
     { id: 'invoiceNumber', numeric: true, disablePadding: false, label: t('Invoice Number') },
     { id: 'paymentStatus', numeric: true, disablePadding: false, label: t('Payment Status') },
     { id: '', numeric: true, disablePadding: false }
