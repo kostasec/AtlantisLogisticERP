@@ -1,10 +1,10 @@
 # Atlantis Logistic ERP - Transportation Company Management System
 
-## 📋 Overview
+## Overview
 
 Atlantis IS is a comprehensive transportation company management system built with modern web technologies. The system consists of three main components: a Node.js backend API, a React frontend application, and a SQL Server database. This full-stack solution manages vehicles, employees, clients, invoices, and inspections for transportation companies.
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 Atlantis IS/
@@ -14,7 +14,7 @@ Atlantis IS/
 └── README.md         # This file
 ```
 
-## 🚀 Features
+## Features
 
 ### Backend Features
 - **RESTful API** with Express.js
@@ -58,7 +58,6 @@ Atlantis IS/
 - **Node.js** - Runtime environment
 - **Express.js** - Web framework
 - **SQL Server** - Database (mssql driver)
-- **EJS** - Template engine
 - **CORS** - Cross-origin resource sharing
 - **Mocha & Chai** - Testing framework
 - **TypeScript** - Type safety (dev dependency)
@@ -81,7 +80,7 @@ Atlantis IS/
 - **Microsoft SQL Server** - Primary database
 - **T-SQL** - Database programming language
 
-## 📦 Installation & Setup
+## Installation & Setup
 
 ### Prerequisites
 - **Node.js** (v16 or higher)
@@ -158,7 +157,7 @@ const config = {
 ### Frontend Configuration
 The frontend is configured to proxy API requests to `http://localhost:5000`. Update the proxy in `package.json` if your backend runs on a different port.
 
-## 🗃️ Database Schema
+## Database Schema
 
 The database includes the following main entities:
 
@@ -183,7 +182,7 @@ The database includes the following main entities:
 - **ProcessingStatus** - Processing status types
 - **Vat** - VAT rates and information
 
-## 🧪 Testing
+## Testing
 
 ### Backend Testing
 ```bash
@@ -223,7 +222,7 @@ Test files include:
 - `POST /api/invoices` - Create new invoice
 - `PUT /api/invoices/:id` - Update invoice
 
-## 🚀 Deployment
+## Deployment
 
 ### Backend Deployment
 1. Set environment variables for production database
@@ -243,11 +242,11 @@ Test files include:
 
 
 
-## 📄 License
+## License
 
 This project is licensed under the ISC License - see the package.json files for details.
 
-## 👥 Author
+## Author
 
 - **Konstantin Šec** - Initial work and development
 
