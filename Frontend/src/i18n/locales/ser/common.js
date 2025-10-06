@@ -1,6 +1,6 @@
 export default {
   Dashboard: 'Kontrolna tabla',
-  Dates: 'Datumi',
+  Finance: 'Finansije',
   Statistics: 'Statistika',
   Profiles: 'Profili',
   Management: 'Upravljanje',
@@ -32,6 +32,9 @@ export default {
   Truck: 'Kamion',
   Trailer: 'Prikolica',
   Driver: 'Vozač',
+  Make: 'Marka',
+  Model: 'Model',
+  'Registration Tag': 'Registarska oznaka',
   'Add New Employee': 'Dodaj novog zaposlenog',
   'Add Employee': 'Dodaj zaposlenog',
   'Add Client': 'Dodaj klijenta',

@@ -29,6 +29,5 @@ export default function UserAccount() {
         </Typography>
       </Box>
 
-      <Button>Upgrade to Pro</Button>
     </FlexRowAlign>;
 }

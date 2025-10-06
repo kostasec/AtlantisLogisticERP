@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Collapse from '@mui/material/Collapse';
 import { styled } from '@mui/material/styles';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const StyledRoot = styled('div')(({ theme }) => ({
   padding: '1.5rem',
@@ -16,6 +17,25 @@ const StyledRoot = styled('div')(({ theme }) => ({
   }
 }));
 
+const ExpandButton = styled(Button)(({ theme }) => ({
+  padding: 0,
+  textTransform: 'none',
+  justifyContent: 'flex-start',
+  minWidth: 'auto',
+  '&:hover': {
+    backgroundColor: 'transparent'
+  }
+}));
+
+const StyledExpandIcon = styled(ExpandMoreIcon, {
+  shouldForwardProp: (prop) => prop !== 'expanded'
+})(({ expanded }) => ({
+  fontSize: 16,
+  marginLeft: 4,
+  transition: 'transform 0.3s ease',
+  transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)'
+}));
+
 export default function EntityGridCard({
   title,
   subtitle,
@@ -25,9 +45,14 @@ export default function EntityGridCard({
 }) {
   const { t } = useTranslation();
   const [showContact, setShowContact] = useState(false);
+  const [expanded, setExpanded] = useState({});
 
   const toggleContact = useCallback(() => {
     setShowContact(prev => !prev);
+  }, []);
+
+  const toggleField = useCallback((idx) => {
+    setExpanded(prev => ({ ...prev, [idx]: !prev[idx] }));
   }, []);
 
   return (
@@ -46,13 +71,39 @@ export default function EntityGridCard({
       </Stack>
 
       {fields.map((field, idx) => (
-        <Stack key={idx} direction="row" alignItems="center" spacing={1} mt={idx === 0 ? 2 : 1}>
-          {field.icon && <field.icon className="icon" />}
-          <Typography variant="body2" color="grey.500">
-            {field.label ? `${field.label}: ` : ''}
-            {field.value}
-          </Typography>
-        </Stack>
+        <div key={idx}>
+          <Stack direction="row" alignItems="center" spacing={1} mt={idx === 0 ? 2 : 1}>
+            {field.icon && <field.icon className="icon" />}
+            {field.expandFields ? (
+              <ExpandButton
+                variant="text"
+                size="small"
+                onClick={() => toggleField(idx)}
+              >
+                <Typography variant="body2" color="grey.500" textAlign="left">
+                  {field.label ? `${field.label}: ` : ''}{field.value}
+                </Typography>
+                <StyledExpandIcon expanded={!!expanded[idx]} />
+              </ExpandButton>
+            ) : (
+              <Typography variant="body2" color="grey.500">
+                {field.label ? `${field.label}: ` : ''}
+                {field.value}
+              </Typography>
+            )}
+          </Stack>
+          {field.expandFields && (
+            <Collapse in={!!expanded[idx]} timeout="auto" unmountOnExit>
+              <Stack spacing={0.5} mt={0.5} ml={4}>
+                {field.expandFields.map((ef, eIdx) => (
+                  <Typography key={eIdx} variant="body2" color="text.secondary">
+                    {ef.label ? `${ef.label}: ` : ''}{ef.value}
+                  </Typography>
+                ))}
+              </Stack>
+            </Collapse>
+          )}
+        </div>
       ))}
 
       {contactPerson && (

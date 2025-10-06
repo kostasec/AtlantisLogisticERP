@@ -1,4 +1,3 @@
-// CUSTOM ICON COMPONENT
 import duotone from '@/icons/duotone';
 import sidebar from '@/icons/sidebar';
 import Car from '@/icons/Car';
@@ -10,9 +9,9 @@ export const navigations = [
      type: 'label',
      label: 'Dashboard'
    },{
-      name: 'Dates',
+      name: 'Finance',
       path: '/dashboard/finance',
-      icon: duotone.Calender
+      icon: duotone.Dashboard
    },/*{
       name: 'Statistics',
       path: '/dashboard/logistics',
@@ -22,7 +21,7 @@ export const navigations = [
       type: 'label',
       label: 'Management'
    },{
-     name: 'Invoices',
+     name: 'SEF',
      icon: duotone.Invoice,
      children: [{
      name: 'Incoming Invoices',

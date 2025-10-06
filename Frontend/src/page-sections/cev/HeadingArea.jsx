@@ -33,9 +33,9 @@ export default function HeadingArea({
   value,
   changeTab,
   title,          // string
-  icon: Icon,     // React komponenta ikone
+  icon: Icon,     // React components & icons
   buttonLabel,    // string
-  buttonRoute     // string (ruta za navigate)
+  buttonRoute     // string 
 }) {
   const navigate = useNavigate();
 

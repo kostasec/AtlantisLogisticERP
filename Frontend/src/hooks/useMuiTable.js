@@ -8,10 +8,7 @@ function descendingComparator(a, b, orderBy) {
 
 export function getComparator(order, orderBy) {
   return order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
-} // Since 2020 all major browsers ensure sort stability with Array.prototype.sort().
-// stableSort() brings sort stability to non-modern browsers (notably IE11). If you
-// only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
-// with exampleArray.slice().sort(exampleComparator)
+} 
 
 export function stableSort(array, comparator) {
   const stabilizedThis = array.map((el, index) => [el, index]);

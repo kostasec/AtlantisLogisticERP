@@ -2,7 +2,7 @@ import { Outlet, useLocation } from 'react-router'; // MUI
 
 import useMediaQuery from '@mui/material/useMediaQuery';
 // CUSTOM COMPONENTS
-import MobileSidebar from './components/MobileSidebar';
+
 import DashboardHeader from './components/DashboardHeader';
 import DashboardSidebar from './components/DashboardSidebar';
 import LayoutBodyWrapper from './components/LayoutBodyWrapper';
@@ -15,9 +15,9 @@ export default function DashboardLayoutV1() {
   const downLg = useMediaQuery(theme => theme.breakpoints.down('lg'));
   return <LayoutProvider>
       {
-      /* CONDITIONALLY RENDER THE SIDEBAR */
+      /*RENDER THE SIDEBAR */
     }
-      {downLg ? <MobileSidebar /> : <DashboardSidebar />}
+       <DashboardSidebar />
 
       <LayoutBodyWrapper>
         {
@@ -28,7 +28,7 @@ export default function DashboardLayoutV1() {
         {
         /* MAIN CONTENT RENDER SECTION */
       }
-  <Outlet key={location.pathname} />
+      <Outlet key={location.pathname} />
 
         {
         /* GLOBAL FOOTER */

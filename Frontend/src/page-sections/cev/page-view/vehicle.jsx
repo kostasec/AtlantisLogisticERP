@@ -75,11 +75,29 @@ export default function VehiclePageView({ initialVehicles }) {
             paginate(page, perPage, filtered).map(vehicle => (
               <Grid size={{ lg: 3, md: 4, sm: 6, xs: 12 }} key={vehicle.truckID + vehicle.trailerID}>
                 <GridCard
-                  title={`${vehicle.truckID ?? '-'} / ${vehicle.trailerID ?? '-'}`}
+                  title={`${vehicle.truck?.registrationTag || vehicle.truckID || '-'} / ${vehicle.trailer?.registrationTag || vehicle.trailerID || '-'}`}
                   subtitle={vehicle.role || ''}
                   fields={[
-                    { icon: LocalShipping, label: t('Truck'), value: vehicle.truckID || '-' },
-                    { icon: LocalShipping, label: t('Trailer'), value: vehicle.trailerID || '-' },
+                    {
+                      icon: LocalShipping,
+                      label: t('Truck'),
+                      value: vehicle.truckID || vehicle.truck?.registrationTag || '-',
+                      expandFields: [
+                        { label: t('Make'), value: vehicle.truck?.make || '-' },
+                        { label: t('Model'), value: vehicle.truck?.model || '-' },
+                        { label: t('Registration Tag'), value: vehicle.truck?.registrationTag || vehicle.truckID || '-' }
+                      ]
+                    },
+                    {
+                      icon: LocalShipping,
+                      label: t('Trailer'),
+                      value: vehicle.trailerID || vehicle.trailer?.registrationTag || '-',
+                      expandFields: [
+                        { label: t('Make'), value: vehicle.trailer?.make || '-' },
+                        { label: t('Model'), value: vehicle.trailer?.model || '-' },
+                        { label: t('Registration Tag'), value: vehicle.trailer?.registrationTag || vehicle.trailerID || '-' }
+                      ]
+                    },
                     { icon: AccountCircle, label: t('Driver'), value: vehicle.driver || '-' }
                   ]}
                   sx={{ width: '100%' }}

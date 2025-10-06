@@ -59,7 +59,6 @@ export default function DashboardHeader() {
           <IconButton onClick={() => handleChangeTheme(settings.theme === 'light' ? 'dark' : 'light')}>
             <ThemeIcon />
           </IconButton> 
-          {/*<NotificationsPopover />*/}
           <LanguagePopover />
           <SignOutButton onClick={handleLogout} disableElevation>
             <PowerSettingsNewIcon fontSize="small" />

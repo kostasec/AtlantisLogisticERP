@@ -56,7 +56,7 @@ export default {
   , 'Save Draft': 'Sačuvaj nacrt'
   , 'Send Invoice': 'Pošalji fakturu'
   , 'Tax Base': 'Osnovica'
-  , Subtotal: 'Međuzbir'
+  , Subtotal: 'Iznos bez PDV-a'
   , Total: 'Ukupno'
   , 'Route is Required': 'Ruta je obavezna'
   , 'Registration Tag is Required': 'Registracija je obavezna'

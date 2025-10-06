@@ -127,7 +127,7 @@ export default function EmployeePageView({ initialEmployees }) {
 										{ icon: HomeOutlined, label: t('Address'), value: employee.address || '-' },
 										{ icon: Call, label: t('Phone'), value: employee.phoneNumber || '-' },
 										{ icon: duotone.Pages, label: t('Passport'), value: employee.passportNumber || '-' },
-										{ icon: duotone.UserProfile, label: t('Manager'), value: employee.manager || '-' },
+										{ icon: duotone.UserProfile, label: t('Manager'), value: employee.manager || 'No Manager' },
 										{ icon: Car, label: t('Vehicle'), value: employee.vehicle || '-' },
 									]} 
 								/>
