@@ -247,7 +247,7 @@ Test files include:
 
 This project is licensed under the ISC License - see the package.json files for details.
 
-## 👥 Authors
+## 👥 Author
 
 - **Konstantin Šec** - Initial work and development
 
