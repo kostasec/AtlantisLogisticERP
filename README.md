@@ -1,4 +1,4 @@
-# Atlantis IS - Transportation Company Management System
+# Atlantis Logistic ERP - Transportation Company Management System
 
 ## 📋 Overview
 
@@ -247,7 +247,7 @@ Test files include:
 
 This project is licensed under the ISC License - see the package.json files for details.
 
-## 👥 Authors
+## 👥 Author
 
 - **Konstantin Šec** - Initial work and development
 
