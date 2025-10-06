@@ -8,6 +8,9 @@ import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
+import Alert from '@mui/material/Alert';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
 import { alpha, styled } from '@mui/material/styles'; // CUSTOM COMPONENTS
 
 import Scrollbar from '@/components/scrollbar';
@@ -22,6 +25,9 @@ import InvoiceTableRow from '../InvoiceTableRow';
 import InvoiceTableHead from '../InvoiceTableHead';
 import InvoiceTableActions from '../InvoiceTableActions'; // CUSTOM DUMMY DATA
 
+import { paginate } from '@/utils/paginate';
+import { outgoingInvoiceService } from '@/services/outgoingInvoice';
+
 const StyledAvatar = styled(Avatar)(({
   theme
 }) => ({
@@ -35,9 +41,8 @@ const StyledAvatar = styled(Avatar)(({
 
 const normalizeInvoices = list => (Array.isArray(list) ? list : []).map(item => ({
   ...item,
-  date: item.date ? new Date(item.date) : null,
-  SendDate: item.SendDate ? new Date(item.SendDate) : null,
-  DeliveredDate: item.DeliveredDate ? new Date(item.DeliveredDate) : null
+  issueDate: item.issueDate ? new Date(item.issueDate) : null,
+  deliveredDate: item.deliveredDate ? new Date(item.deliveredDate) : null
 }));
 
 function InvoiceTablePageView({
@@ -51,6 +56,8 @@ function InvoiceTablePageView({
     search: '',
     status: ''
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const {
     page,
     order,
@@ -70,8 +77,33 @@ function InvoiceTablePageView({
   useEffect(() => {
     setPage(0);
   }, [invoiceFilter, setPage]);
+  
   useEffect(() => {
-    setInvoices(normalizeInvoices(initialInvoices));
+    const fetchInvoices = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await outgoingInvoiceService.getAllOutgoingInvoices();
+        if (response.success) {
+          setInvoices(normalizeInvoices(response.data));
+        } else {
+          setError('Failed to fetch invoices');
+        }
+      } catch (err) {
+        console.error('Error fetching invoices:', err);
+        setError('Error connecting to server: ' + err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // Učitaj iz API-ja ako nema početnih podataka
+    if (initialInvoices.length === 0) {
+      fetchInvoices();
+    } else {
+      setInvoices(normalizeInvoices(initialInvoices));
+      setLoading(false);
+    }
   }, [initialInvoices]);
   const handleChangeFilter = useCallback((key, value) => {
     setInvoiceFilter(prev => ({ ...prev,
@@ -91,7 +123,6 @@ function InvoiceTablePageView({
       if (search) {
         const searchTerm = search.toLowerCase();
         const matchesName = item.name ? item.name.toLowerCase().includes(searchTerm) : false;
-        const matchesEmail = item.email ? item.email.toLowerCase().includes(searchTerm) : false;
   const matchesParty = item[partyKey] ? item[partyKey].toString().toLowerCase().includes(searchTerm) : false;
         return matchesName || matchesEmail || matchesParty;
       }
@@ -110,6 +141,27 @@ function InvoiceTablePageView({
     setInvoices(prev => prev.filter(item => !selected.includes(item.id)));
     handleSelectAllRows([])();
   }, [selected, handleSelectAllRows]);
+
+  if (loading) {
+    return (
+      <Card>
+        <Box display="flex" justifyContent="center" alignItems="center" py={8}>
+          <CircularProgress />
+        </Box>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <Alert severity="error" sx={{ m: 2 }}>
+          {error}
+        </Alert>
+      </Card>
+    );
+  }
+
   return <Card>
       <FlexBetween flexWrap="wrap" gap={2} px={2} py={3}>
         <Stack direction="row" alignItems="center" gap={1}>
@@ -166,7 +218,7 @@ function InvoiceTablePageView({
 }
 
 export const OutgoingInvoice = ({ initialInvoices = [], ...props }) => (
-  <InvoiceTablePageView title="Outgoing Invoice" initialInvoices={initialInvoices} partyKey="Recipient" partyLabel="Recipient" {...props} />
+  <InvoiceTablePageView title="Outgoing Invoice" initialInvoices={initialInvoices} partyKey="recipient" partyLabel="Recipient" {...props} />
 );
 
 export default OutgoingInvoice;

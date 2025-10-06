@@ -2,6 +2,7 @@ import Chart from 'react-apexcharts'; // MUI
 
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '@mui/material/styles'; // CUSTOM COMPONENTS
 
 import FlexBox from '@/components/flexbox/FlexBox';
@@ -18,6 +19,7 @@ const series = [{
 
 const categories = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 export default function CompanyProgress() {
+  const { t } = useTranslation();
   const theme = useTheme(); // REACT CHART OPTIONS
 
   const options = useChartOptions({
@@ -59,7 +61,7 @@ export default function CompanyProgress() {
       fontSize: 18,
       fontWeight: 500
     }}>
-        Company Progress
+        {t('Company Progress')}
       </Typography>
 
       <FlexBox p={2} gap={2} alignItems="center" flexWrap="wrap">
@@ -73,7 +75,7 @@ export default function CompanyProgress() {
           </FlexBox>
 
           <Typography variant="body2" color="text.secondary">
-            This month
+            {t('This month')}
           </Typography>
         </div>
 
@@ -87,7 +89,7 @@ export default function CompanyProgress() {
           </FlexBox>
 
           <Typography variant="body2" color="text.secondary">
-            Last month
+            {t('Last month')}
           </Typography>
         </div>
       </FlexBox>

@@ -47,42 +47,16 @@ export default function InvoiceTableHead({
   const createSortHandler = useCallback(property => event => {
     onRequestSort(event, property);
   }, [onRequestSort]);
-  const headCells = useMemo(() => [{
-    id: 'DocumentStatus',
-    numeric: true,
-    disablePadding: false,
-    label: t('Status')
-  }, {
-    id: 'ProcessingStatus',
-    numeric: true,
-    disablePadding: false,
-    label: t('Proc. Status')
-  }, {
-    id: partyKey,
-    numeric: true,
-    disablePadding: false,
-    label: t(partyLabel)
-  }, {
-    id: 'SendDate',
-    numeric: true,
-    disablePadding: false,
-    label: t('Send Date')
-  }, {
-    id: 'DeliveredDate',
-    numeric: true,
-    disablePadding: false,
-    label: t('Delivered Date')
-  }, {
-    id: 'InvoiceNumber',
-    numeric: true,
-    disablePadding: false,
-    label: t('Invoice Number')
-  }, {
-    id: '',
-    numeric: true,
-    disablePadding: false,
-    label: t('Edit')
-  }], [partyKey, partyLabel, t]);
+  const headCells = useMemo(() => [
+    { id: 'documentStatus', numeric: true, disablePadding: false, label: t('Status') },
+    { id: 'processingStatus', numeric: true, disablePadding: false, label: t('Proc. Status') },
+    { id: partyKey, numeric: true, disablePadding: false, label: t(partyLabel) },
+    { id: 'sentDate', numeric: true, disablePadding: false, label: t('Sent Date') },
+    { id: 'deliveredDate', numeric: true, disablePadding: false, label: t('Delivered Date') },
+    { id: 'invoiceNumber', numeric: true, disablePadding: false, label: t('Invoice Number') },
+    { id: 'paymentStatus', numeric: true, disablePadding: false, label: t('Payment Status') },
+    { id: '', numeric: true, disablePadding: false }
+  ], [partyKey, partyLabel, t]);
   return <StyledTableHead>
       <TableRow>
         <TableCell padding="checkbox">

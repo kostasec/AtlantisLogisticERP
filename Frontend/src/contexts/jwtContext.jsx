@@ -2,7 +2,7 @@ import { createContext, useEffect, useReducer, useCallback, useMemo } from 'reac
 import axios from 'axios'; // CUSTOM LOADING COMPONENT
 
 import { LoadingProgress } from '@/components/loader';
-const API_URL = 'http://localhost:5000'; // ==============================================================
+// ==============================================================
 
 // ==============================================================
 const initialState = {
@@ -99,7 +99,7 @@ export function AuthProvider({
     });
   }, []); // USER LOGOUT HANDLER
 
-  const logout = () => {
+  const logout = useCallback(() => {
     setSession(null);
     dispatch({
       type: 'LOGOUT',
@@ -108,7 +108,9 @@ export function AuthProvider({
         isAuthenticated: false
       }
     });
-  };
+    // Redirect to login page
+    window.location.href = '/login';
+  }, []);
 
   const checkCurrentUser = useCallback(async () => {
     try {

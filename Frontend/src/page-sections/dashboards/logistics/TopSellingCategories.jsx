@@ -2,6 +2,7 @@ import Chart from 'react-apexcharts'; // MUI
 
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '@mui/material/styles'; // CUSTOM HOOK
 
 import useChartOptions from '@/hooks/useChartOptions'; // CUSTOM UTILS METHOD
@@ -15,6 +16,7 @@ const series = [{
 
 const categories = ['70% ECR', 'FGI 50%', 'EOQ 80%', 'FMG 75%', 'PLG 90%', 'OLX 60%', 'FCR 70%'];
 export default function TopSellingCategories() {
+  const { t } = useTranslation();
   const theme = useTheme(); // REACT CHART OPTIONS
 
   const options = useChartOptions({
@@ -101,7 +103,7 @@ export default function TopSellingCategories() {
       <Typography variant="h6" sx={{
       px: 1
     }}>
-        Top Selling Categories
+        {t('Top Selling Categories')}
       </Typography>
 
       <Chart type="bar" height={300} series={series} options={options} />

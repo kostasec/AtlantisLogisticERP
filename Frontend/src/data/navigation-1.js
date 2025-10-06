@@ -13,11 +13,12 @@ export const navigations = [
       name: 'Dates',
       path: '/dashboard/finance',
       icon: duotone.Calender
-   },{
+   },/*{
       name: 'Statistics',
       path: '/dashboard/logistics',
       icon: duotone.Dashboard
-   },{
+   },*/
+   {
       type: 'label',
       label: 'Management'
    },{
@@ -35,14 +36,6 @@ export const navigations = [
      }]
    }, 
    {
-    name: 'Data Table',
-    icon: duotone.DataTable,
-    children: [{
-    name: 'Data Table 1',
-    path: '/dashboard/data-table-1'
-   }]
-   },
-   {
     name: 'Clients',
     icon: duotone.UserList,
     path: '/dashboard/client'
@@ -56,13 +49,16 @@ export const navigations = [
     path: '/dashboard/vehicle'
   },{
     name: 'Withdrawal',
-    icon: duotone.Pricing
+    icon: duotone.Pricing,
+    path: '/dashboard/withdrawal'
   },{
     name: 'Expenses',
-    icon: Menu
+    icon: Menu,
+    path: '/dashboard/expenses'
   },{
     name: 'Inspections',
-    icon: duotone.DataTable
+    icon: duotone.DataTable,
+    path: '/dashboard/inspections'
   }, {
     name: 'File Manager',
     icon: duotone.Folder,

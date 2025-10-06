@@ -23,9 +23,11 @@ const IncomingInvoice = lazy(() => import('@/pages/invoice/incoming-invoice'));
 const OutgoingInvoice = lazy(() => import('@/pages/invoice/outgoing-invoice'));
 const InvoiceCreate = lazy(() => import('@/pages/invoice/create'));
 
+// COMING SOON / WITHDRAWAL
+const ComingSoon = lazy(() => import('@/pages/coming-soon'));
 
-//DATA TABLE PAGE
-const DataTable1 = lazy(() => import('@/pages/data-tables/table-1'));
+
+
 
 //FILE MANAGER
 const FileManager = lazy(() => import('@/pages/file-manager'));
@@ -70,6 +72,15 @@ export const DashboardRoutes = [{
     path: 'vehicle',
     element: <VehicleView />
   },{
+    path: 'withdrawal',
+    element: <ComingSoon />
+  },{
+    path: 'expenses',
+    element: <ComingSoon />
+  },{
+    path: 'inspections',
+    element: <ComingSoon />
+  },{
     path: 'incoming-invoice',
     element: <IncomingInvoice />
   }, {
@@ -79,9 +90,6 @@ export const DashboardRoutes = [{
     path: 'create-invoice',
     element: <InvoiceCreate />
   },{
-    path: 'data-table-1',
-    element: <DataTable1 />
-  }, {
     path: 'file-manager',
     element: <FileManager />
   }]

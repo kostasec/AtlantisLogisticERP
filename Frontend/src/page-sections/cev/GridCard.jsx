@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
@@ -22,6 +23,7 @@ export default function EntityGridCard({
   contactPerson,
   contactIcons = {}
 }) {
+  const { t } = useTranslation();
   const [showContact, setShowContact] = useState(false);
 
   const toggleContact = useCallback(() => {
@@ -61,7 +63,7 @@ export default function EntityGridCard({
             sx={{ mt: 2, px: 0 }}
             onClick={toggleContact}
           >
-            {showContact ? 'Hide Contact Person' : 'Show Contact Person'}
+            {showContact ? t('Hide Contact Person') : t('Show Contact Person')}
           </Button>
 
           <Collapse in={showContact} timeout="auto" unmountOnExit>

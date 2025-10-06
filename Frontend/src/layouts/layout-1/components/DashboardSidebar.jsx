@@ -46,14 +46,20 @@ const SidebarContent = memo(({
     width: '6px'
   },
   '&::-webkit-scrollbar-track': {
-    background: 'rgba(0,0,0,0.1)',
+    background: theme => theme.palette.mode === 'dark' 
+      ? 'rgba(255,255,255,0.1)' 
+      : 'rgba(0,0,0,0.1)',
     borderRadius: '3px'
   },
   '&::-webkit-scrollbar-thumb': {
-    background: 'rgba(0,0,0,0.3)',
+    background: theme => theme.palette.mode === 'dark' 
+      ? 'rgba(255,255,255,0.3)' 
+      : 'rgba(0,0,0,0.3)',
     borderRadius: '3px',
     '&:hover': {
-      background: 'rgba(0,0,0,0.5)'
+      background: theme => theme.palette.mode === 'dark' 
+        ? 'rgba(255,255,255,0.5)' 
+        : 'rgba(0,0,0,0.5)'
     }
   }
 }}>

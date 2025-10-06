@@ -11,11 +11,34 @@ exports.getReadInvoice = async (req, res, next) => {
     try {
         const result = await OutInvoice.fetchAll();
 
-        res.render('outInvoice/read-invoices', {
-            pageTitle: 'Outgoing Invoices',
-            path: '/outInvoice/read',
-            invoices: result.recordset
+        // Proveri da li je zahtev za API (JSON)
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            // Transformacija podataka za frontend format
+            const transformedInvoices = result.recordset.map(invoice => {
+        
+            return{
+               id: invoice.InvoiceNumber, // Jedinstveni identifikator za React key
+               documentStatus: invoice.DocumentStatus,
+               processingStatus: invoice.ProcessingStatus,
+               issueDate: invoice.IssueDate,
+               sendDate: invoice.SendDate,
+               deliveredDate: invoice.DeliveredDate,
+               dueDate: invoice.DueDate,
+               recipient: invoice.Recipient,
+               invoiceNumber: invoice.InvoiceNumber,
+               amount: invoice.Amount,
+               currency: invoice.Currency,      
+               paymentStatus: invoice.PaymentStatusName        
+            };
         });
+
+        return res.json({
+            success: true,
+            data: transformedInvoices
+        });
+    }
+
+      
     } catch (err) {
         console.error('Error fetching invoices:', err);
         res.status(500).send('Database Error');

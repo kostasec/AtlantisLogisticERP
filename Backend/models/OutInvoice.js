@@ -4,7 +4,7 @@ class OutInvoice {
     static async fetchAll() {
         const pool = await getPool();
         return pool.request().query(`
-        SELECT
+       SELECT
 	          DocumentStatus,
 	          ProcessingStatus, 
 	          InvoiceNumber,
@@ -14,9 +14,9 @@ class OutInvoice {
             ' ',
             MAX(Currency)
 	          ) AS TotalInvoiceAmount,
-	          PaymentStatus
+	          PaymentStatusName
         FROM vw_OutgoingInvoiceServicesSummary
-        GROUP BY DocumentStatus, ProcessingStatus, Recipient, Invoicenumber, PaymentStatus, Currency
+        GROUP BY DocumentStatus, ProcessingStatus, Recipient, Invoicenumber, PaymentStatusName, Currency
         `);
     }
 

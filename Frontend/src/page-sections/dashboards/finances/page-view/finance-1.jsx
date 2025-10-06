@@ -1,39 +1,125 @@
+import { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid2';
-import Stack from '@mui/material/Stack'; // CUSTOM PAGE SECTION COMPONENTS
+import Stack from '@mui/material/Stack';
 
-import TransactionTable from '../TransactionTable';
+import TransactionTableIncomingInv from '../TransactionTableIncomingInv';
+import TransactionTableOutgoingInv from '../TransactionTableOutgoingInv';
+import { useTranslation } from 'react-i18next';
+import incomingInvoiceService from '@/services/incomingInvoice';
+import outgoingInvoiceService from '@/services/outgoingInvoice';
+
 export function Finance1PageView() {
+  const { t } = useTranslation();
+  const [outgoingInvoices, setOutgoingInvoices] = useState([]);
+  const [incomingInvoicesCarriers, setIncomingInvoicesCarriers] = useState([]);
+  const [incomingInvoicesOthers, setIncomingInvoicesOthers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchInvoices = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch incoming invoices for carriers
+        const carriersResponse = await incomingInvoiceService.getCarrierIncomingInvoices();
+        const carriersInvoices = carriersResponse.data || [];
+        
+        // Fetch incoming invoices for others
+        const othersResponse = await incomingInvoiceService.getOtherIncomingInvoices();
+        const othersInvoices = othersResponse.data || [];
+        
+        // Fetch outgoing invoices
+        const outgoingResponse = await outgoingInvoiceService.getAllOutgoingInvoices();
+        const outgoingInvoicesData = outgoingResponse.data || [];
+        
+        // Transform carrier invoices to transaction format
+        const transformedCarriers = carriersInvoices.map(invoice => ({
+          id: invoice.id,
+          sender: invoice.sender,
+          invoiceNumber: invoice.invoiceNumber,
+          dueDate: invoice.dueDate,
+          amount: invoice.amount,
+          currency: invoice.currency // Dodaj currency iz baze
+        }));
+
+        // Transform other invoices to transaction format
+        const transformedOthers = othersInvoices.map(invoice => ({
+          id: invoice.id,
+          sender: invoice.sender,
+          invoiceNumber: invoice.invoiceNumber,
+          dueDate: invoice.dueDate,
+          amount: invoice.amount,
+          currency: invoice.currency // Dodati currency iz baze
+        }));
+
+        // Transform outgoing invoices to transaction format
+        const transformedOutgoing = outgoingInvoicesData.map(invoice => ({
+          id: invoice.id,
+          recipient: invoice.recipient, // recipient umesto sender
+          invoiceNumber: invoice.invoiceNumber,
+          dueDate: invoice.dueDate,
+          amount: invoice.amount,
+          currency: invoice.currency // Dodaj currency iz baze
+        }));
+
+        setIncomingInvoicesCarriers(transformedCarriers);
+        setIncomingInvoicesOthers(transformedOthers);
+        setOutgoingInvoices(transformedOutgoing);
+        
+      } catch (error) {
+        console.error('Error fetching invoice data:', error);
+        // Keep empty arrays as fallback
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInvoices();
+  }, []);
   return <div className="pt-2 pb-4">
       <Grid container spacing={3}>
-      {
-        /*Outgoing Invoices Payment */
-      }
-        <Grid size={{
-        md: 12,
-        xs: 12
-      }}>
-        <TransactionTable title="Outgoing Invoices for Payment"/>
-          
-        </Grid>
+     
       
         {
         /* II Payment Carriers */
       }
         <Grid size={{
-        md: 6,
+        md: 12,
         xs: 12
       }}>
-        <TransactionTable title="Incoming Invoices for Payment" subtitle="Carriers"/>
+        <TransactionTableIncomingInv 
+          title={t('Incoming Invoices for Payment') || 'Incoming Invoices for Payment'} 
+          subtitle={t('Carriers') || 'Carriers'}
+          transactions={incomingInvoicesCarriers}
+        />
         </Grid>
         {
 
       /* II Payment Others */
         }
         <Grid size={{
-        md: 6,
+        md: 12,
         xs: 12
       }}>
-        <TransactionTable title="Incoming Invoices for Payment" subtitle="Others"/>
+        <TransactionTableIncomingInv 
+          subtitle={t('Others') || 'Others'}
+          transactions={incomingInvoicesOthers}
+        />
+          
+        </Grid>
+
+         {
+        /*Outgoing Invoices Payment */
+      }
+        <Grid size={{
+        md: 12,
+        xs: 12
+      }}>
+        <TransactionTableOutgoingInv
+          title={t('Outgoing Invoices for Payment') || 'Outgoing Invoices for Payment'}
+          transactions={outgoingInvoices}
+        />
+      
           
         </Grid>
 
@@ -45,7 +131,7 @@ export function Finance1PageView() {
         md: 6,
         xs: 12
       }}>
-        <TransactionTable title="Vehicle Inspection" />
+        {/*Vehicle Inspection*/}
 
           <Stack spacing={3}>
            
@@ -59,7 +145,7 @@ export function Finance1PageView() {
         md: 6,
         xs: 12
       }}>
-        <TransactionTable title="Employee Inspection" />
+       {/*Employee Inspection*/}
          
         </Grid>
 

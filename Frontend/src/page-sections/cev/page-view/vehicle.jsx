@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import Card from '@mui/material/Card';
+import Grid from '@mui/material/Grid2';
 import Stack from '@mui/material/Stack';
 import Pagination from '@mui/material/Pagination';
 import Typography from '@mui/material/Typography';
@@ -11,16 +12,23 @@ import HeadingArea from '../HeadingArea';
 import GridCard from '../GridCard';
 
 import { paginate } from '@/utils/paginate';
+import { isMockEnabled } from '@/mocks/mockConfig';
+import { mockVehicles } from '@/mocks/data/vehicles';
+
 
 import LocalShipping from '@/icons/Car';
 import AccountCircle from '@/icons/User';
+import duotone from '@/icons/duotone';
 import Add from '@/icons/Add';
 
 export default function VehiclePageView({ initialVehicles }) {
   const { t } = useTranslation();
   const [perPage] = useState(8);
   const [page, setPage] = useState(1);
-  const safeVehicles = useMemo(() => initialVehicles ?? [], [initialVehicles]);
+  const safeVehicles = useMemo(() => {
+    if (isMockEnabled()) return mockVehicles;
+    return initialVehicles ?? [];
+  }, [initialVehicles]);
   const [items, setItems] = useState(safeVehicles);
   const [filter, setFilter] = useState({ role: '', search: '' });
 
@@ -42,7 +50,10 @@ export default function VehiclePageView({ initialVehicles }) {
 
   const filtered = items.filter(item => {
     if (filter.role) return item.role?.toLowerCase() === filter.role;
-    if (filter.search) return item.vehicleName?.toLowerCase().includes(filter.search.toLowerCase());
+    if (filter.search) {
+      const haystack = `${item.truckID} ${item.trailerID} ${item.driver}`.toLowerCase();
+      return haystack.includes(filter.search.toLowerCase());
+    }
     return true;
   });
 
@@ -53,35 +64,38 @@ export default function VehiclePageView({ initialVehicles }) {
 
         <SearchArea value={filter.search} onChange={handleSearchChange} gridRoute="/dashboard/vehicle-grid" listRoute="/dashboard/vehicle-list" />
 
-        <Stack spacing={2}>
+        <Grid container spacing={3}>
           {filtered.length === 0 ? (
-            <Typography variant="body2" color="text.secondary" textAlign="center" py={4}>
-              {t('No vehicles available yet.')}
-            </Typography>
+            <Grid size={12}>
+              <Typography variant="body2" color="text.secondary" textAlign="center" py={4}>
+                {t('No vehicles available yet.')}
+              </Typography>
+            </Grid>
           ) : (
             paginate(page, perPage, filtered).map(vehicle => (
-            <div key={vehicle.truckID + vehicle.trailerID} style={{ width: '100%' }}>
-              <GridCard
-                title={vehicle.vehicleName}
-                fields={[
-                  { icon: LocalShipping, label: t('Truck'), value: vehicle.truckID },
-                  { icon: LocalShipping, label: t('Trailer'), value: vehicle.trailerID },
-                  { icon: AccountCircle, label: t('Driver'), value: vehicle.driver }
-                ]}
-                sx={{ width: '100%' }}
-              />
-            </div>
-          )))
-          }
+              <Grid size={{ lg: 3, md: 4, sm: 6, xs: 12 }} key={vehicle.truckID + vehicle.trailerID}>
+                <GridCard
+                  title={`${vehicle.truckID ?? '-'} / ${vehicle.trailerID ?? '-'}`}
+                  subtitle={vehicle.role || ''}
+                  fields={[
+                    { icon: LocalShipping, label: t('Truck'), value: vehicle.truckID || '-' },
+                    { icon: LocalShipping, label: t('Trailer'), value: vehicle.trailerID || '-' },
+                    { icon: AccountCircle, label: t('Driver'), value: vehicle.driver || '-' }
+                  ]}
+                  sx={{ width: '100%' }}
+                />
+              </Grid>
+            ))
+          )}
 
           {filtered.length > 0 && (
-            <div>
+            <Grid size={12}>
               <Stack alignItems="center" py={2}>
                 <Pagination shape="rounded" count={Math.ceil(filtered.length / perPage)} onChange={(_, newPage) => setPage(newPage)} />
               </Stack>
-            </div>
+            </Grid>
           )}
-        </Stack>
+        </Grid>
       </Card>
     </div>
   );

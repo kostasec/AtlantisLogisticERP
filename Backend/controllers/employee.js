@@ -12,9 +12,9 @@ exports.getReadEmployee = async (req, res, next) => {
   try {
     const employees = await Employee.fetchAll();
     
-    // Provjeri da li je zahtjev za API (JSON)
+    // Proveri da li je zahtev za API (JSON)
     if (req.headers.accept && req.headers.accept.includes('application/json')) {
-      // Transformiraj podatke za frontend format
+      // Transformacija podataka za frontend format
       const transformedEmployees = employees.recordset.map(employee => {
         // Spoji adresna polja u jedno
         let address = '';

@@ -6,6 +6,7 @@ import { useTheme } from '@mui/material/styles'; // CUSTOM HOOK
 import useChartOptions from '@/hooks/useChartOptions'; // CUSTOM COMPONENTS
 
 import Heading from './Heading'; // CUSTOM UTILS METHODS
+import { useTranslation } from 'react-i18next';
 
 import { currency } from '@/utils/currency'; // STYLED COMPONENT
 
@@ -18,6 +19,7 @@ const series = [{
   data: [6, 15, 10, 17, 12, 19, 10]
 }];
 export default function TotalShipments() {
+  const { t } = useTranslation();
   const theme = useTheme(); // TOTAL SHIPMENTS REACT CHART OPTIONS
 
   const options = useChartOptions({
@@ -48,7 +50,7 @@ export default function TotalShipments() {
     }
   });
   return <CardWrapper>
-      <Heading percentage="+2.19%" subtitle="Total Shipments" title={currency(12650)} />
+  <Heading percentage="+2.19%" subtitle={t('Total Shipments')} title={currency(12650)} />
 
       <Box mb={-3} mx={-1}>
         <Chart type="bar" height={110} series={series} options={options} />

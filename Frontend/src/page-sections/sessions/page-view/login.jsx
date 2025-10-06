@@ -118,6 +118,18 @@ export default function LoginPageView() {
                 Sign In
               </Button>
             </Grid>
+
+            <Grid size={12}>
+              <Button 
+                fullWidth 
+                variant="outlined" 
+                color="secondary"
+                onClick={() => signInWithEmail('admin@atlantis.com', 'password123')}
+                sx={{ mt: 1 }}
+              >
+                Quick Mock Login (Admin)
+              </Button>
+            </Grid>
           </Grid>
         </FormProvider>
 

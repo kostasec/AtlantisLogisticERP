@@ -1,6 +1,6 @@
-import { memo, useCallback } from 'react';
+import { memo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup'; // MUI
 
@@ -12,47 +12,65 @@ import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import RadioGroup from '@mui/material/RadioGroup';
-import Typography from '@mui/material/Typography'; // CUSTOM COMPONENTS
+import Typography from '@mui/material/Typography';
 
-import InvoiceSummery from '../InvoiceSummery';
-import { FormProvider, TextField, DatePicker } from '@/components/form'; // CUSTOM ICON COMPONENT
 
-import Delete from '@/icons/Delete'; // STYLED COMPONENTS
+import InvoiceSummary from '../InvoiceSummary';
+import InvoiceItems from '../InvoiceItems';
+import AdditionalInformation from '../AdditionalInformation';
+import { FormProvider, TextField, DatePicker } from '@/components/form'; // STYLED COMPONENTS
 
 import { StatusWrapper, StyledFormControl } from '../styles';
+import { AddAPhoto } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 const validationSchema = Yup.object().shape({
-  billTo: Yup.string().required('Bill To is Required!'),
-  billToAddress: Yup.string().required('Address is Required!'),
-  billToPhone: Yup.string().required('Phone is Required!'),
-  billFrom: Yup.string().required('Bill From is Required!'),
-  billFromAddress: Yup.string().required('Address is Required!'),
-  billFromPhone: Yup.string().required('Phone is Required!'),
-  status: Yup.string().default(() => 'Pending'),
   items: Yup.array().of(Yup.object().shape({
-    name: Yup.string().required('Item Name Required'),
-    price: Yup.number().moreThan(0, 'Price must be greater than 0').required('Price is Required'),
-    qty: Yup.number().moreThan(0, 'Quantity must be greater than 0').required('Quantity is Required')
-  }))
+    route: Yup.string().required('Route is Required'),
+    regTag: Yup.string().required('Registration Tag is Required'),
+    price: Yup.string().required('Price is Required'),
+    vat: Yup.string().required('VAT is Required'),
+    discount: Yup.string().required('Discount is Required'),
+    amount: Yup.string().required('Amount is Required')
+  })),
+  additionalInfo: Yup.object().shape({
+    orderNumber: Yup.string(),
+    customerReference: Yup.string(),
+    projectCode: Yup.string(),
+    departmentCode: Yup.string(),
+    costCenter: Yup.string(),
+    purchaseOrder: Yup.string(),
+    contractNumber: Yup.string(),
+    deliveryNote: Yup.string(),
+    shipmentTracking: Yup.string(),
+    specialInstructions: Yup.string()
+  })
 });
 export default function CreateInvoicePageView() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const handleCancel = useCallback(() => navigate('/dashboard/invoice-list'), [navigate]);
   const initialValues = {
-    orderNo: 204,
-    billTo: '',
-    billFrom: '',
-    billToPhone: '',
-    billToAddress: '',
-    billFromPhone: '',
-    status: 'Pending',
-    billFromAddress: '',
-    orderDate: new Date(),
     items: [{
       id: 1,
-      name: '',
-      price: 0,
-      qty: 0
-    }]
+      route: '',
+      regTag: '',
+      price: '',
+      vat: '',
+      discount: '',
+      amount: ''
+    }],
+    additionalInfo: {
+      orderNumber: '',
+      customerReference: '',
+      projectCode: '',
+      departmentCode: '',
+      costCenter: '',
+      purchaseOrder: '',
+      contractNumber: '',
+      deliveryNote: '',
+      shipmentTracking: '',
+      specialInstructions: ''
+    }
   };
   const methods = useForm({
     defaultValues: initialValues,
@@ -66,174 +84,166 @@ export default function CreateInvoicePageView() {
     formState: {
       isSubmitting
     }
-  } = methods; // FOR HANDLING ITEM LIST
-
-  const {
-    fields,
-    append,
-    remove
-  } = useFieldArray({
-    name: 'items',
-    control
-  }); // FORM SUBMIT HANDLER
+  } = methods; // FORM SUBMIT HANDLER
 
   const handleSubmitForm = handleSubmit(values => {
     alert(JSON.stringify(values, null, 2));
+  });
+
+  const handleSendInvoice = handleSubmit(values => {
+    console.log('Sending invoice:', values);
+    // Here you would typically:
+    // 1. Save the invoice to the database
+    // 2. Send email notification to recipient
+    // 3. Update invoice status to 'sent'
+    // 4. Redirect to invoice list or show success message
+    alert('Invoice sent successfully!');
+    navigate('/dashboard/invoice-list');
   });
   return <div className="pt-2 pb-4">
       <Card className="p-3">
         <Typography variant="body1" sx={{
         fontWeight: 500,
-        mb: 2
+        mb: 3
       }}>
-          Order Status
+          {t('Create Outgoing Invoice')}
         </Typography>
 
         <FormProvider methods={methods} onSubmit={handleSubmitForm}>
-          <StatusWrapper>
-            <RadioGroup row name="status" defaultValue={watch('status')} onChange={e => setValue('status', e.target.value)}>
-              {['Pending', 'Processing', 'Delivered'].map(item => <StyledFormControl key={item} value={item} label={item} control={<Radio size="small" />} />)}
-            </RadioGroup>
 
-            <div className="buttonWrapper">
-              <Button color="secondary" variant="outlined" onClick={handleCancel} sx={{
-              mr: 1
-            }}>
-                Cancel
-              </Button>
-
-              <Button loading={isSubmitting} type="submit" variant="contained">
-                Save
-              </Button>
-            </div>
-          </StatusWrapper>
 
           {
-          /* ORDER NO & ORDER DATE FIELDS */
+          /* INVOICE NUMBER */
         }
           <Grid container spacing={3}>
-            <Grid size={{
-            md: 4,
+          
+          <Grid size={{
+            md: 6,
             sm: 6,
             xs: 12
           }}>
-              <TextField fullWidth name="orderNo" label="Order Number" />
-            </Grid>
+          <TextField fullWidth name="invoiceNo" label={t('Invoice Number')} />   
+          </Grid>
 
-            <Grid size={{
-            md: 4,
+          <Grid size={{
+            md: 1,
             sm: 6,
             xs: 12
           }}>
-              <DatePicker name="orderDate" label="Order Date" />
-            </Grid>
+          <TextField fullWidth name="model" label={t('Model')} />    
+          </Grid>
+
+          <Grid size={{
+            md: 5,
+            sm: 6,
+            xs: 12
+          }}>
+          <TextField fullWidth name="referenceNo" label={t('Reference Number')} />
+          </Grid>
+
           </Grid>
 
           <Divider sx={{
-          my: 4
+          mt: 3,
+          mb: 2
         }} />
 
           {
-          /* BILL TO & BILL FROM FIELDS */
+          /* Invoice's dates information */
         }
           <Grid container spacing={3}>
             <Grid size={{
             md: 4,
-            sm: 6,
+            sm: 3,
             xs: 12
           }}>
-              <Stack spacing={2}>
-                <TextField fullWidth name="billTo" label="Bill to" />
-                <TextField fullWidth name="billToAddress" label="Bill to Address" />
-                <TextField fullWidth type="number" name="billToPhone" label="Bill to Phone" />
+              <Stack spacing={3} >
+              <Typography variant="subtitle1" fontWeight={500}>{t('Invoice Information')}</Typography>
+              <DatePicker name="issueDate" label={t('Issue Date')} />
+              <DatePicker name="transDate" label={t('Transaction Date')} />
+              <DatePicker name="dueDate" label={t('Due Date')} />
               </Stack>
             </Grid>
 
+            {/* Empty Space */}
             <Grid size={{
-            md: 4,
-            sm: 6,
+            md: 2,
+            sm: 0,
+            xs: 0
+          }}>
+            </Grid>
+
+            {/* Recipient */}
+            <Grid size={{
+            md: 6,
+            sm: 7,
             xs: 12
           }}>
               <Stack spacing={2}>
-                <TextField fullWidth name="billFrom" label="Bill From" />
-                <TextField fullWidth name="billFromAddress" label="Bill from Address" />
-                <TextField fullWidth type="number" name="billFromPhone" label="Bill from Phone" />
+                <Typography variant="subtitle1" fontWeight={500}>{t('Recipient')}</Typography>
+
+               
+                <TextField 
+                  fullWidth 
+                  name="recipient" 
+                  label={t('Recipient')} 
+                  helperText={t('Find by Tax Number or Client Name')}
+                />
               </Stack>
             </Grid>
           </Grid>
 
           <Divider sx={{
-          my: 4
+          mt: 4,
+          mb: 2
         }} />
 
           {
           /* ITEM LIST FIELDS */
         }
-          <Grid container spacing={2} alignItems="flex-end">
-            <Grid size={12}>
-              <Button variant="contained" onClick={() => append({
-              name: '',
-              price: 0,
-              qty: 0
-            })} sx={{
-              marginBottom: 2
-            }}>
-                Add New Item
-              </Button>
-            </Grid>
-
-            {fields.map((field, index) => <ItemRow key={field.id} index={index} onRemove={() => remove(index)} />)}
-          </Grid>
+          <InvoiceItems control={control} />
 
           <Divider sx={{
           my: 4
         }} />
 
-          {
-          /* INVOICE TOTAL AMOUNT SUMMERY */
-        }
-          <InvoiceSummery />
+
+          <AdditionalInformation />
+
+          <Divider sx={{
+          my: 4
+        }} />
+
+
+          <InvoiceSummary />
+
+          <Divider sx={{ my: 4 }} />
+
+          {/* ACTION BUTTONS */}
+          <Stack direction="row" spacing={2} justifyContent="flex-end">
+
+            
+            <Button 
+              type="submit"
+              variant="outlined" 
+              color="primary"
+              disabled={isSubmitting}
+              sx={{ minWidth: 120 }}
+            >
+              {t('Save Draft')}
+            </Button>
+
+            <Button 
+              variant="contained" 
+              color="primary"
+              disabled={isSubmitting}
+              onClick={handleSendInvoice}
+              sx={{ minWidth: 120 }}
+            >
+              {t('Send Invoice')}
+            </Button>
+          </Stack>
         </FormProvider>
       </Card>
     </div>;
 }
-const ItemRow = memo(function ItemRow({
-  index,
-  onRemove
-}) {
-  return <Grid container size={12} spacing={1}>
-      <Grid size={{
-      md: 4,
-      sm: 4,
-      xs: 12
-    }}>
-        <TextField fullWidth size="small" label="Item Name" name={`items.${index}.name`} />
-      </Grid>
-
-      <Grid size={{
-      md: 2,
-      sm: 3,
-      xs: 5
-    }}>
-        <TextField fullWidth size="small" type="number" label="Item Price" name={`items.${index}.price`} />
-      </Grid>
-
-      <Grid size={{
-      md: 2,
-      sm: 3,
-      xs: 5
-    }}>
-        <TextField fullWidth size="small" type="number" label="Item Quantity" name={`items.${index}.qty`} />
-      </Grid>
-
-      <Grid size={{
-      md: 2,
-      sm: 2,
-      xs: 2
-    }}>
-        <IconButton onClick={onRemove} color="error">
-          <Delete />
-        </IconButton>
-      </Grid>
-    </Grid>;
-});

@@ -30,7 +30,7 @@ import { ListItemIcon, ListItemText } from './list';
 import { Tab, TabList, TabPanel, Tabs } from './tabs';
 import { FilledInput, Input, InputLabel, OutlinedInput } from './input';
 import { Pagination, PaginationItem, TablePagination } from './pagination';
-import { Accordion, AccordionDetails, AccordionSummery } from './accordion';
+import { Accordion, AccordionDetails, AccordionSummary } from './accordion';
 import { Dialog, DialogActions, DialogContent, DialogTitle } from './dialog';
 import { Button, ButtonBase, ButtonGroup, IconButton, LoadingButton } from './button';
 import { DatePicker, TimePicker, DateTimePicker, MobileDatePicker, StaticDatePicker, DesktopDatePicker, DesktopTimePicker, DesktopDateTimePicker } from './pickers';
@@ -140,7 +140,7 @@ const componentsOverride = theme => {
     MuiLoadingButton: LoadingButton(theme),
     // ACCORDION
     MuiAccordion: Accordion(theme),
-    MuiAccordionSummary: AccordionSummery(theme),
+    MuiAccordionSummary: AccordionSummary(theme),
     MuiAccordionDetails: AccordionDetails(theme),
     // PAGINATION
     MuiPagination: Pagination(),

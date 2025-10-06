@@ -62,7 +62,7 @@ export const AccordionDetails = theme => ({
     }
   }
 });
-export const AccordionSummery = theme => ({
+export const AccordionSummary = theme => ({
   styleOverrides: {
     root: {
       fontSize: 14,

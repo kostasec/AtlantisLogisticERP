@@ -190,3 +190,11 @@ SELECT e.EmplType, E.EmplID, e.FirstName, e.LastName, e.StreetAndNmbr, e.City, e
             LEFT JOIN Employee m ON (m.EmplID=e.MgrID)
             WHERE e.EmplType NOT IN ('Driver')
 GO
+
+-- ===========================
+-- CREATE VIEW vw_OutInvSender
+-- ===========================
+CREATE VIEW vw_OutInvSender AS
+SELECT oi.*, ClientName AS 'Sender'
+FROM OutgoingInvoice oi JOIN Client c on (oi.TaxID=c.TaxID)
+GO

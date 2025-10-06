@@ -106,7 +106,7 @@ export default function EmployeePageView({ initialEmployees }) {
 	return (
 		<div className="pt-2 pb-4">
 			<Card sx={{ px: 3, py: 2 }}>
-				<HeadingArea value={filter.role} changeTab={changeTab} title={t('Employees')} icon={Add} buttonLabel={t('Add New Employee')} buttonRoute="/dashboard/add-employee" />
+				<HeadingArea value={filter.role} changeTab={changeTab} title={t('Employees')} icon={Add} buttonLabel={t('Add Employee')} buttonRoute="/dashboard/add-employee" />
 
 				<SearchArea value={filter.search} onChange={handleSearchChange} gridRoute="/dashboard/employee-grid" listRoute="/dashboard/employee-list" />
 
@@ -121,15 +121,14 @@ export default function EmployeePageView({ initialEmployees }) {
 						paginate(page, perPage, filtered).map(employee => (
 							<Grid size={{ lg: 3, md: 4, sm: 6, xs: 12 }} key={employee.id}>
 								<GridCard 
-									avatar={employee.avatar || '/static/avatar/020-man-4.svg'} 
 									title={employee.fullName} 
 									subtitle={employee.employeeType} 
 									fields={[
 										{ icon: HomeOutlined, label: t('Address'), value: employee.address || '-' },
 										{ icon: Call, label: t('Phone'), value: employee.phoneNumber || '-' },
 										{ icon: duotone.Pages, label: t('Passport'), value: employee.passportNumber || '-' },
-										{ icon: duotone.UserProfile, label: t('Manager'), value: employee.manager || 'No Manager' },
-										{ icon: Car, label: t('Vehicle'), value: employee.vehicle || 'No Vehicle' },
+										{ icon: duotone.UserProfile, label: t('Manager'), value: employee.manager || '-' },
+										{ icon: Car, label: t('Vehicle'), value: employee.vehicle || '-' },
 									]} 
 								/>
 							</Grid>

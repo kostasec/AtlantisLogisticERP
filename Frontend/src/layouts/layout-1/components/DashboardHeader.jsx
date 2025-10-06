@@ -9,7 +9,6 @@ import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
 import { SettingsContext } from '@/contexts/settingsContext';
 import ThemeIcon from '@/icons/ThemeIcon';
 import LanguagePopover from '@/layouts/layout-parts/popovers/LanguagePopover';
-import NotificationsPopover from '@/layouts/layout-parts/popovers/NotificationsPopover';
 import { DashboardHeaderRoot, StyledToolBar } from '@/layouts/layout-1/styles';
 import useAuth from '@/hooks/useAuth';
 
@@ -48,6 +47,11 @@ export default function DashboardHeader() {
     });
   };
 
+  const handleLogout = () => {
+    console.log('Logout button clicked');
+    logout();
+  };
+
   return (
     <DashboardHeaderRoot position="sticky">
       <StyledToolBar sx={{ justifyContent: 'flex-end' }}>
@@ -55,9 +59,9 @@ export default function DashboardHeader() {
           <IconButton onClick={() => handleChangeTheme(settings.theme === 'light' ? 'dark' : 'light')}>
             <ThemeIcon />
           </IconButton> 
-          <NotificationsPopover />
+          {/*<NotificationsPopover />*/}
           <LanguagePopover />
-          <SignOutButton onClick={logout} disableElevation>
+          <SignOutButton onClick={handleLogout} disableElevation>
             <PowerSettingsNewIcon fontSize="small" />
           </SignOutButton>
         </Stack>

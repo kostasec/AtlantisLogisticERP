@@ -54,7 +54,7 @@ export default function InvoiceTableRow(props) {
       <TableCell align="center" padding="normal" sx={{ verticalAlign: 'middle' }}>
         <FlexBox justifyContent="center" alignItems="center">
           {(() => {
-            const status = (invoice.DocumentStatus || '').toString().toLowerCase();
+            const status = (invoice.documentStatus || '').toString().toLowerCase();
             let statusType = 'error'; // default
             
             switch (status) {
@@ -75,7 +75,7 @@ export default function InvoiceTableRow(props) {
                 statusType = 'error';
             }
             
-            return <StatusBadge type={statusType}>{invoice.DocumentStatus || '-'}</StatusBadge>;
+            return <StatusBadge type={statusType}>{invoice.documentStatus ? t(invoice.documentStatus) : '-'}</StatusBadge>;
           })()}
         </FlexBox>
       </TableCell>
@@ -83,7 +83,7 @@ export default function InvoiceTableRow(props) {
       <TableCell align="center" padding="normal" sx={{ verticalAlign: 'middle' }}>
         <FlexBox justifyContent="center" alignItems="center">
           {(() => {
-            const pStatus = (invoice.ProcessingStatus || '').toString().toLowerCase();
+            const pStatus = (invoice.processingStatus || '').toString().toLowerCase();
             let statusType = 'error'; // default
             
             switch (pStatus) {
@@ -110,7 +110,7 @@ export default function InvoiceTableRow(props) {
                 statusType = 'error';
             }
             
-            return <StatusBadge type={statusType}>{invoice.ProcessingStatus || '-'}</StatusBadge>;
+            return <StatusBadge type={statusType}>{invoice.processingStatus ? t(invoice.processingStatus) : '-'}</StatusBadge>;
           })()}
         </FlexBox>
       </TableCell>
@@ -125,7 +125,7 @@ export default function InvoiceTableRow(props) {
         <FlexBox justifyContent="center" alignItems="center">
           <Typography variant="body2" color="text.secondary">
             {(() => {
-              const d = invoice.SendDate ? new Date(invoice.SendDate) : null;
+              const d = invoice.sentDate ? new Date(invoice.sentDate) : null;
               return d && isValid(d) ? format(d, 'MMM dd, yyyy') : '-';
             })()}
           </Typography>
@@ -136,7 +136,7 @@ export default function InvoiceTableRow(props) {
         <FlexBox justifyContent="center" alignItems="center">
           <Typography variant="body2" color="text.secondary">
             {(() => {
-              const d = invoice.DeliveredDate ? new Date(invoice.DeliveredDate) : null;
+              const d = invoice.deliveredDate ? new Date(invoice.deliveredDate) : null;
               return d && isValid(d) ? format(d, 'MMM dd, yyyy') : '-';
             })()}
           </Typography>
@@ -145,7 +145,13 @@ export default function InvoiceTableRow(props) {
 
       <TableCell align="center" padding="normal" sx={{ verticalAlign: 'middle' }}>
         <FlexBox justifyContent="center" alignItems="center">
-          <Typography variant="body2">{invoice.InvoiceNumber || invoice.invoiceId || '-'}</Typography>
+          <Typography variant="body2">{invoice.invoiceNumber ||  '-'}</Typography>
+        </FlexBox>
+      </TableCell>
+
+        <TableCell align="center" padding="normal" sx={{ verticalAlign: 'middle' }}>
+        <FlexBox justifyContent="center" alignItems="center">
+          <Typography variant="body2">{invoice.paymentStatus ? t(invoice.paymentStatus) : '-'}</Typography>
         </FlexBox>
       </TableCell>
 
@@ -155,10 +161,7 @@ export default function InvoiceTableRow(props) {
             handleCloseMenu();
             navigate('/dashboard/invoice-details');
           }} />
-          <TableMoreMenuItem title={t('Delete')} Icon={DeleteOutline} handleClick={() => {
-            handleCloseMenu();
-            handleDeleteInvoice(invoice.id);
-          }} />
+          
         </TableMoreMenu>
       </TableCell>
     </TableRow>;

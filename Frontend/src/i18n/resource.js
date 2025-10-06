@@ -52,7 +52,7 @@ export const resources = {
       Delete: 'Delete',
   'Data Not Found!': 'Data Not Found!',
   '{{count}} selected': '{{count}} selected',
-  'Add New Employee': 'Add New Employee',
+  'Add Employee': 'Add Employee',
   'Add Client': 'Add Client',
   'Add Vehicle': 'Add Vehicle',
   Address: 'Address',
@@ -110,6 +110,47 @@ export const resources = {
   Pricing: 'Pricing',
   Support: 'Support',
   'Create Ticket': 'Create Ticket'
+      , // === Added invoice/payment related keys (table headers & dialogs) ===
+      SENDER: 'Sender',
+      RECIPIENT: 'Recipient',
+      INVOICE: 'Invoice',
+      'DUE DATE': 'Due Date',
+      AMOUNT: 'Amount',
+      PAYMENT: 'Payment',
+      PAY: 'Pay',
+      PAID: 'Paid',
+      UNPAID: 'Unpaid',
+      'MARK AS PAID': 'Mark as Paid',
+      'CONFIRM PAYMENT': 'Confirm Payment',
+      CONFIRM: 'Confirm',
+      CANCEL: 'Cancel',
+      'Are you sure this invoice has been paid?': 'Are you sure this invoice has been paid?',
+      'No invoices available': 'No invoices available',
+      // === Finance dashboard specific ===
+      'Incoming Invoices for Payment': 'Incoming Invoices for Payment',
+      'Outgoing Invoices for Payment': 'Outgoing Invoices for Payment',
+      Carriers: 'Carriers',
+      Others: 'Others'
+      , 'Top Selling Categories': 'Top Selling Categories'
+      , 'Company Progress': 'Company Progress'
+      , 'This month': 'This month'
+      , 'Last month': 'Last month'
+      , 'Total Shipments': 'Total Shipments'
+      , 'Failed to fetch incoming invoices': 'Failed to fetch incoming invoices'
+      , 'Error connecting to server': 'Error connecting to server'
+      , 'Payment Status': 'Payment Status'
+      , Delivered: 'Delivered'
+      , Sent: 'Sent'
+      , Pending: 'Pending'
+      , Failed: 'Failed'
+      , Rejected: 'Rejected'
+      , Accepted: 'Accepted'
+      , Completed: 'Completed'
+      , Approved: 'Approved'
+      , Processing: 'Processing'
+      , 'In Review': 'In Review'
+      , Submitted: 'Submitted'
+      , Cancelled: 'Cancelled'
     }
   },
   ser: {
@@ -165,7 +206,7 @@ export const resources = {
       Delete: 'Obriši',
   'Data Not Found!': 'Podaci nisu pronađeni!',
   '{{count}} selected': '{{count}} odabrano',
-  'Add New Employee': 'Dodaj novog zaposlenog',
+  'Add Employee': 'Dodaj zaposlenog',
   'Add Client': 'Dodaj klijenta',
   'Add Vehicle': 'Dodaj vozilo',
   Address: 'Adresa',
@@ -223,6 +264,47 @@ export const resources = {
   Pricing: 'Cene',
   Support: 'Podrška',
   'Create Ticket': 'Kreiraj tiket'
+      , // === Dodati ključevi za fakture / plaćanja (zaglavlja tabela i dijalozi) ===
+      SENDER: 'Pošiljalac',
+      RECIPIENT: 'Primalac',
+      INVOICE: 'Faktura',
+      'DUE DATE': 'Datum dospeća',
+      AMOUNT: 'Iznos',
+      PAYMENT: 'Plaćanje',
+      PAY: 'Plati',
+      PAID: 'Plaćeno',
+      UNPAID: 'Neplaćeno',
+      'MARK AS PAID': 'Označi kao plaćeno',
+      'CONFIRM PAYMENT': 'Potvrdi plaćanje',
+      CONFIRM: 'Potvrdi',
+      CANCEL: 'Otkaži',
+      'Are you sure this invoice has been paid?': 'Da li ste sigurni da je ova faktura plaćena?',
+      'No invoices available': 'Nema dostupnih faktura',
+      // === Specifično za finansijsku tablu ===
+      'Incoming Invoices for Payment': 'Ulazne fakture za plaćanje',
+      'Outgoing Invoices for Payment': 'Izlazne fakture za naplatu',
+      Carriers: 'Prevoznici',
+      Others: 'Ostali'
+      , 'Top Selling Categories': 'Najprodavanije kategorije'
+      , 'Company Progress': 'Napredak kompanije'
+      , 'This month': 'Ovaj mesec'
+      , 'Last month': 'Prošli mesec'
+      , 'Total Shipments': 'Ukupne pošiljke'
+      , 'Failed to fetch incoming invoices': 'Neuspešno preuzimanje ulaznih faktura'
+      , 'Error connecting to server': 'Greška pri konekciji sa serverom'
+  , 'Payment Status': 'Status plaćanja'
+  , Delivered: 'Isporučeno'
+  , Sent: 'Poslato'
+  , Pending: 'Na čekanju'
+  , Failed: 'Neuspešno'
+  , Rejected: 'Odbijeno'
+  , Accepted: 'Prihvaćeno'
+  , Completed: 'Završeno'
+  , Approved: 'Odobreno'
+  , Processing: 'U obradi'
+  , 'In Review': 'U pregledu'
+  , Submitted: 'Predato'
+  , Cancelled: 'Otkazano'
     }
   }
 };
