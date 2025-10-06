@@ -42,6 +42,7 @@ Atlantis IS/
 - **Charts and Visualizations** with ApexCharts
 - **Authentication** ready (Auth0 integration)
 - **RTL Support** for right-to-left languages
+- **Mock Data Integration** for development without database
 
 ### Database Features
 - **SQL Server** relational database
@@ -94,7 +95,15 @@ git clone https://github.com/kostasec/TransportationCompany.git
 cd TransportationCompany
 ```
 
-### 2. Database Setup
+### 2. Database Setup (Optional)
+The project includes mock data and can run without database setup for development and testing purposes.
+
+**Option A: Use Mock Data (Recommended for quick start)**
+- The application includes built-in mock data
+- No database configuration required
+- Perfect for development and testing
+
+**Option B: Full Database Setup**
 ```bash
 cd Database
 # Execute the SQL scripts in SQL Server Management Studio or sqlcmd
@@ -122,7 +131,12 @@ npm run dev
 ## 🔧 Configuration
 
 ### Backend Configuration
-Update the database connection in `Backend/util/db.js`:
+
+**Mock Data Mode (Default)**
+The application runs with mock data by default - no database configuration needed.
+
+**Database Mode (Optional)**
+To use a real database, update the database connection in `Backend/util/db.js`:
 ```javascript
 const config = {
   server: 'your-server-name',
