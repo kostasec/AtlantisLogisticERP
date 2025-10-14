@@ -4,7 +4,7 @@ import { modularResources, availableLanguages } from './locales';
 
 
 
-const defaultLng = 'ser'; 
+const defaultLng = 'en'; 
 const fallbackLng = 'en';
 
 i18next.use(initReactI18next).init({

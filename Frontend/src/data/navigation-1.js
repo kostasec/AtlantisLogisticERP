@@ -12,14 +12,6 @@ export const navigations = [
       name: 'Finance',
       path: '/dashboard/finance',
       icon: duotone.Dashboard
-   },/*{
-      name: 'Statistics',
-      path: '/dashboard/logistics',
-      icon: duotone.Dashboard
-   },*/
-   {
-      type: 'label',
-      label: 'Management'
    },{
      name: 'SEF',
      icon: duotone.Invoice,
@@ -33,7 +25,23 @@ export const navigations = [
     name: 'Create Invoice',
     path: '/dashboard/create-invoice'
      }]
-   }, 
+   },{
+    name: 'Expenses',
+    icon: Menu,
+    path: '/dashboard/expenses'
+  },{
+    name: 'Inspections',
+    icon: duotone.DataTable,
+    path: '/dashboard/inspections'
+  }, /*{
+      name: 'Statistics',
+      path: '/dashboard/logistics',
+      icon: duotone.Dashboard
+   },*/
+   {
+      type: 'label',
+      label: 'Management'
+   },
    {
     name: 'Clients',
     icon: duotone.UserList,
@@ -46,21 +54,5 @@ export const navigations = [
     name: 'Vehicles',
     icon: Car,
     path: '/dashboard/vehicle'
-  },{
-    name: 'Withdrawal',
-    icon: duotone.Pricing,
-    path: '/dashboard/withdrawal'
-  },{
-    name: 'Expenses',
-    icon: Menu,
-    path: '/dashboard/expenses'
-  },{
-    name: 'Inspections',
-    icon: duotone.DataTable,
-    path: '/dashboard/inspections'
-  }, {
-    name: 'File Manager',
-    icon: duotone.Folder,
-    path: '/dashboard/file-manager'
   }
 ];

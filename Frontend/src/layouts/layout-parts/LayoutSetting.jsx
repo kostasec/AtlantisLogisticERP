@@ -87,9 +87,7 @@ export default function LayoutSetting() {
   };
 
   return <Fragment>
-      <StyledButton color="primary" onClick={toggleDrawer}>
-        Layouts
-      </StyledButton>
+
 
       <CustomDrawer open={open} anchor="right" variant="persistent">
         <FlexBox alignItems="center" justifyContent="space-between" px={2} py={1}>

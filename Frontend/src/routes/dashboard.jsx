@@ -9,13 +9,15 @@ const Logistics = lazy(() => import('@/pages/dashboard/logistics'));
 
 
 //CEV PAGES
-const ClientView= lazy(() => import('@/pages/cev/client'));
-const EmployeeView= lazy(() => import('@/pages/cev/employee'));
-const VehicleView= lazy(() => import('@/pages/cev/vehicle'));
+const ClientView= lazy(() => import('@/pages/cev/client/list-client'));
+const AddClientView = lazy(() => import('@/pages/cev/client/add-client'));
+const EmployeeView= lazy(() => import('@/pages/cev/employee/list-employee'));
+const AddEmployeeView= lazy(() =>import('@/pages/cev/employee/add-employee'))
+const VehicleView = lazy(() => import('@/pages/cev/vehicle/list-vehicle'));
+const AddVehicleView = lazy(() => import('@/pages/cev/vehicle/add-vehicle'));
 
-// TEST COMPONENTS
-const ClientTest = lazy(() => import('@/components/ClientTest'));
-const EmployeeTest = lazy(() => import('@/components/EmployeeTest'));
+//EXPENSES
+const ExpensesView= lazy(()=> import('@/page-sections/expenses/Expenses'))
 
 
  // ALL INVOICE RELATED PAGES
@@ -23,14 +25,7 @@ const IncomingInvoice = lazy(() => import('@/pages/invoice/incoming-invoice'));
 const OutgoingInvoice = lazy(() => import('@/pages/invoice/outgoing-invoice'));
 const InvoiceCreate = lazy(() => import('@/pages/invoice/create'));
 
-// COMING SOON / WITHDRAWAL
-const ComingSoon = lazy(() => import('@/pages/coming-soon'));
 
-
-
-
-//FILE MANAGER
-const FileManager = lazy(() => import('@/pages/file-manager'));
 
 
 const ActiveLayout = () => {
@@ -57,29 +52,32 @@ export const DashboardRoutes = [{
     path: 'logistics',
     element: <Logistics />
   },{
+    path: 'add-employee',
+    element: <AddEmployeeView />
+  },{
     path: 'employee',
     element: <EmployeeView />
-  } ,{
+  },{
     path: 'client',
     element: <ClientView />
   },{
-    path: 'client-test',
-    element: <ClientTest />
-  },{
-    path: 'employee-test',
-    element: <EmployeeTest />
+    path: 'add-client',
+    element: <AddClientView />
   },{
     path: 'vehicle',
     element: <VehicleView />
   },{
+    path: 'add-vehicle',
+    element: <AddVehicleView />
+  },{
     path: 'withdrawal',
-    element: <ComingSoon />
+    element: <></>
   },{
     path: 'expenses',
-    element: <ComingSoon />
+    element: <ExpensesView />
   },{
     path: 'inspections',
-    element: <ComingSoon />
+    element: <></>
   },{
     path: 'incoming-invoice',
     element: <IncomingInvoice />
@@ -89,8 +87,5 @@ export const DashboardRoutes = [{
   }, {
     path: 'create-invoice',
     element: <InvoiceCreate />
-  },{
-    path: 'file-manager',
-    element: <FileManager />
   }]
 }];

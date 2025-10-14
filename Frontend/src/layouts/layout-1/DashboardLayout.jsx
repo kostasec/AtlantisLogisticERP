@@ -10,35 +10,19 @@ import LayoutSetting from '@/layouts/layout-parts/LayoutSetting';
 import Footer from '@/components/footer'; // DASHBOARD LAYOUT BASED CONTEXT PROVIDER
 
 import LayoutProvider from './context/layoutContext';
+import MobileSidebar from './components/MobileSidebar';
 export default function DashboardLayoutV1() {
   const location = useLocation();
   const downLg = useMediaQuery(theme => theme.breakpoints.down('lg'));
-  return <LayoutProvider>
-      {
-      /*RENDER THE SIDEBAR */
-    }
-       <DashboardSidebar />
-
+  return (
+    <LayoutProvider>
+      {downLg ? <MobileSidebar /> : <DashboardSidebar />}
       <LayoutBodyWrapper>
-        {
-        /* DASHBOARD HEADER SECTION */
-      }
         <DashboardHeader />
-
-        {
-        /* MAIN CONTENT RENDER SECTION */
-      }
-      <Outlet key={location.pathname} />
-
-        {
-        /* GLOBAL FOOTER */
-      }
+        <Outlet key={location.pathname} />
         <Footer />
-
-        {
-        /* LAYOUT SETTING SECTION */
-      }
-        
+        <LayoutSetting />
       </LayoutBodyWrapper>
-    </LayoutProvider>;
+    </LayoutProvider>
+  );
 }
