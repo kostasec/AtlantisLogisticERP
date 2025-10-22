@@ -5,10 +5,12 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@mui/icons-material/Delete';
+import Delete from '@/icons/Delete';
 import CloseIcon from '@mui/icons-material/Close';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import Pagination from '@mui/material/Pagination';
 import Typography from '@mui/material/Typography';
 
 const initialExpenseState = {
@@ -21,83 +23,97 @@ const initialExpenseState = {
 };
 
 export default function AddExpense({ open, onClose, onAdd }) {
-  const [newExpense, setNewExpense] = useState(initialExpenseState);
+  const [items, setItems] = useState([initialExpenseState]);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  const handleInputChange = (event) => {
+  const updateItem = (idx, patch) => {
+    setItems(prev => prev.map((it, i) => i === idx ? { ...it, ...patch } : it));
+  };
+
+  const handleItemInputChange = (idx, event) => {
     const { name, value } = event.target;
-    if (name === 'domesticAllowance' || name === 'inoAllowance') {
-      setNewExpense(prev => ({
-        ...prev,
-        [name]: value,
-      }));
-    } else if (name.startsWith('domesticExpenses')) {
-      const idx = Number(name.replace('domesticExpenses', ''));
-      const updated = [...newExpense.domesticExpenses];
-      updated[idx] = value;
-      setNewExpense(prev => ({
-        ...prev,
-        domesticExpenses: updated
-      }));
-    } else if (name.startsWith('inoExpenses')) {
-      const idx = Number(name.replace('inoExpenses', ''));
-      const updated = [...newExpense.inoExpenses];
-      updated[idx] = value;
-      setNewExpense(prev => ({
-        ...prev,
-        inoExpenses: updated
-      }));
+    if (['domesticAllowance', 'inoAllowance', 'date', 'orderNumber'].includes(name)) {
+      updateItem(idx, { [name]: value });
     }
   };
 
-  const handleAddExpenseField = () => {
-    setNewExpense(prev => ({
-      ...prev,
-      domesticExpenses: [...prev.domesticExpenses, '']
+  const handleInnerExpenseChange = (itemIdx, listName, expenseIdx, value) => {
+    setItems(prev => prev.map((it, i) => {
+      if (i !== itemIdx) return it;
+      const updated = [...it[listName]];
+      updated[expenseIdx] = value;
+      return { ...it, [listName]: updated };
     }));
   };
 
-  const handleRemoveExpenseField = (idx) => {
-    setNewExpense(prev => ({
-      ...prev,
-      domesticExpenses: prev.domesticExpenses.filter((_, i) => i !== idx)
-    }));
+  const handleAddExpenseField = (itemIdx) => {
+    setItems(prev => prev.map((it, i) => i === itemIdx ? { ...it, domesticExpenses: [...it.domesticExpenses, ''] } : it));
   };
 
-  const handleAddInoExpenseField = () => {
-    setNewExpense(prev => ({
-      ...prev,
-      inoExpenses: [...prev.inoExpenses, '']
-    }));
+  const handleRemoveExpenseField = (itemIdx, idx) => {
+    setItems(prev => prev.map((it, i) => i === itemIdx ? { ...it, domesticExpenses: it.domesticExpenses.filter((_, j) => j !== idx) } : it));
   };
 
-  const handleRemoveInoExpenseField = (idx) => {
-    setNewExpense(prev => ({
-      ...prev,
-      inoExpenses: prev.inoExpenses.filter((_, i) => i !== idx)
-    }));
+  const handleAddInoExpenseField = (itemIdx) => {
+    setItems(prev => prev.map((it, i) => i === itemIdx ? { ...it, inoExpenses: [...it.inoExpenses, ''] } : it));
+  };
+
+  const handleRemoveInoExpenseField = (itemIdx, idx) => {
+    setItems(prev => prev.map((it, i) => i === itemIdx ? { ...it, inoExpenses: it.inoExpenses.filter((_, j) => j !== idx) } : it));
+  };
+
+  const handleAddItem = () => {
+    setItems(prev => {
+      const next = [...prev, JSON.parse(JSON.stringify(initialExpenseState))];
+      setCurrentIndex(next.length - 1);
+      return next;
+    });
+  };
+
+  const handleRemoveItem = (idx) => {
+    setItems(prev => {
+      const next = prev.filter((_, i) => i !== idx);
+      // if no items remain, keep one empty item
+      if (next.length === 0) {
+        setCurrentIndex(0);
+        return [JSON.parse(JSON.stringify(initialExpenseState))];
+      }
+      // adjust currentIndex if out of range
+      if (currentIndex >= next.length) {
+        setCurrentIndex(Math.max(0, next.length - 1));
+      }
+      return next;
+    });
   };
 
   const handleSubmit = () => {
-    // sum up domesticExpenses and inoExpenses before submit
-    const totalDomesticExpenses = newExpense.domesticExpenses
-      .map(Number)
-      .filter(n => !isNaN(n))
-      .reduce((a, b) => a + b, 0);
-    const totalInoExpenses = newExpense.inoExpenses
-      .map(Number)
-      .filter(n => !isNaN(n))
-      .reduce((a, b) => a + b, 0);
-    onAdd({
-      ...newExpense,
-      domesticExpenses: totalDomesticExpenses,
-      inoExpenses: totalInoExpenses
+    const itemsWithTotals = items.map(it => {
+      const totalDomesticExpenses = it.domesticExpenses.map(Number).filter(n => !isNaN(n)).reduce((a, b) => a + b, 0);
+      const totalInoExpenses = it.inoExpenses.map(Number).filter(n => !isNaN(n)).reduce((a, b) => a + b, 0);
+      const domesticAllowanceTotal = (Number(it.domesticAllowance) * 3000) || 0;
+      const inoAllowanceTotal = (Number(it.inoAllowance) * 90) || 0;
+      const domesticTotal = domesticAllowanceTotal + totalDomesticExpenses;
+      const inoTotal = inoAllowanceTotal + totalInoExpenses;
+      const grandTotal = domesticTotal + inoTotal;
+      return {
+        ...it,
+        domesticExpensesSum: totalDomesticExpenses,
+        inoExpensesSum: totalInoExpenses,
+        domesticTotal,
+        inoTotal,
+        grandTotal
+      };
     });
-    setNewExpense(initialExpenseState);
+
+    const grandSum = itemsWithTotals.map(i => i.grandTotal).reduce((a, b) => a + b, 0);
+
+    onAdd({ items: itemsWithTotals, grandTotal: grandSum });
+    setItems([initialExpenseState]);
     onClose();
   };
 
   const handleClose = () => {
-    setNewExpense(initialExpenseState);
+    setItems([initialExpenseState]);
     onClose();
   };
 
@@ -118,7 +134,7 @@ export default function AddExpense({ open, onClose, onAdd }) {
       }}
     >
       <Box sx={{ position: 'relative' }}>
-        <DialogTitle sx={{ pr: 5 }}>Add New Travel Expense</DialogTitle>
+        <DialogTitle sx={{ pr: 5 }}>Add Pay Slip</DialogTitle>
         <IconButton
           aria-label="close"
           onClick={handleClose}
@@ -134,123 +150,154 @@ export default function AddExpense({ open, onClose, onAdd }) {
         </IconButton>
       </Box>
       <DialogContent>
-        <Box sx={{ display: 'grid', gap: 2, pt: 2 }}>
-          <TextField
-            fullWidth
-            label="Date"
-            type="date"
-            name="date"
-            value={newExpense.date}
-            onChange={handleInputChange}
-            InputLabelProps={{ shrink: true }}
-          />
-          <TextField
-            fullWidth
-            label="Order Number"
-            name="orderNumber"
-            value={newExpense.orderNumber}
-            onChange={handleInputChange}
-          />
-          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-            <Box>
-              <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>Domestic</Typography>
-              <TextField
-                fullWidth
-                label={`Allowance (RSD)${newExpense.domesticAllowance ? ` = ${Number(newExpense.domesticAllowance) * 3000} RSD` : ''}`}
-                name="domesticAllowance"
-                type="number"
-                value={newExpense.domesticAllowance}
-                onChange={handleInputChange}
-                sx={{ mb: 2 }}
-                helperText={newExpense.domesticAllowance ? `Total: ${Number(newExpense.domesticAllowance) * 3000} RSD` : 'Enter number of days, will be multiplied by 3000'}
-              />
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="body2" sx={{ mb: 1 }}>Expenses (RSD)</Typography>
-                {newExpense.domesticExpenses.map((val, idx) => (
-                  <Box key={idx} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                    <TextField
-                      fullWidth
-                      type="number"
-                      name={`domesticExpenses${idx}`}
-                      value={val}
-                      onChange={handleInputChange}
-                      sx={{ mr: 1 }}
-                    />
-                    {newExpense.domesticExpenses.length > 1 && (
-                      <IconButton onClick={() => handleRemoveExpenseField(idx)} color="error" size="small">
-                        <DeleteIcon fontSize="small" />
+        <Stack spacing={2}>
+          {items.length > 0 && (() => {
+            const item = items[currentIndex];
+            const itemIdx = currentIndex;
+            return (
+              <Box key={itemIdx} >
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                  <Typography variant="subtitle1">Item {itemIdx + 1} / {items.length}</Typography>
+                  <Box>
+                    {items.length > 1 && (
+                      <IconButton color="error" size="small" onClick={() => handleRemoveItem(itemIdx)}>
+                        <Delete />
                       </IconButton>
                     )}
                   </Box>
-                ))}
-                <Button onClick={handleAddExpenseField} variant="outlined" size="small">+ Add expense</Button>
-                  <Typography variant="body2" sx={{ mt: 1 }}>
-                    Total: {newExpense.domesticExpenses.map(Number).filter(n => !isNaN(n)).reduce((a, b) => a + b, 0)} RSD
-                  </Typography>
-                <Box sx={{ my: 2 }}>
-                  <hr style={{ border: 'none', borderTop: '1px solid #ccc', margin: 0 }} />
                 </Box>
-                <Typography variant="body2" sx={{ mt: 1, fontWeight: 'bold', color: 'primary.main' }}>
-                  Grand Total: {
-                    (Number(newExpense.domesticAllowance) * 3000 || 0) +
-                    newExpense.domesticExpenses.map(Number).filter(n => !isNaN(n)).reduce((a, b) => a + b, 0)
-                  } RSD
-                </Typography>
-              </Box>
-            </Box>
-            <Box>
-              <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>International</Typography>
-              <TextField
-                fullWidth
-                label={`Allowance (EUR)${newExpense.inoAllowance ? ` = ${Number(newExpense.inoAllowance) * 90} EUR` : ''}`}
-                name="inoAllowance"
-                type="number"
-                value={newExpense.inoAllowance}
-                onChange={handleInputChange}
-                sx={{ mb: 2 }}
-                helperText={newExpense.inoAllowance ? `Total: ${Number(newExpense.inoAllowance) * 90} EUR` : 'Enter number of days, will be multiplied by 90'}
-              />
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="body2" sx={{ mb: 1 }}>Expenses (EUR)</Typography>
-                {newExpense.inoExpenses.map((val, idx) => (
-                  <Box key={idx} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+
+                <TextField
+                  fullWidth
+                  label="Date"
+                  type="date"
+                  name="date"
+                  value={item.date}
+                  onChange={(e) => handleItemInputChange(itemIdx, e)}
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ mb: 1 }}
+                />
+                <TextField
+                  fullWidth
+                  label="Order Number"
+                  name="orderNumber"
+                  value={item.orderNumber}
+                  onChange={(e) => handleItemInputChange(itemIdx, e)}
+                  sx={{ mb: 1 }}
+                />
+
+                <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+                  <Box>
+                    <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>Domestic</Typography>
                     <TextField
                       fullWidth
+                      label={`Allowance (RSD)${item.domesticAllowance ? ` = ${Number(item.domesticAllowance) * 3000} RSD` : ''}`}
+                      name="domesticAllowance"
                       type="number"
-                      name={`inoExpenses${idx}`}
-                      value={val}
-                      onChange={handleInputChange}
-                      sx={{ mr: 1 }}
+                      value={item.domesticAllowance}
+                      onChange={(e) => handleItemInputChange(itemIdx, e)}
+                      sx={{ mb: 2 }}
+                      helperText={item.domesticAllowance ? `Total: ${Number(item.domesticAllowance) * 3000} RSD` : 'Enter number of days, will be multiplied by 3000'}
                     />
-                    {newExpense.inoExpenses.length > 1 && (
-                      <IconButton onClick={() => handleRemoveInoExpenseField(idx)} color="error" size="small">
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
-                    )}
+                    <Box sx={{ mb: 2 }}>
+                      <Typography variant="body2" sx={{ mb: 1 }}>Expenses (RSD)</Typography>
+                      {item.domesticExpenses.map((val, idx) => (
+                        <Box key={idx} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                          <TextField
+                            fullWidth
+                            type="number"
+                            value={val}
+                            onChange={(e) => handleInnerExpenseChange(itemIdx, 'domesticExpenses', idx, e.target.value)}
+                            sx={{ mr: 1 }}
+                          />
+                          {item.domesticExpenses.length > 1 && (
+                            <IconButton onClick={() => handleRemoveExpenseField(itemIdx, idx)} color="error" size="small">
+                              <Delete fontSize="small" />
+                            </IconButton>
+                          )}
+                        </Box>
+                      ))}
+                      <Button onClick={() => handleAddExpenseField(itemIdx)} variant="outlined" size="small">+ Add expense</Button>
+                        <Typography variant="body2" sx={{ mt: 1 }}>
+                          Total: {item.domesticExpenses.map(Number).filter(n => !isNaN(n)).reduce((a, b) => a + b, 0)} RSD
+                        </Typography>
+                      <Box sx={{ my: 2 }}>
+                        <hr style={{ border: 'none', borderTop: '1px solid #ccc', margin: 0 }} />
+                      </Box>
+                      <Typography variant="body2" sx={{ mt: 1, fontWeight: 'bold', color: 'primary.main' }}>
+                        Grand Total: {
+                          (Number(item.domesticAllowance) * 3000 || 0) +
+                          item.domesticExpenses.map(Number).filter(n => !isNaN(n)).reduce((a, b) => a + b, 0)
+                        } RSD
+                      </Typography>
+                    </Box>
                   </Box>
-                ))}
-                <Button onClick={handleAddInoExpenseField} variant="outlined" size="small">+ Add expense</Button>
-                  <Typography variant="body2" sx={{ mt: 1 }}>
-                    Total: {newExpense.inoExpenses.map(Number).filter(n => !isNaN(n)).reduce((a, b) => a + b, 0)} EUR
-                  </Typography>
-                <Box sx={{ my: 2 }}>
-                  <hr style={{ border: 'none', borderTop: '1px solid #ccc', margin: 0 }} />
+                  <Box>
+                    <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>International</Typography>
+                    <TextField
+                      fullWidth
+                      label={`Allowance (EUR)${item.inoAllowance ? ` = ${Number(item.inoAllowance) * 90} EUR` : ''}`}
+                      name="inoAllowance"
+                      type="number"
+                      value={item.inoAllowance}
+                      onChange={(e) => handleItemInputChange(itemIdx, e)}
+                      sx={{ mb: 2 }}
+                      helperText={item.inoAllowance ? `Total: ${Number(item.inoAllowance) * 90} EUR` : 'Enter number of days, will be multiplied by 90'}
+                    />
+                    <Box sx={{ mb: 2 }}>
+                      <Typography variant="body2" sx={{ mb: 1 }}>Expenses (EUR)</Typography>
+                      {item.inoExpenses.map((val, idx) => (
+                        <Box key={idx} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                          <TextField
+                            fullWidth
+                            type="number"
+                            value={val}
+                            onChange={(e) => handleInnerExpenseChange(itemIdx, 'inoExpenses', idx, e.target.value)}
+                            sx={{ mr: 1 }}
+                          />
+                          {item.inoExpenses.length > 1 && (
+                            <IconButton onClick={() => handleRemoveInoExpenseField(itemIdx, idx)} color="error" size="small">
+                              <Delete fontSize="small" />
+                            </IconButton>
+                          )}
+                        </Box>
+                      ))}
+                      <Button onClick={() => handleAddInoExpenseField(itemIdx)} variant="outlined" size="small">+ Add expense</Button>
+                        <Typography variant="body2" sx={{ mt: 1 }}>
+                          Total: {item.inoExpenses.map(Number).filter(n => !isNaN(n)).reduce((a, b) => a + b, 0)} EUR
+                        </Typography>
+                      <Box sx={{ my: 2 }}>
+                        <hr style={{ border: 'none', borderTop: '1px solid #ccc', margin: 0 }} />
+                      </Box>
+                      <Typography variant="body2" sx={{ mt: 1, fontWeight: 'bold', color: 'primary.main' }}>
+                        Grand Total: {
+                          (Number(item.inoAllowance) * 90 || 0) +
+                          item.inoExpenses.map(Number).filter(n => !isNaN(n)).reduce((a, b) => a + b, 0)
+                        } EUR
+                      </Typography>
+                    </Box>
+                  </Box>
                 </Box>
-                <Typography variant="body2" sx={{ mt: 1, fontWeight: 'bold', color: 'primary.main' }}>
-                  Grand Total: {
-                    (Number(newExpense.inoAllowance) * 90 || 0) +
-                    newExpense.inoExpenses.map(Number).filter(n => !isNaN(n)).reduce((a, b) => a + b, 0)
-                  } EUR
-                </Typography>
               </Box>
-            </Box>
+            );
+          })()}
+        </Stack>
+        <Box sx={{ display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center', mt: 2 }}>
+          <Box sx={{ justifySelf: 'center' }}>
+            <Pagination
+              count={items.length}
+              page={currentIndex + 1}
+              onChange={(e, page) => setCurrentIndex(page - 1)}
+              color="primary"
+              size="small"
+            />
+          </Box>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Button size="small" onClick={handleAddItem}>+ Add new item</Button>
           </Box>
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleSubmit} variant="contained" color="primary">
-          Add Expense
-        </Button>
       </DialogActions>
     </Dialog>
   );

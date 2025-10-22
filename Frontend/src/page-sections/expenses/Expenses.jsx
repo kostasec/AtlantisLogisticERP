@@ -10,6 +10,7 @@ import TableCell from '@mui/material/TableCell';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import AddIcon from '@mui/icons-material/Add';
+import PrintIcon from '@mui/icons-material/Print';
 import { EXPENSES } from '@/mocks/data/expenses';
 import AddExpense from './AddExpense';
 import GetWithdrawal from './getWithdrawal';
@@ -43,9 +44,10 @@ import TablePagination from '@mui/material/TablePagination';
 export default function Expenses() {
   const [selectedDriver, setselectedDriver] = useState();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-      const [isWithdrawalOpen, setIsWithdrawalOpen] = useState(false);
-      const [page, setPage] = useState(0);
-      const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [isWithdrawalOpen, setIsWithdrawalOpen] = useState(false);
+  const [paySlips, setPaySlips] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
       useEffect(() => {
         const firstDriver = Object.keys(EXPENSES)[0];
         setselectedDriver(firstDriver);
@@ -64,8 +66,9 @@ export default function Expenses() {
   };
 
   const handleAddExpense = (newExpense) => {
-    // Ovde ćemo dodati logiku za čuvanje novog troška
-    console.log('New expense:', newExpense);
+   
+    setPaySlips(prev => [newExpense, ...prev]);
+    console.log('Added Pay Slip:', newExpense);
   };
 
   let expenseData = [];
@@ -136,7 +139,7 @@ export default function Expenses() {
                 onClick={handleOpenDialog}
                 startIcon={<AddIcon />}
               >
-                Add Expense
+                Add Pay Slip
               </Button>
               <Box sx={{ mt: -4, textAlign: 'right' }}>
                 <Typography variant="body1" sx={{ color: '#ff6f60', fontWeight: 'bold', display: 'inline' }}>
@@ -152,64 +155,103 @@ export default function Expenses() {
             </Box>
           )}
           {selectedDriver && (
-            <Box sx={{ mt: 4 }}>
-              {expenseData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((exp, index) => (
+            <Box>
+              <Box sx={{ mt: 4 }}>
                 <Card
-                  key={exp.orderNumber || index}
                   sx={theme => ({
                     mb: 3,
                     p: 2,
                     borderRadius: 2,
-                    boxShadow: theme.palette.mode === 'dark' ? '0 4px 32px 0 rgba(0, 0, 0, 0.7)' : 5
+                    // subtle top border that adapts to theme (no black in light mode)
+                    borderTop: theme.palette.mode === 'dark'
+                      ? '1px solid rgba(255,255,255,0.06)'
+                      : '1px solid rgba(0,0,0,0.06)',
+                    boxShadow: theme.palette.mode === 'dark'
+                      ? '0 4px 32px 0 rgba(0, 0, 0, 0.7)'
+                      : '0 8px 30px rgba(0,0,0,0.12)'
                   })}
                 >
-                  <Stack direction="row" alignItems="center" gap={2} sx={{ mb: 2 }}>
-                    <Typography variant="h6" fontWeight={700} color="primary">
-                      Order: {exp.orderNumber}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">{exp.date}</Typography>
+                  <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
+                    <Typography variant="h5" fontWeight={700} color="primary">Pay Slip</Typography>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      startIcon={<PrintIcon />}
+                      onClick={() => window.print()}
+                    >
+                      Print
+                    </Button>
                   </Stack>
-                  <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
-                    <Box>
-                      <Typography variant="subtitle2" fontWeight="bold" color="primary">Domestic</Typography>
-                      <Box sx={{ mt: 1, mb: 1 }}>
-                        <Typography variant="body2">Allowance (RSD): <b>{exp.domesticAllowance}</b></Typography>
-                        <Typography variant="body2">Expenses (RSD): <b>{exp.domesticExpenses}</b></Typography>
-                        <Divider sx={{ my: 1 }} />
-                        <Typography variant="body2" color="#ff6f60" fontWeight="bold">
-                          Grand Total: {(Number(exp.domesticAllowance) + Number(exp.domesticExpenses))} RSD
+
+                  {/* Render existing expenses for driver inside Pay Slip card */}
+                  {expenseData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((exp, index) => (
+                    <Card
+                      key={exp.orderNumber || index}
+                      sx={theme => ({
+                        mb: 3,
+                        p: 2,
+                        borderRadius: 2,
+                        borderTop: theme.palette.mode === 'dark'
+                        ? '1px solid rgba(255,255,255,0.06)'
+                        : '1px solid rgba(0,0,0,0.06)',
+                        boxShadow: theme.palette.mode === 'dark'
+                          ? '0 6px 12px rgba(0,0,0,0.45)'
+                          : '0 8px 26px rgba(0,0,0,0.12)'
+                      })}
+                    >
+                      <Stack direction="row" alignItems="center" gap={2} sx={{ mb: 2 }}>
+                        <Typography variant="h6" fontWeight={700} color="primary">
+                          Order: {exp.orderNumber}
                         </Typography>
+                        <Typography variant="body2" color="text.secondary">{exp.date}</Typography>
+                      </Stack>
+                      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
+                        <Box>
+                          <Typography variant="subtitle2" fontWeight="bold" color="primary">Domestic</Typography>
+                          <Box sx={{ mt: 1, mb: 1 }}>
+                            <Typography variant="body2">Allowance (RSD): <b>{exp.domesticAllowance}</b></Typography>
+                            <Typography variant="body2">Expenses (RSD): <b>{exp.domesticExpenses}</b></Typography>
+                            <Divider sx={{ my: 1 }} />
+                            <Typography variant="body2" color="#ff6f60" fontWeight="bold">
+                              Grand Total: {(Number(exp.domesticAllowance) + Number(exp.domesticExpenses))} RSD
+                            </Typography>
+                          </Box>
+                        </Box>
+                        <Box>
+                          <Typography variant="subtitle2" fontWeight="bold" color="primary">International</Typography>
+                          <Box sx={{ mt: 1, mb: 1 }}>
+                            <Typography variant="body2">Allowance (EUR): <b>{exp.inoAllowance}</b></Typography>
+                            <Typography variant="body2">Expenses (EUR): <b>{exp.inoExpenses}</b></Typography>
+                            <Divider sx={{ my: 1 }} />
+                            <Typography variant="body2" color="#ff6f60" fontWeight="bold">
+                              Grand Total: {(Number(exp.inoAllowance) + Number(exp.inoExpenses))} EUR
+                            </Typography>
+                          </Box>
+                        </Box>
                       </Box>
-                    </Box>
-                    <Box>
-                      <Typography variant="subtitle2" fontWeight="bold" color="primary">International</Typography>
-                      <Box sx={{ mt: 1, mb: 1 }}>
-                        <Typography variant="body2">Allowance (EUR): <b>{exp.inoAllowance}</b></Typography>
-                        <Typography variant="body2">Expenses (EUR): <b>{exp.inoExpenses}</b></Typography>
-                        <Divider sx={{ my: 1 }} />
-                        <Typography variant="body2" color="#ff6f60" fontWeight="bold">
-                          Grand Total: {(Number(exp.inoAllowance) + Number(exp.inoExpenses))} EUR
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </Box>
+                    </Card>
+                  ))}
+
                 </Card>
-              ))}
-              <TablePagination
-                component="div"
-                count={expenseData.length}
-                page={page}
-                onPageChange={(e, newPage) => setPage(newPage)}
-                rowsPerPage={rowsPerPage}
-                onRowsPerPageChange={e => {
-                  setRowsPerPage(parseInt(e.target.value, 10));
-                  setPage(0);
-                }}
-                rowsPerPageOptions={[5, 10, 25]}
-                showFirstButton
-                showLastButton
-                sx={{ mt: 2 }}
-              />
+              </Box>
+
+              <Box sx={{ mt: 2 }}>
+                <TablePagination
+                  component="div"
+                  count={expenseData.length}
+                  page={page}
+                  onPageChange={(e, newPage) => setPage(newPage)}
+                  rowsPerPage={rowsPerPage}
+                  onRowsPerPageChange={e => {
+                    setRowsPerPage(parseInt(e.target.value, 10));
+                    setPage(0);
+                  }}
+                  rowsPerPageOptions={[5, 10, 25]}
+                  showFirstButton
+                  showLastButton
+                  sx={{ mt: 2 }}
+                />
+              </Box>
             </Box>
           )}
         </Box>

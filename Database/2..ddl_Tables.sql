@@ -29,17 +29,23 @@ GO
 IF OBJECT_ID('Inspection', 'U') IS NOT NULL
     DROP TABLE Inspection;
 GO
-IF OBJECT_ID('WithdrawalEUR', 'U') IS NOT NULL
-    DROP TABLE WithdrawalEUR;
+IF OBJECT_ID('PaymentEUR', 'U') IS NOT NULL
+    DROP TABLE PaymentEUR;
 GO
-IF OBJECT_ID('WithdrawalRSD', 'U') IS NOT NULL
-    DROP TABLE WithdrawalRSD;
+IF OBJECT_ID('PaymentRSD', 'U') IS NOT NULL
+    DROP TABLE PaymentRSD;
 GO
-IF OBJECT_ID('TravelExpensesRSD', 'U') IS NOT NULL
-    DROP TABLE TravelExpensesRSD;
+IF OBJECT_ID('PaySlipItemRSD', 'U') IS NOT NULL
+    DROP TABLE PaySlipItemRSD;
 GO
-IF OBJECT_ID('TravelExpensesEUR', 'U') IS NOT NULL
-    DROP TABLE TravelExpensesEUR;
+IF OBJECT_ID('PaySlipRSD', 'U') IS NOT NULL
+    DROP TABLE PaySlipRSD;
+GO
+IF OBJECT_ID('PaySlipItemEUR', 'U') IS NOT NULL
+    DROP TABLE PaySlipItemEUR;
+GO
+IF OBJECT_ID('PaySlipEUR', 'U') IS NOT NULL
+    DROP TABLE PaySlipEUR;
 GO
 IF OBJECT_ID('TaxService', 'U') IS NOT NULL
     DROP TABLE TaxService;
@@ -98,6 +104,16 @@ GO
 IF OBJECT_ID('VATCodeList', 'U') IS NOT NULL
     DROP TABLE VATCodeList;
 GO
+IF OBJECT_ID('LoadingItem', 'U') IS NOT NULL
+    DROP TABLE LoadingItem;
+GO
+IF OBJECT_ID('UnloadingItem', 'U') IS NOT NULL
+    DROP TABLE UnloadingItem;
+GO
+IF OBJECT_ID('WorkOrder', 'U') IS NOT NULL
+    DROP TABLE WorkOrder;
+GO
+
 IF OBJECT_ID('Client', 'U') IS NOT NULL
     DROP TABLE Client;
 GO
@@ -128,10 +144,58 @@ CREATE TABLE ContactPerson(
     PhoneNmbr VARCHAR(50),
     PersonEmail VARCHAR(100),
     TaxID VARCHAR(50) NOT NULL,
+    ClientType VARCHAR(10) NOT NULL CHECK (ClientType IN ('Supplier',       'Transportation')),
     CONSTRAINT fk_ContactPerson_TaxID FOREIGN KEY (TaxID) REFERENCES Client(TaxID),
     CONSTRAINT pk_ContactPerson PRIMARY KEY(TaxID, ContactName)
 );
 GO
+
+-- =================
+-- Table: WorkOrder
+-- =================
+CREATE TABLE WorkOrder(
+    OrderID INT IDENTITY(1,1) PRIMARY KEY,
+    OrderDate DATE NOT NULL DEFAULT GETDATE(),
+    OrderCode AS (
+        'N-' + CAST(OrderID AS VARCHAR(10)) + '/' + CAST(YEAR(OrderDate) AS VARCHAR(4))
+    ) PERSISTED,
+    Amount DECIMAL (18,2) NOT NULL,
+    Currency VARCHAR(5) NOT NULL,
+    Note VARCHAR(30),
+    ClientID VARCHAR(50) NOT NULL,
+    CONSTRAINT fk_WorkORder_ClientID FOREIGN KEY (ClientID) REFERENCES Client (TaxID)
+);
+-- ===================
+-- Table: LoadingItem
+-- ===================
+CREATE TABLE LoadingItem(
+	LoadingID INT IDENTITY PRIMARY KEY,
+	Firm VARCHAR (50) NOT NULL,
+	LoadingDate DATE NOT NULL,
+	LoadingAdress VARCHAR (50) NOT NULL,
+	Goods VARCHAR(50) NOT NULL,
+	Customs VARCHAR(50) NOT NULL,
+	ForwAgency VARCHAR(50) NOT NULL,
+	Border VARCHAR(50) NOT NULL,
+	Note VARCHAR(50) NOT NULL,
+	OrderID INT NOT NULL,
+	CONSTRAINT fk_LoadingOrder FOREIGN KEY (OrderID) REFERENCES WorkOrder(OrderID)
+);
+
+-- ====================
+-- Table: UnloadingItem
+-- ====================
+CREATE TABLE UnloadingItem(
+	UnloadingID INT IDENTITY PRIMARY KEY,
+	Firm VARCHAR (50) NOT NULL,
+	UnloadingDate DATE NOT NULL,
+	UnloadingAdress VARCHAR(50) NOT NULL,
+	Customs VARCHAR(50) NOT NULL,
+	ForwAgency VARCHAR(50) NOT NULL,
+	Note VARCHAR(50) NOT NULL,
+	OrderID INT NOT NULL,
+	CONSTRAINT fk_UnloadingOrder FOREIGN KEY (OrderID) REFERENCES WorkOrder(OrderID)
+);
 
 -- =========================
 -- Table: DocumentStatusList 
@@ -167,12 +231,14 @@ GO
 -- Table: IncomingInvoice
 -- ======================
 CREATE TABLE IncomingInvoice (
-    InvoiceNmbr INT PRIMARY KEY,
+    IncInvID INT IDENTITY(1,1) PRIMARY KEY,
+    IncInvNmbr VARCHAR(15) NOT NULL,
     Amount NUMERIC(18, 2) NOT NULL,
+	Currency VARCHAR(10) NOT NULL,
     TransactionDate DATE NOT NULL,
     DueDate DATE NOT NULL,
     IssueDate DATE NOT NULL,
-    DocumentStatus TINYINT NOT NULL
+    DocumentStatus INT NOT NULL
 	CONSTRAINT fk_IncomingInvoice_DocumentStatus FOREIGN KEY (DocumentStatus) REFERENCES
 	DocumentStatusList(DStatusID),
     PaymentStatus TINYINT NOT NULL
@@ -401,53 +467,76 @@ CREATE TABLE Item(
 );
 GO
 
--- ========================
--- Table: TravelExpensesRSD
--- ========================
-CREATE TABLE TravelExpensesRSD (
-    OrderNmbr VARCHAR(50) PRIMARY KEY,
-    Date DATE NOT NULL,
-    AllowanceRSD DECIMAL(18,2),
-    CostsRSD DECIMAL(18, 2),
+-- ==================
+-- Table: PaySlipEUR
+-- ==================
+CREATE TABLE PaySlipEUR (
+    PaySlipEUR_ID VARCHAR(50) PRIMARY KEY,
+    IssueDate DATE NOT NULL,
     EmplID INT NOT NULL,
-    CONSTRAINT fk_TravelRSD_EmplID FOREIGN KEY (EmplID) REFERENCES Employee (EmplID)
+    CONSTRAINT fk_PaySlipEUR_EmplID FOREIGN KEY (EmplID) REFERENCES Employee (EmplID)
 );
 GO
 
--- ========================
--- Table: TravelExpensesEUR
--- ========================
-CREATE TABLE TravelExpensesEUR (
+-- ======================
+-- Table: PaySlipItemEUR
+-- ======================
+CREATE TABLE PaySlipItemEUR (
     OrderNmbr VARCHAR(50) PRIMARY KEY,
     Date DATE NOT NULL,
     AllowanceEUR DECIMAL(18,2),
     CostsEUR DECIMAL(18, 2),
-    EmplID INT NOT NULL,
-    CONSTRAINT fk_TravelEUR_EmplID FOREIGN KEY (EmplID) REFERENCES Employee (EmplID)
+	PaySlipEUR_ID VARCHAR (50) NOT NULL,
+	CONSTRAINT fk_PaySlipItemEUR_PaySlipID FOREIGN KEY (PaySlipEUR_ID) REFERENCES PaySlipEUR (PaySlipEUR_ID)
 );
 GO
 
--- ====================
--- Table: WithdrawalRSD
--- ====================
-CREATE TABLE WithdrawalRSD(
-    TransactionID INT IDENTITY(1,1) PRIMARY KEY,
+-- ==================
+-- Table: PaySlipRSD
+-- ==================
+CREATE TABLE PaySlipRSD (
+    PaySlipRSD_ID VARCHAR(50) PRIMARY KEY,
+    IssueDate DATE NOT NULL,
+    EmplID INT NOT NULL,
+    CONSTRAINT fk_PaySlipRSD_EmplID FOREIGN KEY (EmplID) REFERENCES Employee (EmplID)
+);
+GO
+
+-- =====================
+-- Table: PaySlipItemRSD
+-- ======================
+CREATE TABLE PaySlipItemRSD (
+    OrderNmbr VARCHAR(50) PRIMARY KEY,
+    Date DATE NOT NULL,
+    AllowanceRSD DECIMAL(18,2),
+	PaySlipID INT NOT NULL,
+    CostsRSD DECIMAL(18, 2),
+	PaySlipRSD_ID VARCHAR(50) NOT NULL,
+	CONSTRAINT fk_PaySlipItemRSD_PaySlipID FOREIGN KEY (PaySlipRSD_ID) REFERENCES PaySlipRSD (PaySlipRSD_ID)
+);
+GO
+
+-- =================
+-- Table: PaymentRSD
+-- =================
+CREATE TABLE PaymentRSD(
+    PaymentID_RSD INT IDENTITY(1,1) PRIMARY KEY,
     AmountRSD INT,
     Date DATE NOT NULL,
     EmplID INT NOT NULL,
-    CONSTRAINT fk_WithdrawalRSD_EmplID FOREIGN KEY (EmplID) REFERENCES Employee(EmplID)
+    CONSTRAINT fk_PaymentRSD_EmplID FOREIGN KEY (EmplID) REFERENCES Employee(EmplID)
 );
 GO
 
--- ====================
--- Table: WithdrawalEUR
--- ====================
-CREATE TABLE WithdrawalEUR(
-    TransactionID INT IDENTITY(1,1) PRIMARY KEY,
+-- =================
+-- Table: PaymentEUR
+-- =================
+CREATE TABLE PaymentEUR(
+    PaymentID_EUR INT IDENTITY(1,1) PRIMARY KEY,
     AmountEUR INT,
     Date DATE NOT NULL,
     EmplID INT NOT NULL,
-    CONSTRAINT fk_WithdrawalEUR_EmplID FOREIGN KEY (EmplID) REFERENCES Employee(EmplID)
+    CONSTRAINT fk_PaymentEUR_EmplID FOREIGN KEY (EmplID) REFERENCES Employee(EmplID)
 );
 GO
 

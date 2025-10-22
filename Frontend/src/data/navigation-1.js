@@ -26,7 +26,7 @@ export const navigations = [
     path: '/dashboard/create-invoice'
      }]
    },{
-    name: 'Expenses',
+    name: 'Travel reimbursement',
     icon: Menu,
     path: '/dashboard/expenses'
   },{
