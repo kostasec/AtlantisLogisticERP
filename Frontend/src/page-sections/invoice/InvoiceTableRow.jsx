@@ -1,4 +1,3 @@
-import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router';
 import format from 'date-fns/format';
 import isValid from 'date-fns/isValid'; // MUI
@@ -7,14 +6,15 @@ import Checkbox from '@mui/material/Checkbox';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles'; // MUI ICON COMPONENTS
 
 import DeleteOutline from '@mui/icons-material/DeleteOutline';
-import RemoveRedEye from '@mui/icons-material/RemoveRedEye'; // CUSTOM COMPONENTS
+import FileDownload from '@mui/icons-material/FileDownload';
+import Cancel from '@mui/icons-material/Cancel'; // MUI ICON COMPONENTS
 
 import FlexBox from '@/components/flexbox/FlexBox';
 import StatusBadge from '@/components/status-badge';
-import { TableMoreMenuItem, TableMoreMenu } from '@/components/table'; // CUSTOM DATA TYPES
 import { useTranslation } from 'react-i18next';
 
 // STYLED COMPONENTS
@@ -37,19 +37,14 @@ export default function InvoiceTableRow(props) {
     isSelected,
     handleDeleteInvoice,
     handleSelectRow,
-    partyKey = 'Sender'
+    partyKey = 'Sender',
+    invoiceType = 'incoming' // Default to incoming for backward compatibility
   } = props;
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const [openMenuEl, setOpenMenuEl] = useState(null);
-  const handleOpenMenu = useCallback(event => {
-    setOpenMenuEl(event.currentTarget);
-  }, []);
-  const handleCloseMenu = useCallback(() => setOpenMenuEl(null), []);
+  
   return <TableRow hover>
-      <TableCell align="center" padding="checkbox" sx={{ verticalAlign: 'middle' }}>
-        <Checkbox size="small" color="primary" checked={isSelected} onClick={event => handleSelectRow(event, invoice.id)} />
-      </TableCell>
+
 
       <TableCell align="center" padding="normal" sx={{ verticalAlign: 'middle' }}>
         <FlexBox justifyContent="center" alignItems="center">
@@ -156,13 +151,28 @@ export default function InvoiceTableRow(props) {
       </TableCell>
 
       <TableCell align="center" padding="normal" sx={{ verticalAlign: 'middle' }}>
-        <TableMoreMenu open={openMenuEl} handleOpen={handleOpenMenu} handleClose={handleCloseMenu}>
-          <TableMoreMenuItem title={t('View')} Icon={RemoveRedEye} handleClick={() => {
-            handleCloseMenu();
-            navigate('/dashboard/invoice-details');
-          }} />
+        <FlexBox justifyContent="center" alignItems="center" gap={1}>
+          <IconButton 
+            size="small" 
+            color="primary"
+            onClick={() => navigate(`/dashboard/document-download/${invoiceType}/${invoice.id}`)}
+            title={t('Download invoice')}
+          >
+            <FileDownload fontSize="small" />
+          </IconButton>
           
-        </TableMoreMenu>
+          <IconButton 
+            size="small" 
+            color="error"
+            onClick={() => {
+              // Cancel invoice logic here
+              console.log('Cancel invoice:', invoice.id);
+            }}
+            title={t('Cancel invoice')}
+          >
+            <Cancel fontSize="small" />
+          </IconButton>
+        </FlexBox>
       </TableCell>
     </TableRow>;
 }

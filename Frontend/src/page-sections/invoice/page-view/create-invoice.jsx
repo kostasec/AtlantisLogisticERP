@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -9,10 +9,16 @@ import Grid from '@mui/material/Grid2';
 import Radio from '@mui/material/Radio';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import RadioGroup from '@mui/material/RadioGroup';
 import Typography from '@mui/material/Typography';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import { TextField as MuiTextField } from '@mui/material';
 
 
 import InvoiceSummary from '../InvoiceSummary';
@@ -25,8 +31,13 @@ import { AddAPhoto } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 const validationSchema = Yup.object().shape({
   items: Yup.array().of(Yup.object().shape({
-    route: Yup.string().required('Route is Required'),
-    regTag: Yup.string().required('Registration Tag is Required'),
+    // Optional fields for different item types
+    route: Yup.string().nullable(),
+    regTag: Yup.string().nullable(),
+    taxName: Yup.string().nullable(),
+    // Common required fields for both item types
+    uom: Yup.string().required('UoM is Required'),
+    quantity: Yup.string().required('Quantity is Required'),
     price: Yup.string().required('Price is Required'),
     vat: Yup.string().required('VAT is Required'),
     discount: Yup.string().required('Discount is Required'),
@@ -48,12 +59,16 @@ const validationSchema = Yup.object().shape({
 export default function CreateInvoicePageView() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [currency, setCurrency] = useState('RSD');
+  const [exchangeRate, setExchangeRate] = useState('117.5');
   const handleCancel = useCallback(() => navigate('/dashboard/invoice-list'), [navigate]);
   const initialValues = {
     items: [{
       id: 1,
       route: '',
       regTag: '',
+      uom: 'kom',
+      quantity: '1',
       price: '',
       vat: '',
       discount: '',
@@ -101,7 +116,10 @@ export default function CreateInvoicePageView() {
     navigate('/dashboard/invoice-list');
   });
   return <div className="pt-2 pb-4">
-      <Card className="p-3">
+    <Grid container spacing={3} sx={{ width: '120%', mx: 'auto' }}>
+      {/* Main Form Card */}
+      <Grid size={{ md: 9, sm: 9, xs: 12 }}>
+        <Card className="p-3" sx={{ ml: -20 }}>
         <Typography variant="body1" sx={{
         fontWeight: 500,
         mb: 3
@@ -207,28 +225,86 @@ export default function CreateInvoicePageView() {
           my: 4
         }} />
 
-
-          <AdditionalInformation />
+          <InvoiceSummary />
 
           <Divider sx={{
           my: 4
         }} />
 
-
-          <InvoiceSummary />
-
+        <AdditionalInformation />
+         
           <Divider sx={{ my: 4 }} />
 
-          {/* ACTION BUTTONS */}
-          <Stack direction="row" spacing={2} justifyContent="flex-end">
+        </FormProvider>
+      </Card>
+      </Grid>
 
-            
+      {/* Action Buttons Card */}
+      <Grid size={{ md: 2.5, sm: 3, xs: 12 }}>
+        <Card className="p-3" >
+
+          
+          <Stack spacing={2}>
+            {/* Currency Selection */}
+            <FormControl fullWidth size="small">
+              <InputLabel>{t('Currency')}</InputLabel>
+              <Select
+                value={currency}
+                label={t('Currency')}
+                onChange={(e) => setCurrency(e.target.value)}
+              >
+                <MenuItem value="RSD">RSD</MenuItem>
+                <MenuItem value="EUR">EUR</MenuItem>
+              </Select>
+            </FormControl>
+
+            {/* Exchange Rate Field - only show when EUR is selected */}
+            {currency === 'EUR' && (
+              <Stack spacing={1}>
+                <Typography variant="caption" color="text.secondary">
+                  {t('Exchange Rate')}
+                </Typography>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <Typography variant="body2">1 EUR =</Typography>
+                  <MuiTextField
+                    size="small"
+                    variant="outlined"
+                    value={exchangeRate}
+                    onChange={(e) => setExchangeRate(e.target.value)}
+                    placeholder="117.5"
+                    sx={{ width: '80px' }}
+                    InputProps={{
+                      sx: { fontSize: '14px' }
+                    }}
+                  />
+                  <Typography variant="body2">RSD</Typography>
+                </Stack>
+              </Stack>
+            )}
+
+            {/* Divider for visual separation */}
+            <Divider sx={{ my: 2 }} />
+
+            {/* Help text */}
+            <Typography variant="caption" color="text.secondary" sx={{ mt: 2, mb: 2, lineHeight: 1.4 }}>
+              <strong>Help:</strong> Fill in all required fields to activate the invoice sending link. You can save the invoice as a draft or form at any time.
+            </Typography>
+
+            <Button
+              variant="outlined" 
+              color="primary"
+              disabled={isSubmitting}
+              sx={{ width: '100%' }}
+            >
+              {t('Save Form')}
+            </Button>
+
             <Button 
               type="submit"
               variant="outlined" 
               color="primary"
               disabled={isSubmitting}
-              sx={{ minWidth: 120 }}
+              sx={{ width: '100%' }}
             >
               {t('Save Draft')}
             </Button>
@@ -238,12 +314,13 @@ export default function CreateInvoicePageView() {
               color="primary"
               disabled={isSubmitting}
               onClick={handleSendInvoice}
-              sx={{ minWidth: 120 }}
+              sx={{ width: '100%' }}
             >
               {t('Send Invoice')}
             </Button>
           </Stack>
-        </FormProvider>
-      </Card>
-    </div>;
+        </Card>
+      </Grid>
+    </Grid>
+  </div>;
 }

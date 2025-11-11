@@ -103,7 +103,20 @@ export default function ClientPageView({ initialClients }) {
   return (
     <div className="pt-2 pb-4">
       <Card sx={{ px: 3, py: 2 }}>
-        <HeadingArea value={filter.role} changeTab={changeTab} title={t('Clients')} icon={Add} buttonLabel={t('Add Client')} buttonRoute="/dashboard/add-client" />
+        <HeadingArea 
+          value={filter.role} 
+          changeTab={changeTab} 
+          title={
+          <Typography variant="h5" fontWeight={600}>{t('Clients')}</Typography>
+        } 
+          icon={Add} 
+          buttonLabel={t('Add Client')} 
+          buttonRoute="/dashboard/add-client" 
+        />
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        Client management and creation
+        </Typography>
+
 
         <SearchArea value={filter.search} onChange={handleSearchChange} gridRoute="/dashboard/client-grid" listRoute="/dashboard/client-list" />
 

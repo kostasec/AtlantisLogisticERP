@@ -1,4 +1,3 @@
-// models/Client.js
 const { sql, getPool } = require('../util/db');
 
 class Client{
@@ -41,7 +40,7 @@ class Client{
             `);
     }
 
-    // Ažuriran metod za umetanje i ažuriranje klijenta
+    // Ažuriran metod za unos i ažuriranje klijenta
     static async upsert(reqBody, transaction) {
         let {
             TaxID,
@@ -157,7 +156,6 @@ class Client{
     }
 
  }
-
 
 
 module.exports = Client;

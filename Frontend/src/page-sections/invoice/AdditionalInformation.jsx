@@ -5,6 +5,9 @@ import Grid from '@mui/material/Grid2';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { TextField } from '@/components/form';
@@ -12,14 +15,15 @@ import { TextField } from '@/components/form';
 
 const ADDITIONAL_INFO_OPTIONS = [
   { key: 'orderNumber', label: 'Order Number', placeholder: 'Enter order number' },
-  { key: 'contractNumber', label: 'Contract Number', placeholder: 'Enter contract number' },
-  { key: 'specialInstructions', label: 'Special Instructions', placeholder: 'Enter special instructions' }
+  { key: 'note', label: 'Note', placeholder: 'Enter note' },
+  { key: 'paymentInstruction', label: 'Payment instructions for international transfers', hasRadio: true}
 ];
 
 
 export default function AdditionalInformation() {
   const { t } = useTranslation();
   const [activeFields, setActiveFields] = useState(new Set());
+  const [paymentInstructionRadio, setPaymentInstructionRadio] = useState('no');
   const { setValue } = useFormContext();
 
 
@@ -116,8 +120,29 @@ export default function AdditionalInformation() {
                       </Typography>
                     </Box>
                     
+                    {/* Radio button for paymentInstruction field - only show when active */}
+                    {option.hasRadio && isActive && (
+                      <Box sx={{ mt: 1, ml: 3 }}>
+                        <RadioGroup
+                          row
+                          value={paymentInstructionRadio}
+                          onChange={(e) => setPaymentInstructionRadio(e.target.value)}
+                        >
+                          <FormControlLabel 
+                            value="yes" 
+                            control={<Radio size="small" />} 
+                            label={t('Yes')} 
+                          />
+                          <FormControlLabel 
+                            value="no" 
+                            control={<Radio size="small" />} 
+                            label={t('No')} 
+                          />
+                        </RadioGroup>
+                      </Box>
+                    )}
                     
-                    {isActive && (
+                    {isActive && !option.hasRadio && (
                       <Box sx={{ mt: 1 }}>
                         <TextField
                           fullWidth

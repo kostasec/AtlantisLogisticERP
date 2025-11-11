@@ -14,17 +14,18 @@ import { useTranslation } from 'react-i18next';
 const StyledTableHead = styled(TableHead)(({
   theme
 }) => ({
-  backgroundColor: theme.palette.grey[100],
+  backgroundColor: theme.palette.grey[200],
   ...theme.applyStyles('dark', {
-    backgroundColor: theme.palette.grey[700]
+    backgroundColor: theme.palette.grey[600]
   })
 }));
 const HeaderCell = styled(TableCell)(({
   theme
 }) => ({
-  fontWeight: 500,
+  fontWeight: 600,
   color: theme.palette.text.primary
-})); // ==============================================================
+}));
+ // ==============================================================
 // center header content
 HeaderCell.defaultProps = {
   align: 'center'
@@ -41,7 +42,7 @@ export default function InvoiceTableHead({
   onRequestSort,
   onSelectAllRows,
   partyLabel = 'Sender',
-  partyKey = 'Sender'
+  partyKey = 'Sender' // Default to incoming for backward compatibility
 }) {
   const { t } = useTranslation();
   const createSortHandler = useCallback(property => event => {
@@ -59,11 +60,8 @@ export default function InvoiceTableHead({
   ], [partyKey, partyLabel, t]);
   return <StyledTableHead>
       <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox size="small" color="primary" onChange={onSelectAllRows} checked={rowCount > 0 && numSelected === rowCount} indeterminate={numSelected > 0 && numSelected < rowCount} />
-        </TableCell>
-
-        {headCells.map(headCell => <HeaderCell key={headCell.id} align="center" padding={headCell.disablePadding ? 'none' : 'normal'} sortDirection={orderBy === headCell.id ? order : false}>
+        {headCells.map(headCell => 
+        <HeaderCell key={headCell.id} align="center" padding={headCell.disablePadding ? 'none' : 'normal'} sortDirection={orderBy === headCell.id ? order : false}>
             <FlexBox justifyContent="center" alignItems="center">
               <TableSortLabel sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '100%', transform: 'translateX(12px)' }} active={orderBy === headCell.id} onClick={createSortHandler(headCell.id)} direction={orderBy === headCell.id ? order : 'asc'}>
                 <Typography variant="body2" sx={{ lineHeight: 1, textAlign: 'center' }}>
@@ -72,6 +70,7 @@ export default function InvoiceTableHead({
                 {orderBy === headCell.id && <span style={visuallyHidden}>
                     {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                   </span>}
+                 {/*Obavezno sortirati po datumu opadajuce kad dodje backend */}
               </TableSortLabel>
             </FlexBox>
           </HeaderCell>)}

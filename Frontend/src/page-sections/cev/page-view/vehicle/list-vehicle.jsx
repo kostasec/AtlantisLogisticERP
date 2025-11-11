@@ -60,8 +60,12 @@ export default function VehiclePageView({ initialVehicles }) {
   return (
     <div className="pt-2 pb-4">
       <Card sx={{ px: 3, py: 2 }}>
-  <HeadingArea value={filter.role} changeTab={changeTab} title={t('Vehicles')} icon={Add} buttonLabel={t('Add Vehicle')} buttonRoute="/dashboard/add-vehicle" />
-
+  <HeadingArea value={filter.role} changeTab={changeTab} title={
+    <Typography variant="h5" fontWeight={600}>{t('Vehicles')}</Typography>
+    } icon={Add} buttonLabel={t('Add Vehicle')} buttonRoute="/dashboard/add-vehicle" />
+  					<Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        			Vehicle management and creation
+        			</Typography>
         <SearchArea value={filter.search} onChange={handleSearchChange} gridRoute="/dashboard/vehicle-grid" listRoute="/dashboard/vehicle-list" />
 
         <Grid container spacing={3}>

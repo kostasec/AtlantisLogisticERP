@@ -344,13 +344,13 @@ GO
 -- Table: Composition
 -- ==================
 CREATE TABLE Composition (
+    CompositionID INT IDENTITY(1,1) NOT NULL,
     TruckID INT NOT NULL,
     TrailerID INT NOT NULL,
+    CONSTRAINT pk_Composition PRIMARY KEY (CompositionID),
     FOREIGN KEY (TruckID) REFERENCES Truck(TruckID),
-    FOREIGN KEY (TrailerID) REFERENCES Trailer(TrailerID),
-    CONSTRAINT pk_Composition PRIMARY KEY (TruckID, TrailerID)
+    FOREIGN KEY (TrailerID) REFERENCES Trailer(TrailerID)
 );
-GO
 
 -- ========================
 -- Table: DriverComposition
@@ -414,15 +414,12 @@ CREATE TABLE TransportationService (
     ServiceID INT,
     Route VARCHAR(100) NOT NULL,
     Price DECIMAL(18, 2) NOT NULL,
-    TruckID INT NULL,
-    TrailerID INT NULL,
+    CompositionID INT NOT NULL,
     CONSTRAINT fk_TranService_ServiceID FOREIGN KEY(ServiceID)
     REFERENCES Service(ServiceID),
-    CONSTRAINT fk_TransServiceComposition FOREIGN KEY(TruckID, TrailerID)
-    REFERENCES Composition(TruckID, TrailerID)
+    CONSTRAINT fk_TransServiceComposition FOREIGN KEY(CompositionID)
+    REFERENCES Composition(CompositionID),
     CONSTRAINT pk_TransportationService PRIMARY KEY(ServiceID)
-    
-   
 );
 GO
 

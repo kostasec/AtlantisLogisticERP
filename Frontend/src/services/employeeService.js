@@ -18,63 +18,7 @@ export const employeeService = {
     }
   },
 
-  // Kreiranje novog zaposlenika
-  createEmployee: async (employeeData) => {
-    if (isMockEnabled()) {
-      await mockDelay();
-      const newEmp = { id: `emp_${Date.now()}`, ...employeeData };
-      mockEmployees.push(newEmp);
-      return { success: true, data: newEmp };
-    }
-    try {
-      const response = await api.post('/employee/insert', employeeData);
-      return response.data;
-    } catch (error) {
-      console.error('Error creating employee:', error);
-      throw error;
-    }
-  },
-
-  // Ažuriranje zaposlenika
-  updateEmployee: async (employeeId, employeeData) => {
-    if (isMockEnabled()) {
-      await mockDelay();
-      const idx = mockEmployees.findIndex(e => e.id === employeeId);
-      if (idx !== -1) {
-        mockEmployees[idx] = { ...mockEmployees[idx], ...employeeData };
-        return { success: true, data: mockEmployees[idx] };
-      }
-      return { success: false, error: 'Employee not found' };
-    }
-    try {
-      const response = await api.post(`/employee/update/${employeeId}`, employeeData);
-      return response.data;
-    } catch (error) {
-      console.error('Error updating employee:', error);
-      throw error;
-    }
-  },
-
-  // Brisanje zaposlenika
-  deleteEmployee: async (employeeId) => {
-    if (isMockEnabled()) {
-      await mockDelay();
-      const idx = mockEmployees.findIndex(e => e.id === employeeId);
-      if (idx !== -1) {
-        const removed = mockEmployees.splice(idx, 1)[0];
-        return { success: true, data: removed };
-      }
-      return { success: false, error: 'Employee not found' };
-    }
-    try {
-      const response = await api.post(`/employee/delete/${employeeId}`);
-      return response.data;
-    } catch (error) {
-      console.error('Error deleting employee:', error);
-      throw error;
-    }
-  },
-
+  
   // Dohvaćanje zaposlenika po ID-u
   getEmployeeById: async (employeeId) => {
     if (isMockEnabled()) {

@@ -19,7 +19,7 @@ import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
 
-export default function GetWithdrawal({ open, onClose }) {
+export default function Payment({ open, onClose }) {
   const driverNames = [
     'Srdjan Horvat',
     'Nebojsa Acimovic',
@@ -71,7 +71,7 @@ export default function GetWithdrawal({ open, onClose }) {
       }}
     >
       <Box sx={{ position: 'relative' }}>
-        <DialogTitle sx={{ pr: 5 }}>Get Withdrawal</DialogTitle>
+        <DialogTitle sx={{ pr: 5 }}>Payment</DialogTitle>
         <IconButton
           aria-label="close"
           onClick={onClose}

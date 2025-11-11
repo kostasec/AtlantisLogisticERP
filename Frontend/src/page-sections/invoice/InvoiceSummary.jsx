@@ -6,7 +6,6 @@ import Typography from '@mui/material/Typography'; // CUSTOM COMPONENTS
 
 import FlexBetween from '@/components/flexbox/FlexBetween'; // CUSTOM UTILS METHOD
 
-import { currency } from '@/utils/currency';
 import { parseEuropeanNumber } from '@/utils/numberFormat';
 
 export default function InvoiceSummary() {
@@ -17,11 +16,16 @@ export default function InvoiceSummary() {
   // Funkcija za mapiranje VAT koda u procenat
   const getVATPercentage = (vatCode) => {
     switch (vatCode) {
-      case 'VAT 10%': return 0.10;
-      case 'VAT 20%': return 0.20;
-      case 'NO VAT - IMPORT':
-      case 'NO VAT - EXPORT': 
-      case 'NO VAT - FOREIGN':
+      case 'S20': return 0.20;  // Standardna stopa 20%
+      case 'S10': return 0.10;  // Standardna stopa 10%
+      case 'O': return 0.00;    // Oslobođeno
+      case 'E': return 0.00;    // Izvoz
+      case 'AE10': return 0.10; // Agrotehnika 10%
+      case 'OE': return 0.00;   // Ostalo oslobođeno
+      case 'SS': return 0.00;   // Posebna stopa
+      case 'R': return 0.00;    // Rezervisano
+      case 'N': return 0.00;    // Neoporezivo
+      case 'Z': return 0.00;    // Nulta stopa
       default: return 0.00;
     }
   };
@@ -57,8 +61,11 @@ export default function InvoiceSummary() {
     totalAmount: 0
   });
 
-  // Formatiranje brojeva na 2 decimale
-  const formatAmount = (amount) => parseFloat(amount.toFixed(2));
+  // Formatiranje brojeva na 2 decimale bez valute
+  const formatAmount = (amount) => parseFloat(amount.toFixed(2)).toLocaleString('sr-RS', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
 
   const {
     taxBase,
@@ -69,21 +76,20 @@ export default function InvoiceSummary() {
   } = calculations;
   return <Box maxWidth={320}>
       <Typography variant="body1" fontWeight={500}>
-        {t('Amount')}
+        {t('Summary')}
       </Typography>
 
-  <SummaryItem label={t('Tax Base')} value={currency(formatAmount(taxBase))} />
-  <SummaryItem label={t('Subtotal')} value={currency(formatAmount(subtotal))} />
-      {discountAmount > 0 && (
-  <SummaryItem label={t('Discount')} value={currency(-formatAmount(discountAmount))} />
-      )}
-      {vatAmount > 0 && (
-  <SummaryItem label={t('VAT')} value={currency(formatAmount(vatAmount))} />
-      )}
+  <SummaryItem label={t('Tax Base')} value={formatAmount(taxBase)} />
+  <SummaryItem label={t('Subtotal')} value={formatAmount(subtotal)} />
+  
+  <SummaryItem label={t('Discount')} value={formatAmount(-discountAmount)} />
+
+  <SummaryItem label={t('VAT')} value={formatAmount(vatAmount)} />
+    
       <Divider sx={{
         my: 2
       }} />
-  <SummaryItem label={t('Total')} value={currency(formatAmount(totalAmount))} />
+  <SummaryItem label={t('Total')} value={formatAmount(totalAmount)} />
     </Box>;
 }
 

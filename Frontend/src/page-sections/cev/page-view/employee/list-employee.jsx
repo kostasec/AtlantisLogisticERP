@@ -106,8 +106,12 @@ export default function EmployeePageView({ initialEmployees }) {
 	return (
 		<div className="pt-2 pb-4">
 			<Card sx={{ px: 4, py: 2 }}>
-				<HeadingArea value={filter.role} changeTab={changeTab} title={t('Employees')} icon={Add} buttonLabel={t('Add Employee')} buttonRoute="/dashboard/add-employee" />
-
+				<HeadingArea value={filter.role} changeTab={changeTab} title={
+					<Typography variant="h5" fontWeight={600}>{t('Employees')}</Typography>
+					}icon={Add} buttonLabel={t('Add Employee')} buttonRoute="/dashboard/add-employee" />
+					<Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        			Employee management and creation
+        			</Typography>
 				<SearchArea value={filter.search} onChange={handleSearchChange} gridRoute="/dashboard/employee-grid" listRoute="/dashboard/employee-list" />
 
 				<Grid container spacing={3}>

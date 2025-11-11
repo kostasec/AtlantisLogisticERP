@@ -1,4 +1,4 @@
-import expensesPageView from '@/page-sections/expenses/expenses';
-export default function expensesPage() {
-  return <expensesPageView />;
+import ReimbursementMain from '@/page-sections/expenses/ReimbursementMain';
+export default function ExpensesPage() {
+  return <ReimbursementMain />;
 }

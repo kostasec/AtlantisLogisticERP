@@ -25,6 +25,8 @@ export default {
   'CONFIRM PAYMENT': 'Potvrdi plaćanje',
   CONFIRM: 'Potvrdi',
   CANCEL: 'Otkaži',
+  Cancel: 'Otkaži',
+  Download: 'Preuzmi',
   'Are you sure this invoice has been paid?': 'Da li ste sigurni da je ova faktura plaćena?',
   'No invoices available': 'Nema dostupnih faktura',
   'Payment Status': 'Status plaćanja',
@@ -39,6 +41,7 @@ export default {
   , 'Reference Number': 'Poziv na broj'
   , 'Find by Tax Number or Client Name': 'Pronađi po PIB-u ili nazivu klijenta'
   , 'Item Information': 'Stavke'
+  , 'Summary' : 'Rekapitulacija'
   , 'Tax Name': 'Naziv poreza'
   , Route: 'Ruta'
   , 'Reg. Tag': 'Reg. oznaka'
@@ -46,7 +49,7 @@ export default {
   , VAT: 'PDV'
   , Discount: 'Popust'
   , Amount: 'Iznos'
-  , 'Additional Information': 'Dodatne informacije'
+  , 'Additional Information': 'Dodatne informacije o računu'
   , 'Order Number': 'Broj naloga'
   , 'Enter order number': 'Unesite broj naloga'
   , 'Contract Number': 'Broj ugovora'
@@ -55,13 +58,17 @@ export default {
   , 'Enter special instructions': 'Unesite Dodatne informacije o računu'
   , 'Save Draft': 'Sačuvaj nacrt'
   , 'Send Invoice': 'Pošalji fakturu'
-  , 'Tax Base': 'Osnovica'
+  , 'Tax Base': 'Ukupno'
   , Subtotal: 'Iznos bez PDV-a'
-  , Total: 'Ukupno'
+  , Total: 'Ukupno za uplatu'
   , 'Route is Required': 'Ruta je obavezna'
   , 'Registration Tag is Required': 'Registracija je obavezna'
   , 'Price is Required': 'Cena je obavezna'
   , 'VAT is Required': 'PDV je obavezan'
   , 'Discount is Required': 'Popust je obavezan'
   , 'Amount is Required': 'Iznos je obavezan'
+  , 'Note' : 'Dodatne instrukcije'
+  , 'Payment instructions for international transfers' : 'Instrukcije za uplate iz inostranstva'
+  , 'Yes': 'Da'
+  , 'No' : 'Ne'
 };

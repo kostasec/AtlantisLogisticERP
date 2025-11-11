@@ -49,10 +49,6 @@ export default function AddEmployeePageView() {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
 
-  // Keep fields from shrinking when the Card becomes narrower
-  const fieldSx = { minWidth: 600, flexShrink: 0 };
-  const wideFieldSx = { minWidth: 800, flexShrink: 0 };
-
   const {
     control,
     handleSubmit,
@@ -111,8 +107,8 @@ export default function AddEmployeePageView() {
   };
 
   return (
-    <Box display="flex" justifyContent="center" className="pt-2 pb-4">
-      <Card sx={{ px: 3, py: 3, maxWidth: 850 }}>
+    <div className="pt-2 pb-4">
+      <Card sx={{ px: 3, py: 3 }}>
       <HeadingArea title={t('Add Employee')} icon={Add} />
           
         <Box sx={{ mt: 4 }} />
@@ -131,8 +127,14 @@ export default function AddEmployeePageView() {
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <Stack spacing={3}>
+            {/* Basic Employee Information */}
+            <Typography variant="h6" fontWeight={500} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <User sx={{ fontSize: 20 }} />
+              Basic Information
+            </Typography>
+
             <Grid container spacing={3}>
-              <Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Controller
                   name="firstName"
                   control={control}
@@ -140,7 +142,6 @@ export default function AddEmployeePageView() {
                     <TextField
                       {...field}
                       label={t('First Name')}
-                      sx={wideFieldSx}
                       fullWidth
                       error={!!errors.firstName}
                       helperText={errors.firstName?.message}
@@ -149,7 +150,7 @@ export default function AddEmployeePageView() {
                 />
               </Grid>
               
-              <Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Controller
                   name="lastName"
                   control={control}
@@ -157,7 +158,6 @@ export default function AddEmployeePageView() {
                     <TextField
                       {...field}
                       label={t('Last Name')}
-                      sx={wideFieldSx}
                       fullWidth
                       error={!!errors.lastName}
                       helperText={errors.lastName?.message}
@@ -166,7 +166,7 @@ export default function AddEmployeePageView() {
                 />
               </Grid>
 
-              <Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Controller
                   name="emplType"
                   control={control}
@@ -174,7 +174,6 @@ export default function AddEmployeePageView() {
                     <TextField
                       {...field}
                       label={t('Employee Type')}
-                      sx={wideFieldSx}
                       fullWidth
                       error={!!errors.emplType}
                       helperText={errors.emplType?.message}
@@ -182,76 +181,8 @@ export default function AddEmployeePageView() {
                   )}
                 />
               </Grid>
-              
-              <Grid>
-                <Controller
-                  name="streetAndNumber"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label={t('Street and Number')}
-                      sx={wideFieldSx}
-                      fullWidth
-                      error={!!errors.streetAndNumber}
-                      helperText={errors.streetAndNumber?.message}
-                    />
-                  )}
-                />
-              </Grid>
-              
-              <Grid>
-                <Controller
-                  name="city"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label={t('City')}
-                      sx={wideFieldSx}
-                      fullWidth
-                      error={!!errors.city}
-                      helperText={errors.city?.message}
-                    />
-                  )}
-                />
-              </Grid>
-              
-              <Grid>
-                <Controller
-                  name="zipCode"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label={t('ZIP Code')}
-                      sx={wideFieldSx}
-                      fullWidth
-                      error={!!errors.zipCode}
-                      helperText={errors.zipCode?.message}
-                    />
-                  )}
-                />
-              </Grid>
 
-              <Grid>
-                <Controller
-                  name="country"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label={t('Country')}
-                      sx={wideFieldSx}
-                      fullWidth
-                      error={!!errors.country}
-                      helperText={errors.country?.message}
-                    />
-                  )}
-                />
-              </Grid>
-
-              <Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Controller
                   name="phoneNumber"
                   control={control}
@@ -259,7 +190,6 @@ export default function AddEmployeePageView() {
                     <TextField
                       {...field}
                       label={t('Phone Number')}
-                      sx={wideFieldSx}
                       fullWidth
                       error={!!errors.phoneNumber}
                       helperText={errors.phoneNumber?.message}
@@ -268,7 +198,7 @@ export default function AddEmployeePageView() {
                 />
               </Grid>
 
-              <Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Controller
                   name="passportNumber"
                   control={control}
@@ -276,7 +206,6 @@ export default function AddEmployeePageView() {
                     <TextField
                       {...field}
                       label={t('Passport Number')}
-                      sx={wideFieldSx}
                       fullWidth
                       error={!!errors.passportNumber}
                       helperText={errors.passportNumber?.message}
@@ -285,27 +214,98 @@ export default function AddEmployeePageView() {
                 />
               </Grid>
 
-            <Grid>
-            <Controller
-                name="vehicle"
-                control={control}
-                render={({ field }) => (
-                <TextField
-                    {...field}
-                    select
-                    label="Vehicle"
-          sx={wideFieldSx}
-                    fullWidth
-                    error={!!errors.vehicle}
-                    helperText={errors.vehicle?.message}
-                >
-                  <MenuItem value="v1">V1</MenuItem>
-                  <MenuItem value="v2">V2</MenuItem>
-                  </TextField>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <Controller
+                  name="vehicle"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      select
+                      label="Vehicle"
+                      fullWidth
+                      error={!!errors.vehicle}
+                      helperText={errors.vehicle?.message}
+                    >
+                      <MenuItem value="v1">V1</MenuItem>
+                      <MenuItem value="v2">V2</MenuItem>
+                    </TextField>
                   )}
                 />              
               </Grid>
+            </Grid>
+
+            {/* Address Information */}
+            <Typography variant="h6" fontWeight={500} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <HomeOutlined sx={{ fontSize: 20 }} />
+              Address Information
+            </Typography>
+
+            <Grid container spacing={3}>
+              <Grid size={{ xs: 3 }}>
+                <Controller
+                  name="streetAndNumber"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label={t('Street and Number')}
+                      fullWidth
+                      error={!!errors.streetAndNumber}
+                      helperText={errors.streetAndNumber?.message}
+                    />
+                  )}
+                />
               </Grid>
+              
+              <Grid size={{ xs: 3 }}>
+                <Controller
+                  name="city"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label={t('City')}
+                      fullWidth
+                      error={!!errors.city}
+                      helperText={errors.city?.message}
+                    />
+                  )}
+                />
+              </Grid>
+              
+              <Grid size={{ xs: 3 }}>
+                <Controller
+                  name="zipCode"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label={t('ZIP Code')}
+                      fullWidth
+                      error={!!errors.zipCode}
+                      helperText={errors.zipCode?.message}
+                    />
+                  )}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 3 }}>
+                <Controller
+                  name="country"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label={t('Country')}
+                      fullWidth
+                      error={!!errors.country}
+                      helperText={errors.country?.message}
+                    />
+                  )}
+                />
+              </Grid>
+            </Grid>
 
             {/* Action Buttons */}
             <Stack direction="row" spacing={2} justifyContent="flex-end" pt={2}>
@@ -327,6 +327,6 @@ export default function AddEmployeePageView() {
           </Stack>
         </form>
       </Card>
-    </Box>
+    </div>
   );
 }

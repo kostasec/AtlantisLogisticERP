@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid2';
-import Stack from '@mui/material/Stack';
+
 
 import TransactionTableIncomingInv from '../TransactionTableIncomingInv';
 import TransactionTableOutgoingInv from '../TransactionTableOutgoingInv';
@@ -39,7 +39,7 @@ export function Finance1PageView() {
           invoiceNumber: invoice.invoiceNumber,
           dueDate: invoice.dueDate,
           amount: invoice.amount,
-          currency: invoice.currency // Dodaj currency iz baze
+          currency: invoice.currency
         }));
 
         // Transform other invoices to transaction format
@@ -49,17 +49,17 @@ export function Finance1PageView() {
           invoiceNumber: invoice.invoiceNumber,
           dueDate: invoice.dueDate,
           amount: invoice.amount,
-          currency: invoice.currency // Dodati currency iz baze
+          currency: invoice.currency
         }));
 
         // Transform outgoing invoices to transaction format
         const transformedOutgoing = outgoingInvoicesData.map(invoice => ({
           id: invoice.id,
-          recipient: invoice.recipient, // recipient umesto sender
+          recipient: invoice.recipient,
           invoiceNumber: invoice.invoiceNumber,
           dueDate: invoice.dueDate,
           amount: invoice.amount,
-          currency: invoice.currency // Dodaj currency iz baze
+          currency: invoice.currency
         }));
 
         setIncomingInvoicesCarriers(transformedCarriers);
@@ -76,129 +76,34 @@ export function Finance1PageView() {
 
     fetchInvoices();
   }, []);
-  return <div className="pt-2 pb-4">
+  return (
+    <div className="pt-2 pb-4">
       <Grid container spacing={3}>
-     
-      
-        {
-        /* II Payment Carriers */
-      }
-        <Grid size={{
-        md: 12,
-        xs: 12
-      }}>
-        <TransactionTableIncomingInv 
-          title={t('Incoming Invoices for Payment') || 'Incoming Invoices for Payment'} 
-          subtitle={t('Carriers') || 'Carriers'}
-          transactions={incomingInvoicesCarriers}
-        />
-        </Grid>
-        {
-
-      /* II Payment Others */
-        }
-        <Grid size={{
-        md: 12,
-        xs: 12
-      }}>
-        <TransactionTableIncomingInv 
-          subtitle={t('Others') || 'Others'}
-          transactions={incomingInvoicesOthers}
-        />
-          
+        {/* Incoming Invoices - Carriers */}
+        <Grid size={{ xs: 12, md: 12 }}>
+          <TransactionTableIncomingInv 
+            title={t('Incoming Invoices for Payment')} 
+            subtitle={t('Carriers')}
+            transactions={incomingInvoicesCarriers}
+          />
         </Grid>
 
-         {
-        /*Outgoing Invoices Payment */
-      }
-        <Grid size={{
-        md: 12,
-        xs: 12
-      }}>
-        <TransactionTableOutgoingInv
-          title={t('Outgoing Invoices for Payment') || 'Outgoing Invoices for Payment'}
-          transactions={outgoingInvoices}
-        />
-      
-          
+        {/* Incoming Invoices - Others */}
+        <Grid size={{ xs: 12, md: 12 }}>
+          <TransactionTableIncomingInv 
+            subtitle={t('Others')}
+            transactions={incomingInvoicesOthers}
+          />
         </Grid>
 
-
-        {
-        /* QUICK TRANSFER AND INSTALLMENT CARD */
-      }
-        <Grid size={{
-        md: 6,
-        xs: 12
-      }}>
-        {/*Vehicle Inspection*/}
-
-          <Stack spacing={3}>
-           
-          </Stack>
+        {/* Outgoing Invoices */}
+        <Grid size={{ xs: 12, md: 12 }}>
+          <TransactionTableOutgoingInv
+            title={t('Outgoing Invoices for Payment')}
+            transactions={outgoingInvoices}
+          />
         </Grid>
-
-        {
-        /* CUSTOMER TRANSACTION TABLE */
-      }
-        <Grid size={{
-        md: 6,
-        xs: 12
-      }}>
-       {/*Employee Inspection*/}
-         
-        </Grid>
-
-        {
-        /* INVESTMENT CHART CARD */
-      }
-        <Grid size={{
-        md: 8,
-        xs: 12
-      }}>
-          
-        </Grid>
-
-        {
-        /* TOP ACTIVITY CARD */
-      }
-        <Grid size={{
-        md: 4,
-        xs: 12
-      }}>
-         
-        </Grid>
-
-        {
-        /* MY SAVINGS CARD */
-      }
-        <Grid size={{
-        md: 4,
-        xs: 12
-      }}>
-          
-        </Grid>
-
-        {
-        /* AUDITS CARD */
-      }
-        <Grid size={{
-        md: 4,
-        xs: 12
-      }}>
-          
-        </Grid>
-
-        {
-        /* REPORTS CARD */
-      }
-        <Grid size={{
-        md: 4,
-        xs: 12
-      }}>
-          
-        </Grid>
-
       </Grid>
-    </div>;
+    </div>
+  );
 }

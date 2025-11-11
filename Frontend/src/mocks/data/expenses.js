@@ -42,11 +42,6 @@ export const EXPENSES = {
     inoExpenses: '220 EUR'
   },
   'Gabi': {
-    date: '23.10.2025.',
-    orderNumber: '12347',
-    domesticAllowance: '5500 RSD',
-    domesticExpenses: '7500 RSD',
-    inoAllowance: '190 EUR',
-    inoExpenses: '220 EUR'
+
   }
 }

@@ -12,9 +12,10 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Pagination from '@mui/material/Pagination';
 import Typography from '@mui/material/Typography';
+import Trash from '@/icons/duotone/Trash';
 
 const initialExpenseState = {
-  date: '',
+  date: new Date().toISOString().split('T')[0], // Set default date to today
   orderNumber: '',
   domesticAllowance: '',
   domesticExpenses: [''],
@@ -22,7 +23,7 @@ const initialExpenseState = {
   inoExpenses: [''], // now an array
 };
 
-export default function AddExpense({ open, onClose, onAdd }) {
+export default function AddPaySlip({ open, onClose, onAdd }) {
   const [items, setItems] = useState([initialExpenseState]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -75,8 +76,10 @@ export default function AddExpense({ open, onClose, onAdd }) {
       const next = prev.filter((_, i) => i !== idx);
       // if no items remain, keep one empty item
       if (next.length === 0) {
+        const newItem = JSON.parse(JSON.stringify(initialExpenseState));
+        newItem.date = new Date().toISOString().split('T')[0]; // Ensure date is set
         setCurrentIndex(0);
-        return [JSON.parse(JSON.stringify(initialExpenseState))];
+        return [newItem];
       }
       // adjust currentIndex if out of range
       if (currentIndex >= next.length) {
@@ -108,12 +111,18 @@ export default function AddExpense({ open, onClose, onAdd }) {
     const grandSum = itemsWithTotals.map(i => i.grandTotal).reduce((a, b) => a + b, 0);
 
     onAdd({ items: itemsWithTotals, grandTotal: grandSum });
-    setItems([initialExpenseState]);
+    const newItem = JSON.parse(JSON.stringify(initialExpenseState));
+    newItem.date = new Date().toISOString().split('T')[0]; // Ensure date is set
+    setItems([newItem]);
+    setCurrentIndex(0);
     onClose();
   };
 
   const handleClose = () => {
-    setItems([initialExpenseState]);
+    const newItem = JSON.parse(JSON.stringify(initialExpenseState));
+    newItem.date = new Date().toISOString().split('T')[0]; // Ensure date is set
+    setItems([newItem]);
+    setCurrentIndex(0);
     onClose();
   };
 
@@ -151,7 +160,7 @@ export default function AddExpense({ open, onClose, onAdd }) {
       </Box>
       <DialogContent>
         <Stack spacing={2}>
-          {items.length > 0 && (() => {
+          {items.length > 0 && items[currentIndex] && (() => {
             const item = items[currentIndex];
             const itemIdx = currentIndex;
             return (
@@ -161,7 +170,7 @@ export default function AddExpense({ open, onClose, onAdd }) {
                   <Box>
                     {items.length > 1 && (
                       <IconButton color="error" size="small" onClick={() => handleRemoveItem(itemIdx)}>
-                        <Delete />
+                        <Trash fontSize="small" />
                       </IconButton>
                     )}
                   </Box>
@@ -212,7 +221,7 @@ export default function AddExpense({ open, onClose, onAdd }) {
                           />
                           {item.domesticExpenses.length > 1 && (
                             <IconButton onClick={() => handleRemoveExpenseField(itemIdx, idx)} color="error" size="small">
-                              <Delete fontSize="small" />
+                              <Trash fontSize="small" />
                             </IconButton>
                           )}
                         </Box>
@@ -257,7 +266,7 @@ export default function AddExpense({ open, onClose, onAdd }) {
                           />
                           {item.inoExpenses.length > 1 && (
                             <IconButton onClick={() => handleRemoveInoExpenseField(itemIdx, idx)} color="error" size="small">
-                              <Delete fontSize="small" />
+                              <Trash fontSize="small" />
                             </IconButton>
                           )}
                         </Box>

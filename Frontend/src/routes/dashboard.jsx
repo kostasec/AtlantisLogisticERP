@@ -17,13 +17,17 @@ const VehicleView = lazy(() => import('@/pages/cev/vehicle/list-vehicle'));
 const AddVehicleView = lazy(() => import('@/pages/cev/vehicle/add-vehicle'));
 
 //EXPENSES
-const ExpensesView= lazy(()=> import('@/page-sections/expenses/Expenses'))
+const ExpensesView= lazy(()=> import('@/page-sections/expenses/ReimbursementMain'))
+
+//INSPECTIONS
+const InspectionsView = lazy(() => import('@/pages/inspections/InspectionsPage'))
 
 
  // ALL INVOICE RELATED PAGES
 const IncomingInvoice = lazy(() => import('@/pages/invoice/incoming-invoice'));
 const OutgoingInvoice = lazy(() => import('@/pages/invoice/outgoing-invoice'));
 const InvoiceCreate = lazy(() => import('@/pages/invoice/create'));
+const DocumentDownload = lazy(() => import('@/page-sections/invoice/DocumentDownloadPage'));
 
 
 
@@ -77,7 +81,7 @@ export const DashboardRoutes = [{
     element: <ExpensesView />
   },{
     path: 'inspections',
-    element: <></>
+    element: <InspectionsView />
   },{
     path: 'incoming-invoice',
     element: <IncomingInvoice />
@@ -87,5 +91,8 @@ export const DashboardRoutes = [{
   }, {
     path: 'create-invoice',
     element: <InvoiceCreate />
+  }, {
+    path: 'document-download/:type/:id?',
+    element: <DocumentDownload />
   }]
 }];

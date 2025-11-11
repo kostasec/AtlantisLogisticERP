@@ -1,8 +1,9 @@
- // models/Employee.js
 const { sql, getPool } = require('../util/db');
 
+
 class Employee {
-  
+
+  //Radi se fetchAll iz pogleda jer u pogledu imamo izlistana vozila i pun naziv menadzera po svakom zaposlenom
   static async fetchAll() {
     const pool = await getPool();
     return pool.request().query(`
@@ -20,7 +21,6 @@ class Employee {
         `);
   }
   
-
   static async findById(id) {
     const pool = await getPool();
     return pool.request()
@@ -40,7 +40,9 @@ class Employee {
       WHERE EmplType LIKE '%Director%' AND Status = 'Active';
     `);
   }
-//deo logike sa kontrolera je definisan ovde predpostavljam da je lakse bilo
+
+  //Deo logike sa kontrolera je definisan ovde, predpostavljam da je lakse bilo
+  //U ovaj insert bi trebalo dodati i obelezja vozila, jer se na frontendu vozilo adresira za zaposlenog prilikom njegovog inserta u sistem
   static async insert(reqBody, transaction) {
   const mgrIdValue = (reqBody.MgrID && String(reqBody.MgrID).trim() !== '') ? parseInt(reqBody.MgrID, 10) : null;
 
@@ -68,8 +70,9 @@ class Employee {
     return result.recordset[0].EmplID;
   }
 
+  //Isto kao i kod Inserta, treba dodati update za vozilo
   static async update(id, reqBody, transaction) {
-    const mgrIdValue = (reqBody.MgrID && String(reqBody.MgrID).trim() !== '') ? parseInt(reqBody.MgrID, 10) : null;
+  const mgrIdValue = (reqBody.MgrID && String(reqBody.MgrID).trim() !== '') ? parseInt(reqBody.MgrID, 10) : null;
 
     return new sql.Request(transaction)
       .input('EmplID', sql.Int, parseInt(id, 10))

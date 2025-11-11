@@ -51,12 +51,6 @@ exports.getReadEmployee = async (req, res, next) => {
       });
     }
 
-    // Inače vrati HTML stranicu
-    res.render('employee/read-employee', {
-      pageTitle: 'All Employees',
-      path: '/employee/read',
-      employees: employees.recordset
-    });
   } catch (err) {
     console.error('Error fetching employees:', err);
     if (req.headers.accept && req.headers.accept.includes('application/json')) {

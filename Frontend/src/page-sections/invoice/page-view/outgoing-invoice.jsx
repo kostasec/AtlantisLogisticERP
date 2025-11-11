@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'; // MUI
+import { useTranslation } from 'react-i18next';
 
+// MUI Components
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
-import Avatar from '@mui/material/Avatar';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
@@ -11,33 +12,23 @@ import TablePagination from '@mui/material/TablePagination';
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
-import { alpha, styled } from '@mui/material/styles'; // CUSTOM COMPONENTS
 
+// Custom Components
 import Scrollbar from '@/components/scrollbar';
 import FlexBetween from '@/components/flexbox/FlexBetween';
 import { TableDataNotFound, TableToolbar } from '@/components/table'; // CUSTOM DEFINED HOOK
 
-import useMuiTable, { getComparator, stableSort } from '@/hooks/useMuiTable'; // CUSTOM ICON COMPONENTS
-
-import Invoice from '@/icons/sidebar/Invoice'; // CUSTOM PAGE SECTION COMPONENTS
-
+// Table Components
 import InvoiceTableRow from '../InvoiceTableRow';
 import InvoiceTableHead from '../InvoiceTableHead';
 import InvoiceTableActions from '../InvoiceTableActions'; // CUSTOM DUMMY DATA
 
-import { paginate } from '@/utils/paginate';
+// Hooks
+import useMuiTable, { getComparator, stableSort } from '@/hooks/useMuiTable'; // CUSTOM ICON COMPONENTS
+
+//Services
 import { outgoingInvoiceService } from '@/services/outgoingInvoice';
 
-const StyledAvatar = styled(Avatar)(({
-  theme
-}) => ({
-  width: 36,
-  height: 36,
-  backgroundColor: alpha(theme.palette.primary.main, 0.1),
-  '& .icon': {
-    fontSize: 22
-  }
-}));
 
 const normalizeInvoices = list => (Array.isArray(list) ? list : []).map(item => ({
   ...item,
@@ -51,6 +42,7 @@ function InvoiceTablePageView({
   partyKey,
   partyLabel
 }) {
+  const { t } = useTranslation();
   const [invoices, setInvoices] = useState(() => normalizeInvoices(initialInvoices));
   const [invoiceFilter, setInvoiceFilter] = useState({
     search: '',
@@ -87,7 +79,7 @@ function InvoiceTablePageView({
         if (response.success) {
           setInvoices(normalizeInvoices(response.data));
         } else {
-          setError('Failed to fetch invoices');
+          setError('Failed to fetch outgoing invoices');
         }
       } catch (err) {
         console.error('Error fetching invoices:', err);
@@ -112,23 +104,24 @@ function InvoiceTablePageView({
   }, []);
   const filteredInvoices = useMemo(() => {
     const sortedInvoices = stableSort(invoices, getComparator(order, orderBy || partyKey));
+    
     return sortedInvoices.filter(item => {
-      const {
-        status,
-        search
-      } = invoiceFilter;
+      const { status, search } = invoiceFilter;
+
+      // Status filtering
       if (status === 'pending') return item.status === 'Pending';
       if (status === 'complete') return item.status === 'Complete';
 
+      // Search filtering
       if (search) {
         const searchTerm = search.toLowerCase();
         const matchesName = item.name ? item.name.toLowerCase().includes(searchTerm) : false;
-  const matchesParty = item[partyKey] ? item[partyKey].toString().toLowerCase().includes(searchTerm) : false;
+        const matchesParty = item[partyKey] ? item[partyKey].toString().toLowerCase().includes(searchTerm) : false;
         return matchesName || matchesEmail || matchesParty;
       }
-
       return true;
     });
+
   }, [invoices, order, orderBy, invoiceFilter, partyKey]);
   const paginatedInvoices = useMemo(() => {
     const startIndex = page * rowsPerPage;
@@ -165,60 +158,70 @@ function InvoiceTablePageView({
   return <Card>
       <FlexBetween flexWrap="wrap" gap={2} px={2} py={3}>
         <Stack direction="row" alignItems="center" gap={1}>
-          <StyledAvatar variant="rounded">
-            <Invoice color="primary" className="icon" />
-          </StyledAvatar>
-
           <Typography variant="body1" fontWeight={500}>
-            {title}
+           {t(title)}
           </Typography>
         </Stack>
-
-        
       </FlexBetween>
 
-      {
-      /* INVOICE FILTER ACTION BAR */
-    }
-      <InvoiceTableActions filter={invoiceFilter} handleChangeFilter={handleChangeFilter} />
+      {/* Invoice Filter Action Bar */}
+      <InvoiceTableActions 
+      filter={invoiceFilter} 
+      handleChangeFilter={handleChangeFilter} 
+      />
 
-      {
-      /* TABLE ROW SELECTION HEADER  */
-    }
-      {selected.length > 0 && <TableToolbar selected={selected.length} handleDeleteRows={handleAllDeleteInvoice} />}
-
-      {
-      /* TABLE HEAD & BODY ROWS */
-    }
+      {/* Table Content */}
       <TableContainer>
         <Scrollbar autoHide={false}>
-          <Table sx={{
-          minWidth: 900
-        }}>
-            {
-            /* TABLE HEAD SECTION */
-          }
-            <InvoiceTableHead order={order} orderBy={orderBy} numSelected={selected.length} rowCount={filteredInvoices.length} onRequestSort={handleRequestSort} onSelectAllRows={handleSelectAllRows(filteredInvoices.map(row => row.id))} partyLabel={partyLabel} partyKey={partyKey} />
+          <Table sx={{minWidth: 900}}>
 
-            {
-            /* TABLE BODY & DATA SECTION */
-          }
+          {/* Table Head */}
+            <InvoiceTableHead 
+            order={order} 
+            orderBy={orderBy} 
+            numSelected={selected.length} 
+            rowCount={filteredInvoices.length} 
+            onRequestSort={handleRequestSort} 
+            onSelectAllRows={handleSelectAllRows(filteredInvoices.map(row => row.id))} 
+            partyLabel={partyLabel} 
+            partyKey={partyKey} 
+            />
+
+            {/* Table Body */}
             <TableBody>
-              {filteredInvoices.length === 0 ? <TableDataNotFound /> : paginatedInvoices.map(invoice => <InvoiceTableRow key={invoice.id} invoice={invoice} handleSelectRow={handleSelectRow} isSelected={isSelected(invoice.id)} handleDeleteInvoice={handleDeleteInvoice} partyKey={partyKey} />)}
+              {filteredInvoices.length === 0 ? (
+              <TableDataNotFound /> 
+              ) : (
+              paginatedInvoices.map(invoice => (
+              <InvoiceTableRow 
+              key={invoice.id} 
+              invoice={invoice} 
+              handleSelectRow={handleSelectRow} 
+              isSelected={isSelected(invoice.id)} 
+              handleDeleteInvoice={handleDeleteInvoice} 
+              partyKey={partyKey} 
+              invoiceType="outgoing" 
+              />
+              ))
+              )}
             </TableBody>
           </Table>
         </Scrollbar>
       </TableContainer>
 
-      {
-      /* TABLE PAGINATION SECTION */
-    }
+      {/* Table Pagination Section */}
       <TablePagination page={page} component="div" rowsPerPage={rowsPerPage} count={filteredInvoices.length} onPageChange={handleChangePage} rowsPerPageOptions={[5, 10, 25]} onRowsPerPageChange={handleChangeRowsPerPage} showFirstButton showLastButton />
     </Card>;
 }
 
 export const OutgoingInvoice = ({ initialInvoices = [], ...props }) => (
-  <InvoiceTablePageView title="Outgoing Invoice" initialInvoices={initialInvoices} partyKey="recipient" partyLabel="Recipient" {...props} />
+  <InvoiceTablePageView 
+  title="Outgoing Invoice" 
+  initialInvoices={initialInvoices} 
+  partyKey="recipient" 
+  partyLabel="Recipient" 
+  {...props} 
+  />
 );
 
 export default OutgoingInvoice;

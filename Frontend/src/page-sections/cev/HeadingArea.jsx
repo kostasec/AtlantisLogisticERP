@@ -42,9 +42,7 @@ export default function HeadingArea({
   return (
     <FlexBetween flexWrap="wrap" gap={1}>
       <FlexBox alignItems="center" gap={1.5}>
-        <StyledAvatar variant="rounded">
-          {Icon && <Icon className="icon" />}
-        </StyledAvatar>
+
 
         <Typography variant="body1" fontWeight={500}>
           {title}

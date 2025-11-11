@@ -10,6 +10,7 @@ exports.getReadAllIncInv = async (req, res, next) => {
             const transformedInvoices = result.recordset.map(invoice => {   
             return {
                 id: invoice.InvoiceNmbr, // Jedinstveni identifikator za React key
+                incInvID: invoice.IncInvID,
                 documentStatus: invoice.DStatusName,
                 processingStatus: invoice.ProcessingStatusName,
                 sender: invoice.Sender,
@@ -24,12 +25,6 @@ exports.getReadAllIncInv = async (req, res, next) => {
             data: transformedInvoices
         });
     }
-
-        // Fallback to render view for HTML requests
-        res.render('incInvoice/read-invoices', {
-            title: 'Incoming Invoices',
-            invoices: result.recordset
-        });
 
     } catch (err) {
         console.error('Error fetching invoices:', err);
@@ -47,6 +42,7 @@ exports.getReadInvoiceCarrier = async (req, res, next) => {
 
             return {
                id: invoice.InvoiceNmbr, // Jedinstveni identifikator za React key
+               incInvID: invoice.IncInvID,
                dueDate: invoice.DueDate,
                sender: invoice.Sender,
                amount: invoice.Amount,
@@ -61,12 +57,6 @@ exports.getReadInvoiceCarrier = async (req, res, next) => {
             data: transformedInvoices
         });
         }
-
-        // Fallback to render view for HTML requests  
-        res.render('incInvoice/read-invoices-carrier', {
-            title: 'Carrier Incoming Invoices',
-            invoices: result.recordset
-        });
 
         } catch (err) {
             console.error('Error fetching invoices:', err);
@@ -91,6 +81,7 @@ exports.getReadInvoiceOther = async (req, res, next) => {
                     
                         return {
                         id: invoice.InvoiceNmbr, // Jedinstveni identifikator za React key
+                        incInvID: invoice.IncInvID,
                         dueDate: invoice.DueDate,
                         sender: invoice.Sender,
                         amount: invoice.Amount,
@@ -106,11 +97,6 @@ exports.getReadInvoiceOther = async (req, res, next) => {
                 });
                 }
 
-                // Fallback to render view for HTML requests
-                res.render('incInvoice/read-invoices-others', {
-                    title: 'Other Incoming Invoices',
-                    invoices: result.recordset
-                });
             
             } catch (err) {
                 console.error('Error fetching invoices:', err);
